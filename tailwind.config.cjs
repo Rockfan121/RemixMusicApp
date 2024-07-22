@@ -1,10 +1,11 @@
 function lightDarkVar(baseName) {
-	return `var(--theme-light, hsl(var(--${baseName}))) var(--theme-dark, hsl(var(--${baseName}-dark)))`;
+	return `var(--theme-light, hsl(var(--${baseName}))) var(--theme-dark, hsl(var(--${baseName}-dark))) 
+	var(--theme-dkviolet, hsl(var(--${baseName}-dkviolet))) var(--theme-sky, hsl(var(--${baseName}-sky)))`;
 }
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	darkMode: ["class"],
+	//darkMode: ["class"],
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",

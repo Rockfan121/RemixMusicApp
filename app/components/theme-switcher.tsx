@@ -1,4 +1,4 @@
-export type Theme = "light" | "dark" | "system";
+export type Theme = "light" | "dark" | "system" | "dkviolet" | "sky";
 
 /**
  * This component is used to set the theme based on the value at hydration time.
@@ -56,20 +56,9 @@ export function getTheme() {
 }
 
 /**
- * This function will toggle the theme between light and dark and store the
+ * This function will change the theme and store the
  * value in localStorage.
  */
-export function toggleTheme() {
-	let currentTheme = validateTheme(localStorage.getItem("theme"));
-	if (currentTheme === "system") {
-		currentTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
-			: "light";
-	}
-	const newTheme = currentTheme === "light" ? "dark" : "light";
-	localStorage.setItem("theme", newTheme);
-	document.documentElement.setAttribute("data-theme", newTheme);
-}
 
 export function setTheme(theme: Theme | string) {
 	let themeToSet: Theme | null = validateTheme(theme);
@@ -86,7 +75,7 @@ export function setTheme(theme: Theme | string) {
 }
 
 function validateTheme(theme: string | null): Theme {
-	return theme === "light" || theme === "dark" || theme === "system"
+	return theme === "light" || theme === "dark" || theme === "system" || theme === "dkviolet" || theme === "sky"
 		? theme
 		: "system";
 }

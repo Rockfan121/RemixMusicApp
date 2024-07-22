@@ -55,6 +55,51 @@
     --ring-dark: 212.7 26.8% 83.9%;
 
     --radius: 0.5rem;
+
+    
+    
+    /*dark sky - #19a1e6  zippystarter: max saturation  max lightness*/
+    --background-sky: 200.4 50% 10%;
+    --foreground-sky: 200.4 5% 100%;
+    --card-sky: 200.4 50% 10%;
+    --card-foreground-sky: 200.4 5% 100%;
+    --popover-sky: 200.4 50% 5%;
+    --popover-foreground-sky: 200.4 5% 100%;
+    --primary-sky: 200.4 98% 39.4%;
+    --primary-foreground-sky: 0 0% 100%;
+    --secondary-sky: 200.4 30% 20%;
+    --secondary-foreground-sky: 0 0% 100%;
+    --muted-sky: 162.4 30% 25%;
+    --muted-foreground-sky: 200.4 5% 65%;
+    --accent-sky: 162.4 30% 25%;
+    --accent-foreground-sky: 200.4 5% 95%;
+    --destructive-sky: 0 100% 50%;
+    --destructive-foreground-sky: 200.4 5% 100%;
+    --border-sky: 200.4 30% 50%;
+    --input-sky: 200.4 30% 50%;
+    --ring-sky: 200.4 98% 39.4%;
+    
+
+    /*dark violet*/
+    --background-dkviolet: 224 71.4% 4.1%;
+    --foreground-dkviolet: 210 20% 98%;
+    --card-dkviolet: 224 71.4% 4.1%;
+    --card-foreground-dkviolet: 210 20% 98%;
+    --popover-dkviolet: 224 71.4% 4.1%;
+    --popover-foreground-dkviolet: 210 20% 98%;
+    --primary-dkviolet: 263.4 70% 50.4%;
+    --primary-foreground-dkviolet: 210 20% 98%;
+    --secondary-dkviolet: 215 27.9% 16.9%;
+    --secondary-foreground-dkviolet: 210 20% 98%;
+    --muted-dkviolet: 215 27.9% 16.9%;
+    --muted-foreground-dkviolet: 217.9 10.6% 64.9%;
+    --accent-dkviolet: 215 27.9% 16.9%;
+    --accent-foreground-dkviolet: 210 20% 98%;
+    --destructive-dkviolet: 0 62.8% 30.6%;
+    --destructive-foreground-dkviolet: 210 20% 98%;
+    --border-dkviolet: 215 27.9% 16.9%;
+    --input-dkviolet: 215 27.9% 16.9%;
+    --ring-dkviolet: 263.4 70% 50.4%;
   }
 }
 
@@ -66,26 +111,50 @@
   :root {
     --theme-light: initial;
     --theme-dark: ;
-    color-scheme: light dark;
+    --theme-dkviolet: ;
+    --theme-sky: ;
+    color-scheme: light dark dkviolet sky;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
       --theme-light: ;
       --theme-dark: initial;
+      --theme-dkviolet: ;
+      --theme-sky: ;
     }
   }
 
   [data-theme="light"] {
     --theme-light: initial;
     --theme-dark: ;
+    --theme-dkviolet: ;
+    --theme-sky: ;
     color-scheme: light;
   }
 
   [data-theme="dark"] {
     --theme-light: ;
     --theme-dark: initial;
+    --theme-dkviolet: ;
+    --theme-sky: ;
     color-scheme: dark;
+  }
+
+  [data-theme="dkviolet"] {
+    --theme-light: ;
+    --theme-dark: ;
+    --theme-dkviolet: initial;
+    --theme-sky: ;
+    color-scheme: dkviolet;
+  }
+
+  [data-theme="sky"] {
+    --theme-light: ;
+    --theme-dark: ;
+    --theme-dkviolet: ;
+    --theme-sky: initial;
+    color-scheme: sky;
   }
 }
 

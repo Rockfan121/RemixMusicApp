@@ -90,6 +90,27 @@ export function Header({
 									System
 								</button>
 							</DropdownMenuItem>
+
+							<DropdownMenuItem asChild>
+								<button
+									type="button"
+									className="w-full"
+									onClick={() => setTheme("dkviolet")}
+									aria-selected={theme === "dkviolet"}
+								>
+									Dark violet
+								</button>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<button
+									type="button"
+									className="w-full"
+									onClick={() => setTheme("sky")}
+									aria-selected={theme === "sky"}
+								>
+									Sky
+								</button>
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 					{isAuthenticated && (
