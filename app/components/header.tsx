@@ -1,4 +1,4 @@
-import { ExitIcon, LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { ExitIcon, HomeIcon, LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { Form, Link } from "@remix-run/react";
 import * as React from "react";
 import { useHydrated } from "remix-utils/use-hydrated";
@@ -31,12 +31,17 @@ export function Header({
 	return (
 		<>
 			<Form id="logout-form" method="POST" action="/logout" />
-			<header className="flex items-center justify-between px-4 py-2 md:py-4">
+			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 py-2 md:py-4 bg-primary">
 				<div className="flex items-center space-x-4">
 					<Link className="flex items-center space-x-2" to="/">
-						{/* <HomeIcon className="h-6 w-6" /> */}
-						<span className="text-lg font-bold">shadcn</span>
+						<HomeIcon className="h-6 w-6" /> 
+						{/*<span className="text-lg font-bold">shadcn</span>*/}
 					</Link>
+				</div>
+				<div className="flex items-center space-x-1 bottom-0">
+					<Button variant="secondary">Button</Button>
+					<Button variant="secondary">Button</Button>
+					<Button variant="secondary">Button</Button>
 				</div>
 				<div className="flex items-center space-x-4">
 					<DropdownMenu>
