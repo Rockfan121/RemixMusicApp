@@ -1,4 +1,4 @@
-import { ExitIcon, HomeIcon, LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { ExitIcon, LaptopIcon, MoonIcon, RocketIcon, SunIcon } from "@radix-ui/react-icons";
 import { Form, Link } from "@remix-run/react";
 import * as React from "react";
 import { useHydrated } from "remix-utils/use-hydrated";
@@ -31,17 +31,17 @@ export function Header({
 	return (
 		<>
 			<Form id="logout-form" method="POST" action="/logout" />
-			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 py-2 md:py-4 bg-primary">
+			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 py-2 bg-primary">
 				<div className="flex items-center space-x-4">
 					<Link className="flex items-center space-x-2" to="/">
-						<HomeIcon className="h-6 w-6" /> 
-						{/*<span className="text-lg font-bold">shadcn</span>*/}
+						<RocketIcon className="ml-4 h-8 w-8" /> 
+						<span className="text-sm hidden md:inline">music under control</span>
 					</Link>
 				</div>
-				<div className="flex items-center space-x-1 bottom-0">
-					<Button variant="secondary">Button</Button>
-					<Button variant="secondary">Button</Button>
-					<Button variant="secondary">Button</Button>
+				<div className="flex items-center space-x-1">
+					<Button variant="secondary">Playlists</Button>
+					<Button variant="secondary">Recently played</Button>
+					<Button variant="secondary">Favorites</Button>
 				</div>
 				<div className="flex items-center space-x-4">
 					<DropdownMenu>
