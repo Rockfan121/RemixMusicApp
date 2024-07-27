@@ -1,4 +1,10 @@
-import { ExitIcon, LaptopIcon, MoonIcon, RocketIcon, SunIcon } from "@radix-ui/react-icons";
+import {
+	ExitIcon,
+	LaptopIcon,
+	MoonIcon,
+	RocketIcon,
+	SunIcon,
+} from "@radix-ui/react-icons";
 import { Form, Link } from "@remix-run/react";
 import * as React from "react";
 import { useHydrated } from "remix-utils/use-hydrated";
@@ -33,9 +39,11 @@ export function Header({
 			<Form id="logout-form" method="POST" action="/logout" />
 			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 py-2 bg-primary">
 				<div className="flex items-center space-x-4">
-					<Link className="flex items-center space-x-2" to="/">
-						<RocketIcon className="ml-4 h-8 w-8" /> 
-						<span className="text-sm hidden md:inline">music under control</span>
+					<Link className="flex items-center space-x-2 text-white" to="/">
+						<RocketIcon className="ml-4 h-8 w-8" />
+						<span className="text-sm hidden md:inline">
+							music under control
+						</span>
 					</Link>
 				</div>
 				<div className="flex items-center space-x-1">
@@ -47,7 +55,7 @@ export function Header({
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
-								className="w-10 h-10 rounded-full border"
+								className="w-10 h-10 rounded-full border text-white"
 								size="icon"
 								variant="ghost"
 								title="Theme selector"
