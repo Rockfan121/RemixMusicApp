@@ -9,7 +9,6 @@ import {
 import { Header } from "@/components/header";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUser } from "@/lib/auth.server";
 import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
 
@@ -29,45 +28,48 @@ function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			<Header isAuthenticated={isAuthenticated} />
-			<aside className="h-full w-80 fixed top-0 left-0 py-20 px-5 overflow-x-hidden hidden md:block">
-				<Tabs defaultValue="recent" className="h-full w-full">
-					<TabsList className="grid w-full grid-cols-2">
-						<TabsTrigger value="recent">Recently played</TabsTrigger>
-						<TabsTrigger value="faves">Favorites</TabsTrigger>
-					</TabsList>
-					<TabsContent value="recent" className="h-full w-full pb-10">
-						<ScrollArea className="h-full w-full rounded-md border bg-card">
-							<div className="p-4">
-								{tags.map((tag) => (
-									<span key={tag}>
-										<div className="text-sm">
-											<DoubleArrowRightIcon className="inline" />
-											{` ${tag}-hello`}
-										</div>
-										<Separator className="my-2" />
-									</span>
-								))}
-							</div>
-						</ScrollArea>
-					</TabsContent>
-					<TabsContent value="faves" className="h-full w-full pb-10">
-						<ScrollArea className="h-full w-full rounded-md border bg-card">
-							<div className="p-4">
-								{tags.map((tag) => (
-									<span key={tag}>
-										<div className="text-sm">
-											<DoubleArrowRightIcon className="inline" />
-											{` ${tag}`}
-										</div>
-										<Separator className="my-2" />
-									</span>
-								))}
-							</div>
-						</ScrollArea>
-					</TabsContent>
-				</Tabs>
+			<aside className="h-full w-80 fixed top-0 left-0 py-20 px-3 overflow-x-hidden hidden md:block">
+				<div className="aside-container w-full rounded-md border bg-card">
+					<h4 className="m-3 text-lg font-medium leading-none text-ring">
+						Recently played
+					</h4>
+					<ScrollArea className="scroll-container w-full">
+						<div className="p-2.5">
+							{tags.map((tag) => (
+								<span key={tag}>
+									<div className="text-sm">
+										<DoubleArrowRightIcon className="inline" />
+										{` ${tag}-hello`}
+									</div>
+									<Separator className="my-2" />
+								</span>
+							))}
+						</div>
+					</ScrollArea>
+				</div>
+				<Separator className="my-3" />
+				<div className="aside-container w-full rounded-md border bg-card">
+					<h4 className="m-3 text-lg font-medium leading-none text-ring">
+						Favorites
+					</h4>
+					<ScrollArea className="scroll-container w-full">
+						<div className="p-2.5">
+							{tags.map((tag) => (
+								<span key={tag}>
+									<div className="text-sm">
+										<DoubleArrowRightIcon className="inline" />
+										{` ${tag}`}
+									</div>
+									<Separator className="my-2" />
+								</span>
+							))}
+						</div>
+					</ScrollArea>
+				</div>
 			</aside>
-			<main className="md:ml-80 px-2 py-10 overflow-auto">{children}</main>
+			<main className="md:ml-80 px-2 pt-20 pb-10 overflow-auto">
+				{children}
+			</main>
 			<footer className="w-full h-16 left-0 bottom-0 fixed bg-accent">
 				slider
 			</footer>

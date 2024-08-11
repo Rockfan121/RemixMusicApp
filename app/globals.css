@@ -47,7 +47,7 @@
     --destructive-foreground-dark: 225.9 5% 90%;
     --border-dark: 225.9 30% 18%;
     --input-dark: 225.9 30% 18%;
-    --ring-dark: 225.9 70.7% 40.2%;    
+    --ring-dark: 225.9 70.7% 60%;    
     
     /*dark sky - #19a1e6  zippystarter: max saturation  max lightness*/
     --background-sky: 200.4 50% 10%;
@@ -68,7 +68,7 @@
     --destructive-foreground-sky: 200.4 5% 100%;
     --border-sky: 200.4 30% 50%;
     --input-sky: 200.4 30% 50%;
-    --ring-sky: 200.4 98% 39.4%;
+    --ring-sky: 200.4 98% 45%;
     
 
     /*dark violet; ; zippystarter: max saturation  min lightness*/
@@ -90,7 +90,7 @@
     --destructive-foreground-dkviolet: 278 5% 90%;
     --border-dkviolet: 278 30% 18%;
     --input-dkviolet: 278 30% 18%;
-    --ring-dkviolet: 278 85% 28%;
+    --ring-dkviolet: 278 50% 60%;
   }
 }
 
@@ -156,4 +156,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.aside-container {
+  height: calc(50% - theme('spacing.4'));
+}
+.scroll-container {
+  height: calc(100% - theme('spacing.11'));
 }
