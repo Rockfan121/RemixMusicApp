@@ -47,7 +47,9 @@ export function Header({
 					</Link>
 				</div>
 				<div className="flex items-center space-x-1">
-					<Button variant="secondary">Playlists</Button>
+					<Button asChild variant="secondary">
+						<Link to="/playlists">Playlists</Link>
+					</Button>
 					<Button variant="secondary">Recently played</Button>
 					<Button variant="secondary">Favorites</Button>
 				</div>
