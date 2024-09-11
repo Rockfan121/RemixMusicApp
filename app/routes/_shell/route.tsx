@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import {
+	Link,
 	Outlet,
 	isRouteErrorResponse,
 	useRouteError,
@@ -13,7 +14,7 @@ import { getUser } from "@/lib/auth.server";
 import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
 
 const tags = Array.from({ length: 50 }).map(
-	(_, i, a) => `v1.2.0-beta.${a.length - i}`,
+	(_, i, a) => `Playlist no ${a.length - i}`,
 );
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
@@ -30,8 +31,8 @@ function Layout({ children }: { children: React.ReactNode }) {
 			<Header isAuthenticated={isAuthenticated} />
 			<aside className="h-full w-80 fixed top-0 left-0 py-20 px-3 overflow-x-hidden hidden md:block">
 				<div className="aside-container w-full rounded-md border bg-card">
-					<h4 className="m-3 text-lg font-medium leading-none text-ring">
-						Recently played
+					<h4 className="m-3 text-lg leading-none text-ring">
+						<Link to="/playlists">Recently played</Link>
 					</h4>
 					<ScrollArea className="scroll-container w-full">
 						<div className="p-2.5">
@@ -47,10 +48,10 @@ function Layout({ children }: { children: React.ReactNode }) {
 						</div>
 					</ScrollArea>
 				</div>
-				<Separator className="my-3" />
+				<Separator className="my-1.5" />
 				<div className="aside-container w-full rounded-md border bg-card">
 					<h4 className="m-3 text-lg font-medium leading-none text-ring">
-						Favorites
+						<Link to="/playlists">Favorites</Link>
 					</h4>
 					<ScrollArea className="scroll-container w-full">
 						<div className="p-2.5">
@@ -67,9 +68,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 					</ScrollArea>
 				</div>
 			</aside>
-			<main className="md:ml-80 px-2 pt-20 pb-10 overflow-auto">
-				{children}
-			</main>
+			<main className="md:ml-80 px-2 pt-20 pb-10">{children}</main>
 			<footer className="w-full h-16 left-0 bottom-0 fixed bg-accent">
 				slider
 			</footer>

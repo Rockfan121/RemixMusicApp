@@ -1,9 +1,12 @@
 import {
+	Crosshair2Icon,
 	ExitIcon,
 	LaptopIcon,
 	MoonIcon,
 	RocketIcon,
+	StarFilledIcon,
 	SunIcon,
+	SymbolIcon,
 } from "@radix-ui/react-icons";
 import { Form, Link } from "@remix-run/react";
 import * as React from "react";
@@ -37,21 +40,34 @@ export function Header({
 	return (
 		<>
 			<Form id="logout-form" method="POST" action="/logout" />
-			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 py-2 bg-primary">
-				<div className="flex items-center space-x-4">
+			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 bg-primary">
+				<div className="flex items-center space-x-3">
 					<Link className="flex items-center space-x-2 text-white" to="/">
-						<RocketIcon className="ml-4 h-8 w-8" />
-						<span className="text-sm hidden md:inline">
+						<RocketIcon className="mx-1 h-8 w-8" />
+						<span className="text-sm font-extrabold hidden md:inline">
 							music under control
 						</span>
 					</Link>
 				</div>
 				<div className="flex items-center space-x-1">
-					<Button asChild variant="secondary">
-						<Link to="/playlists">Playlists</Link>
+					<Button asChild variant="ghost" className="navbar-button">
+						<Link to="/playlists">
+							<Crosshair2Icon className="mr-1 h-5 w-5" />
+							<span className="hidden md:inline">Playlists</span>
+						</Link>
 					</Button>
-					<Button variant="secondary">Recently played</Button>
-					<Button variant="secondary">Favorites</Button>
+					<Button asChild variant="ghost" className="navbar-button">
+						<Link to="/playlists">
+							<SymbolIcon className="mr-1 h-5 w-5" />
+							<span className="hidden md:inline">Recently played</span>
+						</Link>
+					</Button>
+					<Button asChild variant="ghost" className="navbar-button">
+						<Link to="/playlists">
+							<StarFilledIcon className="mr-1 h-5 w-5" />
+							<span className="hidden md:inline">Favorites</span>
+						</Link>
+					</Button>
 				</div>
 				<div className="flex items-center space-x-4">
 					<DropdownMenu>

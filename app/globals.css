@@ -159,8 +159,11 @@
 }
 
 .aside-container {
-  height: calc(50% - theme('spacing.4'));
+  height: calc(50% - theme('spacing.2'));
 }
 .scroll-container {
   height: calc(100% - theme('spacing.11'));
+}
+.navbar-button {
+  @apply text-lg text-white py-6;
 }
