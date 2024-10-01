@@ -164,6 +164,9 @@
 .scroll-container {
   height: calc(100% - theme('spacing.11'));
 }
+.playlist-container {
+  width: calc(100% - theme('spacing.12'));
+}
 .navbar-button {
   @apply text-lg text-white py-6;
 }

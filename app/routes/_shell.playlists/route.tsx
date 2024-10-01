@@ -2,9 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MagnifyingGlassIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
 
-const playlists = Array.from({ length: 20 }).map(
-	(_, i, a) => `${a.length - i}`,
-);
+const playlists = Array.from({ length: 20 }).map((_, i, a) => ({
+	no: `${i + 1}`,
+	title: `Playlist no ${i + 1}`,
+	author: "Author",
+	cover:
+		"https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80",
+}));
 
 export default function Playlists() {
 	return (
@@ -31,18 +35,18 @@ export default function Playlists() {
 			</div>
 			<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-10 mx-12 mb-16">
 				{playlists.map((p) => (
-					<figure key={p}>
+					<figure key={p.no}>
 						<div className="w-28 h-28 overflow-hidden rounded-md">
 							<img
-								src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
-								alt={`Playlist no ${p} cover`}
+								src={p.cover}
+								alt={`${p.title} cover`}
 								className="aspect-square h-fit w-fit object-cover"
 							/>
 						</div>
 						<figcaption className="pt-1.5 text-sm text-muted-foreground">
-							Author <br />
+							{`${p.author}`} <br />
 							<span className="font-semibold text-foreground">
-								Playlist no {`${p}`}
+								{`${p.title}`}
 							</span>
 						</figcaption>
 					</figure>
