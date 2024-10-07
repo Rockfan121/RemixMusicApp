@@ -1,4 +1,4 @@
-export const APP_NAME = "remix-shadcn";
+export const APP_NAME = "RemixMusicApp";
 export const DEFAULT_FAILURE_REDIRECT = "/";
 export const DEFAULT_SUCCESS_REDIRECT = "/account";
 

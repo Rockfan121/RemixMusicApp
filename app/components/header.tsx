@@ -51,19 +51,19 @@ export function Header({
 				</div>
 				<div className="flex items-center space-x-1">
 					<Button asChild variant="ghost" className="navbar-button">
-						<Link to="/playlists">
+						<Link to="/exploring">
 							<Crosshair2Icon className="mr-1 h-5 w-5" />
 							<span className="hidden md:inline">Playlists</span>
 						</Link>
 					</Button>
 					<Button asChild variant="ghost" className="navbar-button">
-						<Link to="/playlist">
+						<Link to="/recent">
 							<SymbolIcon className="mr-1 h-5 w-5" />
 							<span className="hidden md:inline">Recently played</span>
 						</Link>
 					</Button>
 					<Button asChild variant="ghost" className="navbar-button">
-						<Link to="/playlist">
+						<Link to="/faves">
 							<StarFilledIcon className="mr-1 h-5 w-5" />
 							<span className="hidden md:inline">Favorites</span>
 						</Link>

@@ -6,92 +6,91 @@
   Theme variables
 */
 @layer base {
-  :root {
-    /*blue; zippystarter: max saturation  min lightness*/
-    --background: 225.9 100% 95%;
-    --foreground: 225.9 5% 0%;
-    --card: 225.9 50% 90%;
-    --card-foreground: 225.9 5% 10%;
-    --popover: 225.9 100% 95%;
-    --popover-foreground: 225.9 100% 0%;
-    --primary: 225.9 70.7% 40.2%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 225.9 30% 70%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: 187.9 30% 85%;
-    --muted-foreground: 225.9 5% 35%;
-    --accent: 187.9 30% 80%;
-    --accent-foreground: 225.9 5% 10%;
-    --destructive: 0 100% 30%;
-    --destructive-foreground: 225.9 5% 90%;
-    --border: 225.9 30% 50%;
-    --input: 225.9 30% 18%;
-    --ring: 225.9 70.7% 40.2%;
-    --radius: 0.5rem;
+	:root {
+		/*blue; zippystarter: max saturation  min lightness*/
+		--background: 225.9 100% 95%;
+		--foreground: 225.9 5% 0%;
+		--card: 225.9 50% 90%;
+		--card-foreground: 225.9 5% 10%;
+		--popover: 225.9 100% 95%;
+		--popover-foreground: 225.9 100% 0%;
+		--primary: 225.9 70.7% 40.2%;
+		--primary-foreground: 0 0% 100%;
+		--secondary: 225.9 30% 70%;
+		--secondary-foreground: 0 0% 0%;
+		--muted: 187.9 30% 85%;
+		--muted-foreground: 225.9 5% 35%;
+		--accent: 187.9 30% 80%;
+		--accent-foreground: 225.9 5% 10%;
+		--destructive: 0 100% 30%;
+		--destructive-foreground: 225.9 5% 90%;
+		--border: 225.9 30% 50%;
+		--input: 225.9 30% 18%;
+		--ring: 225.9 70.7% 40.2%;
+		--radius: 0.5rem;
 
-    --background-dark: 225.9 50% 5%;
-    --foreground-dark: 225.9 5% 90%;
-    --card-dark: 225.9 50% 0%;
-    --card-foreground-dark: 225.9 5% 90%;
-    --popover-dark: 225.9 50% 5%;
-    --popover-foreground-dark: 225.9 5% 90%;
-    --primary-dark: 225.9 70.7% 40.2%;
-    --primary-foreground-dark: 0 0% 100%;
-    --secondary-dark: 225.9 30% 10%;
-    --secondary-foreground-dark: 0 0% 100%;
-    --muted-dark: 187.9 30% 15%;
-    --muted-foreground-dark: 225.9 5% 60%;
-    --accent-dark: 187.9 30% 15%;
-    --accent-foreground-dark: 225.9 5% 90%;
-    --destructive-dark: 0 100% 30%;
-    --destructive-foreground-dark: 225.9 5% 90%;
-    --border-dark: 225.9 30% 18%;
-    --input-dark: 225.9 30% 18%;
-    --ring-dark: 225.9 70.7% 60%;    
-    
-    /*dark sky - #19a1e6  zippystarter: max saturation  max lightness*/
-    --background-sky: 200.4 50% 10%;
-    --foreground-sky: 200.4 5% 100%;
-    --card-sky: 200.4 50% 10%;
-    --card-foreground-sky: 200.4 5% 100%;
-    --popover-sky: 200.4 50% 5%;
-    --popover-foreground-sky: 200.4 5% 100%;
-    --primary-sky: 200.4 98% 39.4%;
-    --primary-foreground-sky: 0 0% 100%;
-    --secondary-sky: 200.4 30% 20%;
-    --secondary-foreground-sky: 0 0% 100%;
-    --muted-sky: 162.4 30% 25%;
-    --muted-foreground-sky: 200.4 5% 65%;
-    --accent-sky: 162.4 30% 25%;
-    --accent-foreground-sky: 200.4 5% 95%;
-    --destructive-sky: 0 100% 50%;
-    --destructive-foreground-sky: 200.4 5% 100%;
-    --border-sky: 200.4 30% 50%;
-    --input-sky: 200.4 30% 50%;
-    --ring-sky: 200.4 98% 45%;
-    
+		--background-dark: 225.9 50% 5%;
+		--foreground-dark: 225.9 5% 90%;
+		--card-dark: 225.9 50% 0%;
+		--card-foreground-dark: 225.9 5% 90%;
+		--popover-dark: 225.9 50% 5%;
+		--popover-foreground-dark: 225.9 5% 90%;
+		--primary-dark: 225.9 70.7% 40.2%;
+		--primary-foreground-dark: 0 0% 100%;
+		--secondary-dark: 225.9 30% 10%;
+		--secondary-foreground-dark: 0 0% 100%;
+		--muted-dark: 187.9 30% 15%;
+		--muted-foreground-dark: 225.9 5% 60%;
+		--accent-dark: 187.9 30% 15%;
+		--accent-foreground-dark: 225.9 5% 90%;
+		--destructive-dark: 0 100% 30%;
+		--destructive-foreground-dark: 225.9 5% 90%;
+		--border-dark: 225.9 30% 18%;
+		--input-dark: 225.9 30% 18%;
+		--ring-dark: 225.9 70.7% 60%;
 
-    /*dark violet; ; zippystarter: max saturation  min lightness*/
-    --background-dkviolet: 278 50% 5%;
-    --foreground-dkviolet: 278 5% 90%;
-    --card-dkviolet: 278 50% 0%;
-    --card-foreground-dkviolet: 278 5% 90%;
-    --popover-dkviolet: 278 50% 5%;
-    --popover-foreground-dkviolet: 278 5% 90%;
-    --primary-dkviolet: 278 85% 28%;
-    --primary-foreground-dkviolet: 0 0% 100%;
-    --secondary-dkviolet: 278 30% 10%;
-    --secondary-foreground-dkviolet: 0 0% 100%;
-    --muted-dkviolet: 240 30% 15%;
-    --muted-foreground-dkviolet: 278 5% 60%;
-    --accent-dkviolet: 240 30% 15%;
-    --accent-foreground-dkviolet: 278 5% 90%;
-    --destructive-dkviolet: 0 100% 30%;
-    --destructive-foreground-dkviolet: 278 5% 90%;
-    --border-dkviolet: 278 30% 18%;
-    --input-dkviolet: 278 30% 18%;
-    --ring-dkviolet: 278 50% 60%;
-  }
+		/*dark sky - #19a1e6  zippystarter: max saturation  max lightness*/
+		--background-sky: 200.4 50% 10%;
+		--foreground-sky: 200.4 5% 100%;
+		--card-sky: 200.4 50% 10%;
+		--card-foreground-sky: 200.4 5% 100%;
+		--popover-sky: 200.4 50% 5%;
+		--popover-foreground-sky: 200.4 5% 100%;
+		--primary-sky: 200.4 98% 39.4%;
+		--primary-foreground-sky: 0 0% 100%;
+		--secondary-sky: 200.4 30% 20%;
+		--secondary-foreground-sky: 0 0% 100%;
+		--muted-sky: 162.4 30% 25%;
+		--muted-foreground-sky: 200.4 5% 65%;
+		--accent-sky: 162.4 30% 25%;
+		--accent-foreground-sky: 200.4 5% 95%;
+		--destructive-sky: 0 100% 50%;
+		--destructive-foreground-sky: 200.4 5% 100%;
+		--border-sky: 200.4 30% 50%;
+		--input-sky: 200.4 30% 50%;
+		--ring-sky: 200.4 98% 45%;
+
+		/*dark violet; ; zippystarter: max saturation  min lightness*/
+		--background-dkviolet: 278 50% 5%;
+		--foreground-dkviolet: 278 5% 90%;
+		--card-dkviolet: 278 50% 0%;
+		--card-foreground-dkviolet: 278 5% 90%;
+		--popover-dkviolet: 278 50% 5%;
+		--popover-foreground-dkviolet: 278 5% 90%;
+		--primary-dkviolet: 278 85% 28%;
+		--primary-foreground-dkviolet: 0 0% 100%;
+		--secondary-dkviolet: 278 30% 10%;
+		--secondary-foreground-dkviolet: 0 0% 100%;
+		--muted-dkviolet: 240 30% 15%;
+		--muted-foreground-dkviolet: 278 5% 60%;
+		--accent-dkviolet: 240 30% 15%;
+		--accent-foreground-dkviolet: 278 5% 90%;
+		--destructive-dkviolet: 0 100% 30%;
+		--destructive-foreground-dkviolet: 278 5% 90%;
+		--border-dkviolet: 278 30% 18%;
+		--input-dkviolet: 278 30% 18%;
+		--ring-dkviolet: 278 50% 60%;
+	}
 }
 
 /*
@@ -99,74 +98,77 @@
   https://twitter.com/devongovett/status/1757131288144663027
 */
 @layer base {
-  :root {
-    --theme-light: initial;
-    --theme-dark: ;
-    --theme-dkviolet: ;
-    --theme-sky: ;
-    color-scheme: light dark dkviolet sky;
-  }
+	:root {
+		--theme-light: initial;
+		--theme-dark: ;
+		--theme-dkviolet: ;
+		--theme-sky: ;
+		color-scheme: light dark dkviolet sky;
+	}
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --theme-light: ;
-      --theme-dark: initial;
-      --theme-dkviolet: ;
-      --theme-sky: ;
-    }
-  }
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--theme-light: ;
+			--theme-dark: initial;
+			--theme-dkviolet: ;
+			--theme-sky: ;
+		}
+	}
 
-  [data-theme="light"] {
-    --theme-light: initial;
-    --theme-dark: ;
-    --theme-dkviolet: ;
-    --theme-sky: ;
-    color-scheme: light;
-  }
+	[data-theme="light"] {
+		--theme-light: initial;
+		--theme-dark: ;
+		--theme-dkviolet: ;
+		--theme-sky: ;
+		color-scheme: light;
+	}
 
-  [data-theme="dark"] {
-    --theme-light: ;
-    --theme-dark: initial;
-    --theme-dkviolet: ;
-    --theme-sky: ;
-    color-scheme: dark;
-  }
+	[data-theme="dark"] {
+		--theme-light: ;
+		--theme-dark: initial;
+		--theme-dkviolet: ;
+		--theme-sky: ;
+		color-scheme: dark;
+	}
 
-  [data-theme="dkviolet"] {
-    --theme-light: ;
-    --theme-dark: ;
-    --theme-dkviolet: initial;
-    --theme-sky: ;
-    color-scheme: dkviolet;
-  }
+	[data-theme="dkviolet"] {
+		--theme-light: ;
+		--theme-dark: ;
+		--theme-dkviolet: initial;
+		--theme-sky: ;
+		color-scheme: dkviolet;
+	}
 
-  [data-theme="sky"] {
-    --theme-light: ;
-    --theme-dark: ;
-    --theme-dkviolet: ;
-    --theme-sky: initial;
-    color-scheme: sky;
-  }
+	[data-theme="sky"] {
+		--theme-light: ;
+		--theme-dark: ;
+		--theme-dkviolet: ;
+		--theme-sky: initial;
+		color-scheme: sky;
+	}
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
 }
 
 .aside-container {
-  height: calc(50% - theme('spacing.2'));
+	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
+	height: calc(50% - theme("spacing.2"));
 }
 .scroll-container {
-  height: calc(100% - theme('spacing.11'));
+	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
+	height: calc(100% - theme("spacing.11"));
 }
 .playlist-container {
-  width: calc(100% - theme('spacing.12'));
+	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
+	width: calc(100% - theme("spacing.12"));
 }
 .navbar-button {
-  @apply text-lg text-white py-6;
+	@apply text-lg text-white py-6;
 }

@@ -32,7 +32,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 			<aside className="h-full w-80 fixed top-0 left-0 py-20 px-3 overflow-x-hidden hidden md:block">
 				<div className="aside-container w-full rounded-md border bg-card">
 					<h4 className="m-3 text-lg leading-none text-ring">
-						<Link to="/playlists">Recently played</Link>
+						<Link to="/recent">Recently played</Link>
 					</h4>
 					<ScrollArea className="scroll-container w-full">
 						<div className="p-2.5">
@@ -51,7 +51,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 				<Separator className="my-1.5" />
 				<div className="aside-container w-full rounded-md border bg-card">
 					<h4 className="m-3 text-lg font-medium leading-none text-ring">
-						<Link to="/playlists">Favorites</Link>
+						<Link to="/faves">Favorites</Link>
 					</h4>
 					<ScrollArea className="scroll-container w-full">
 						<div className="p-2.5">
