@@ -35,7 +35,7 @@ export default function PlaylistsList({
 	let content: React.ReactNode;
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
-			<Link to={p.url} key={p.id}>
+			<Link to={`/tracks/${userIdResolved}/${p.id}`} key={p.id}>
 				<figure>
 					<div className="w-28 h-28 overflow-hidden rounded-md">
 						<img
@@ -45,7 +45,7 @@ export default function PlaylistsList({
 						/>
 					</div>
 					<figcaption className="pt-1 text-sm text-muted-foreground">
-						{`${userNameResolved} ?`} <br />
+						{`${userNameResolved}`} <br />
 						<span className="font-semibold text-foreground">{`${p.name}`}</span>
 					</figcaption>
 				</figure>
