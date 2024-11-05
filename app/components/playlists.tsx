@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { user } from "@/db.server/schema";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import type React from "react";
+import { Alert, AlertDescription } from "./ui/alert";
 
 export type Playlist = {
 	id: string;
@@ -16,15 +17,17 @@ export type Playlist = {
 export default function PlaylistsList({
 	children,
 	listIntro,
+	listEmptyText,
 	userName,
 	userId,
 }: {
 	children?: Array<Playlist>;
 	listIntro: string;
+	listEmptyText: string;
 	userName?: string;
 	userId?: string;
 }) {
-	//Link do tracks sparametryzowany uId (z danych wejściowych xD) oraz id (od playlisty)
+	//The way of rendering data need to be more flexible - in case of "faves" and "recent" lists usernames and userIds will be retrieved from db
 
 	let userNameResolved = "";
 	if (typeof userName !== "undefined") userNameResolved = userName;
@@ -33,6 +36,8 @@ export default function PlaylistsList({
 	if (typeof userId !== "undefined") userIdResolved = userId;
 
 	let content: React.ReactNode;
+	let contentGrid: React.ReactNode;
+	let searchInput: React.ReactNode;
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
 			<Link to={`/tracks/${userIdResolved}/${p.id}`} key={p.id}>
@@ -51,31 +56,46 @@ export default function PlaylistsList({
 				</figure>
 			</Link>
 		));
+
+		contentGrid = (
+			<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16">
+				{content}
+			</div>
+		);
+
+		searchInput = (
+			<div className="flex w-60 max-w-sm items-center space-x-1">
+				<Input placeholder="Search" type="search" />
+				<Button type="submit" size="icon" className="bg-secondary border">
+					<MagnifyingGlassIcon />
+				</Button>
+				{/* <div
+						aria-hidden
+						hidden={true}
+						id="search-spinner"
+					/> */}
+			</div>
+		);
 	} else {
 		content = (
-			<h4 className="text-center text-lg">{listIntro} list is empty!</h4>
+			<Alert className="mx-10 w-auto">
+				<InfoCircledIcon className="h-4 w-4" />
+				<AlertDescription className="p-1">{listEmptyText}</AlertDescription>
+			</Alert>
 		);
+
+		contentGrid = content;
+
+		searchInput = <div />;
 	}
 
 	return (
 		<>
 			<div className="flex space-x-5 mx-6 mb-4">
 				<h4 className="mx-4 text-lg text-ring">{listIntro}</h4>
-				<div className="flex w-60 max-w-sm items-center space-x-1">
-					<Input placeholder="Search" type="search" />
-					<Button type="submit" size="icon" className="bg-secondary border">
-						<MagnifyingGlassIcon />
-					</Button>
-					{/* <div
-                aria-hidden
-                hidden={true}
-                id="search-spinner"
-              /> */}
-				</div>
+				{searchInput}
 			</div>
-			<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16">
-				{content}
-			</div>
+			{contentGrid}
 		</>
 	);
 }

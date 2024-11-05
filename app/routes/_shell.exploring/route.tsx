@@ -1,55 +1,70 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { type LoaderFunctionArgs, json } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
 
 import PlaylistsList from "@/components/playlists";
+import { Input } from "@/components/ui/input";
 
-const USER_ID = "669b02cc904a229c1a956b3b";
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+	const url = new URL(request.url);
+	const USER_ID = url.searchParams.get("q");
+	if (USER_ID !== null && USER_ID !== "") {
+		const res = await fetch(
+			`https://openwhyd.org/u/${USER_ID}/playlists?format=json&limit=100`,
+		);
 
-export async function loader() {
-	const res = await fetch(
-		`https://openwhyd.org/u/${USER_ID}/playlists?format=json&limit=100`,
-	);
+		const resJson = await res.json();
+		const firstPlaylistId = (await resJson)[0].id;
+		const userNameRes = await fetch(
+			`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=100`,
+		);
 
-	const resJson = await res.json();
-	const firstPlaylistId = (await resJson)[0].id;
-
-	const userNameRes = await fetch(
-		`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=100`,
-	);
+		return json({
+			res: await resJson,
+			firstPlaylistRes: await userNameRes.json(),
+		});
+	}
 
 	return json({
-		res: await resJson,
-		userNameRes: await userNameRes.json(),
+		res: {},
+		firstPlaylistRes: {},
 	});
-}
+};
 
 export default function Exploring() {
-	const { res, userNameRes } = useLoaderData<typeof loader>();
+	const { res, firstPlaylistRes } = useLoaderData<typeof loader>();
+	let userNameRes = "";
+	let userIdRes = "";
+	if (Object.keys(firstPlaylistRes).length) {
+		userNameRes = firstPlaylistRes[0].uNm;
+		userIdRes = firstPlaylistRes[0].uId;
+	}
 
 	return (
 		<>
-			<div className="flex space-x-5 mx-6 mb-10">
-				<div className="flex w-60 max-w-sm items-center space-x-1">
-					<Input placeholder="Openwhyd userId" type="search" />
-					<Button type="submit" size="icon">
-						<PaperPlaneIcon />
-					</Button>
-				</div>
-				<div className="flex w-60 max-w-sm items-center space-x-1">
-					<Input placeholder="Openwhyd userName" type="search" />
-					<Button type="submit" size="icon">
-						<PaperPlaneIcon />
-					</Button>
-				</div>
-			</div>
+			<search>
+				<Form id="search-form">
+					<div className="flex mx-6 mb-10 w-60 max-w-sm items-center space-x-1">
+						<Input
+							id="q"
+							name="q"
+							placeholder="Openwhyd userId"
+							type="search"
+							pattern="\w+"
+						/>
+						<Button type="submit" size="icon">
+							<PaperPlaneIcon />
+						</Button>
+					</div>
+				</Form>
+			</search>
 			<PlaylistsList
 				listIntro="Explore playlists"
-				userName={userNameRes[0].uNm}
-				userId={USER_ID}
+				listEmptyText="Enter userId of one of Openwhyd users and click the button to view all their playlists"
+				userName={userNameRes}
+				userId={userIdRes}
 			>
 				{res}
 			</PlaylistsList>
