@@ -40,7 +40,7 @@ export default function PlaylistsList({
 	let searchInput: React.ReactNode;
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
-			<Link to={`/tracks/${userIdResolved}/${p.id}`} key={p.id}>
+			<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.id}>
 				<figure>
 					<div className="w-28 h-28 overflow-hidden rounded-md">
 						<img

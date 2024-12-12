@@ -170,5 +170,13 @@
 	width: calc(100% - theme("spacing.12"));
 }
 .navbar-button {
-	@apply text-lg text-white py-6;
+	@apply text-lg text-white py-4;
+}
+
+.untoggled-button {
+	@apply rounded-full border-0 bg-muted text-muted-foreground;
+}
+
+.toggled-button {
+	@apply rounded-full border-2 border-white;
 }

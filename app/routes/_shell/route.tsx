@@ -29,7 +29,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			<Header isAuthenticated={isAuthenticated} />
-			<aside className="h-full w-80 fixed top-0 left-0 py-20 px-3 overflow-x-hidden hidden md:block">
+			<aside className="h-full w-80 fixed top-0 left-0 pt-14 pb-32 px-3 overflow-x-hidden hidden md:block">
 				<div className="aside-container w-full rounded-md border bg-card">
 					<h4 className="m-3 text-lg leading-none text-ring">
 						<Link to="/recent">Recently played</Link>
@@ -68,10 +68,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 					</ScrollArea>
 				</div>
 			</aside>
-			<main className="md:ml-80 px-2 pt-20 pb-10">{children}</main>
-			<footer className="w-full h-16 left-0 bottom-0 fixed bg-accent">
-				slider
-			</footer>
+			<main className="md:ml-80 px-2 pt-14">{children}</main>
 		</>
 	);
 }

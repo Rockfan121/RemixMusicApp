@@ -18,7 +18,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		const resJson = await res.json();
 		const firstPlaylistId = (await resJson)[0].id;
 		const userNameRes = await fetch(
-			`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=100`,
+			`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=1`,
 		);
 
 		return json({
