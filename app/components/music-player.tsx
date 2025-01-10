@@ -9,7 +9,7 @@ import {
 	TrackNextIcon,
 	TrackPreviousIcon,
 } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 
 export function MusicPlayer() {
@@ -43,6 +43,13 @@ export function MusicPlayer() {
 	const [isPlaying, setIsPlaying] = useState(true);
 	const [isLooped, setIsLooped] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
+	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
+
+	useEffect (() => {
+    if (typeof document !== "undefined"){
+      setHasWindow(true);
+    }
+  }, []);
 
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
@@ -113,7 +120,7 @@ export function MusicPlayer() {
 			<h4 className="font-bold px-4 truncate">
 				{playlist[currentSongIndex].title}
 			</h4>
-			<ReactPlayer
+			{hasWindow && <ReactPlayer
 				url={playlist[currentSongIndex].url}
 				height="120px"
 				width="700px"
@@ -124,6 +131,7 @@ export function MusicPlayer() {
 				muted={isMuted}
 				loop={isLooped}
 			/>
+			}
 		</div>
 	);
 }
