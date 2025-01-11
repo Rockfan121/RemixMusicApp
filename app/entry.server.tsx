@@ -10,7 +10,7 @@ import dbSchema from "@/db.server/schema";
 
 export { dbSchema };
 
-const ABORT_DELAY = 5_000;
+export const streamTimeout = 5_000;
 
 export default function handleRequest(
 	request: Request,
@@ -28,11 +28,7 @@ export default function handleRequest(
 	return new Promise((resolve, reject) => {
 		let shellRendered = false;
 		const { pipe, abort } = renderToPipeableStream(
-			<RemixServer
-				context={remixContext}
-				url={request.url}
-				abortDelay={ABORT_DELAY}
-			/>,
+			<RemixServer context={remixContext} url={request.url} />,
 			{
 				onAllReady() {
 					if (!isBot) return;
@@ -77,6 +73,6 @@ export default function handleRequest(
 			},
 		);
 
-		setTimeout(abort, ABORT_DELAY);
+		setTimeout(abort, streamTimeout + 1000);
 	});
 }

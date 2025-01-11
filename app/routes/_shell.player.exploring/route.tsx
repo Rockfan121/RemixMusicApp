@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
 import PlaylistsList from "@/components/playlists";
@@ -21,16 +21,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=1`,
 		);
 
-		return json({
+		return {
 			res: await resJson,
 			firstPlaylistRes: await userNameRes.json(),
-		});
+		};
 	}
 
-	return json({
+	return {
 		res: {},
 		firstPlaylistRes: {},
-	});
+	};
 };
 
 export default function Exploring() {

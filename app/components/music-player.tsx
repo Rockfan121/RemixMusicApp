@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import type { QueuedTrack } from "@/routes/_shell.player/route";
 import {
 	ListBulletIcon,
 	LoopIcon,
@@ -12,44 +13,22 @@ import {
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 
-export function MusicPlayer() {
-	const [playlist] = useState([
-		{
-			url: "https://www.youtube.com/watch?v=dVG_fFXrD1M",
-			title:
-				"Never Back Down [ft. @Manafest] - Caleb Hyles (Official Music Video)",
-		},
-		{
-			url: "https://www.youtube.com/watch?v=fJ7ec5v6aSg",
-			title:
-				"UNPARALYZED [ft. Trevor McNevan of Thousand Foot Krutch] - Caleb Hyles (Official Music Video)",
-		},
-		{
-			url: "https://www.youtube.com/watch?v=7gm6Id6a9KA",
-			title: "JUST ONE STEP - Caleb Hyles & @jonathanymusic (Original Song)",
-		},
-		{
-			url: "https://www.youtube.com/watch?v=PtMcyZz9X7E",
-			title:
-				"Darkness Before The Dawn - Caleb Hyles (feat. @OfficialLaceySturm)",
-		},
-		{
-			url: "https://www.youtube.com/watch?v=CahV0rr7MBE",
-			title: "IDOLIZE - Caleb Hyles (Original Song)",
-		},
-	]);
-
+export function MusicPlayer({
+	children,
+}: {
+	children: Array<QueuedTrack>;
+}) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(true);
 	const [isLooped, setIsLooped] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
 
-	useEffect (() => {
-    if (typeof document !== "undefined"){
-      setHasWindow(true);
-    }
-  }, []);
+	useEffect(() => {
+		if (typeof document !== "undefined") {
+			setHasWindow(true);
+		}
+	}, []);
 
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
@@ -64,7 +43,7 @@ export function MusicPlayer() {
 
 	const nextSong = () => {
 		setCurrentSongIndex((prevIndex: number) =>
-			prevIndex + 1 < playlist.length ? prevIndex + 1 : 0,
+			prevIndex + 1 < children.length ? prevIndex + 1 : 0,
 		);
 	};
 
@@ -77,7 +56,7 @@ export function MusicPlayer() {
 
 	const prevSong = () => {
 		setCurrentSongIndex((prevIndex) =>
-			prevIndex - 1 >= 0 ? prevIndex - 1 : playlist.length - 1,
+			prevIndex - 1 >= 0 ? prevIndex - 1 : children.length - 1,
 		);
 	};
 
@@ -118,20 +97,21 @@ export function MusicPlayer() {
 				</div>
 			</div>
 			<h4 className="font-bold px-4 truncate">
-				{playlist[currentSongIndex].title}
+				{children[currentSongIndex].title}
 			</h4>
-			{hasWindow && <ReactPlayer
-				url={playlist[currentSongIndex].url}
-				height="120px"
-				width="700px"
-				playing={isPlaying}
-				controls={true}
-				onEnded={nextSong}
-				volume={1}
-				muted={isMuted}
-				loop={isLooped}
-			/>
-			}
+			{hasWindow && (
+				<ReactPlayer
+					url={children[currentSongIndex].url}
+					height="120px"
+					width="700px"
+					playing={isPlaying}
+					controls={true}
+					onEnded={nextSong}
+					volume={1}
+					muted={isMuted}
+					loop={isLooped}
+				/>
+			)}
 		</div>
 	);
 }

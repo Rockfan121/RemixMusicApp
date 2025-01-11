@@ -8,20 +8,12 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { ExternalLinkIcon, StarIcon } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
 
 import type { Playlist } from "@/components/playlists";
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-/*const USER_ID = "669b02cc904a229c1a956b3b";
-export async function loader() {
-	const res = await fetch(
-		`https://openwhyd.org/u/${USER_ID}/playlist/0?format=json&limit=100`,
-	);
-	return json(await res.json());
-}*/
 let PLAYLIST_URL = "";
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	invariant(params.userId, "Missing userId param");
@@ -30,7 +22,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const res = await fetch(
 		`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}?format=json&limit=100`,
 	);
-	return json(await res.json());
+	return await res.json();
 };
 
 type PlaylistInfo = {
