@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import type { QueuedTrack } from "@/routes/_shell.player/route";
+import type { QueuedTrack } from "@/types/openwhydObjects";
 import {
 	ListBulletIcon,
 	LoopIcon,

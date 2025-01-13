@@ -7,9 +7,9 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import type { Track } from "@/types/openwhydObjects";
 import { ExternalLinkIcon, StarIcon } from "@radix-ui/react-icons";
 
-import type { Playlist } from "@/components/playlists";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
@@ -23,32 +23,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}?format=json&limit=100`,
 	);
 	return await res.json();
-};
-
-type PlaylistInfo = {
-	id: number;
-	name: string;
-};
-
-type RepostInfo = {
-	pId: string;
-	uId: string;
-	uNm: string;
-};
-
-export type Track = {
-	_id: string;
-	uId: string;
-	uNm: string;
-	text: string;
-	name: string;
-	eId: string;
-	pl: PlaylistInfo;
-	img: string;
-	repost: RepostInfo;
-	lov: Array<string>;
-	nbR: number;
-	nbP: number;
 };
 
 export default function TracksList() {

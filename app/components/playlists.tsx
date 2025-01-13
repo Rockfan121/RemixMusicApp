@@ -1,17 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { Playlist } from "@/types/openwhydObjects";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import type React from "react";
 import { Alert, AlertDescription } from "./ui/alert";
-
-export type Playlist = {
-	id: string;
-	name: string;
-	url: string;
-	nbTracks: number;
-	img: string;
-};
 
 export default function PlaylistsList({
 	children,
