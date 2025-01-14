@@ -1,10 +1,10 @@
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Playlist } from "@/types/openwhydObjects";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import type React from "react";
-import { Alert, AlertDescription } from "./ui/alert";
 
 export default function PlaylistsList({
 	children,
@@ -32,7 +32,11 @@ export default function PlaylistsList({
 	let searchInput: React.ReactNode;
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
-			<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.id}>
+			<Link
+				to={`/player/tracks/${userIdResolved}/${p.id}`}
+				key={p.id}
+				state={{ playlistImg: `https://openwhyd.org${p.img}` }}
+			>
 				<figure>
 					<div className="w-28 h-28 overflow-hidden rounded-md">
 						<img

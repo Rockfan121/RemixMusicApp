@@ -11,13 +11,10 @@ import type { Track } from "@/types/openwhydObjects";
 import { ExternalLinkIcon, StarIcon } from "@radix-ui/react-icons";
 
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import invariant from "tiny-invariant";
+import { useLoaderData, useLocation } from "@remix-run/react";
 
 let PLAYLIST_URL = "";
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-	invariant(params.userId, "Missing userId param");
-	invariant(params.playlistId, "Missing playlistId param");
 	PLAYLIST_URL = `https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}`;
 	const res = await fetch(
 		`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}?format=json&limit=100`,
@@ -27,13 +24,19 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export default function TracksList() {
 	const TRACKS = useLoaderData<typeof loader>();
+
+	const location = useLocation();
+	let playlistImg = TRACKS[0].img;
+	const state = location.state;
+	if (location.state !== null) playlistImg = state.playlistImg;
+
 	return (
 		<>
 			<div className="mx-6 playlist-container p-6 mb-8 border-2 rounded-md h-52 flex bg-card">
 				<img
 					alt="Playlist cover"
 					className="aspect-square h-40 w-40 rounded-md object-cover"
-					src={`${TRACKS[0].img}`}
+					src={playlistImg}
 				/>
 				<div>
 					<h4 className="ml-6 mb-1 text-2xl font-bold leading-none text-ring">
