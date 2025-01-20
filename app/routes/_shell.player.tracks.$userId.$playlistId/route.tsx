@@ -1,8 +1,8 @@
+import { getYTUrl } from "@/components/music-player";
 import {
 	Table,
 	TableBody,
 	TableCell,
-	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -11,7 +11,7 @@ import type { Track } from "@/types/openwhydObjects";
 import { ExternalLinkIcon, StarIcon } from "@radix-ui/react-icons";
 
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useLocation } from "@remix-run/react";
+import { useLoaderData, useLocation, useOutletContext } from "@remix-run/react";
 
 let PLAYLIST_URL = "";
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -22,8 +22,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	return await res.json();
 };
 
+interface ContextType {
+	callback: (a: Array<Track>, b: number) => void;
+}
+
 export default function TracksList() {
 	const TRACKS = useLoaderData<typeof loader>();
+
+	const { callback } = useOutletContext<ContextType>();
 
 	const location = useLocation();
 	let playlistImg = TRACKS[0].img;
@@ -55,13 +61,12 @@ export default function TracksList() {
 						<TableHead>No</TableHead>
 						<TableHead className="hidden sm:table-cell"> </TableHead>
 						<TableHead>Title</TableHead>
-						<TableHead>Length</TableHead>
-						<TableHead className="text-right">Link</TableHead>
+						<TableHead className="text-center">Link</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					{TRACKS.map((track: Track, i: number, _) => (
-						<TableRow key={track._id}>
+						<TableRow key={track._id} onClick={() => callback(TRACKS, i)}>
 							<TableCell className="font-medium">{i + 1}</TableCell>
 							<TableCell className="hidden sm:table-cell w-16">
 								<img
@@ -72,21 +77,14 @@ export default function TracksList() {
 								/>
 							</TableCell>
 							<TableCell>{track.name}</TableCell>
-							<TableCell>2:00</TableCell>
-							<TableCell className="text-right">
-								<a href={track.eId}>
+							<TableCell className="text-center">
+								<a href={getYTUrl(track.eId)}>
 									<ExternalLinkIcon className="inline ml-6 h-5 w-5" />
 								</a>
 							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
-				<TableFooter>
-					<TableRow>
-						<TableCell colSpan={3}>Total</TableCell>
-						<TableCell className="text-right">32:10</TableCell>
-					</TableRow>
-				</TableFooter>
 			</Table>
 		</>
 	);

@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Link,
 	Outlet,
@@ -12,6 +12,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getUser } from "@/lib/auth.server";
 import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
+
+export const links: LinksFunction = () => {
+	return [
+		{
+			rel: "icon",
+			href: "../favicon.ico",
+			type: "image/ico",
+		},
+	];
+};
 
 const tags = Array.from({ length: 50 }).map(
 	(_, i, a) => `Playlist no ${a.length - i}`,
@@ -32,7 +42,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 			<aside className="h-full w-80 fixed top-0 left-0 pt-14 pb-32 px-3 overflow-x-hidden hidden md:block">
 				<div className="aside-container w-full rounded-md border bg-card">
 					<h4 className="m-3 text-lg leading-none text-ring">
-						<Link to="/recent">Recently played</Link>
+						<Link to="/player/recent">Recently played</Link>
 					</h4>
 					<ScrollArea className="scroll-container w-full">
 						<div className="p-2.5">
@@ -51,7 +61,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 				<Separator className="my-1.5" />
 				<div className="aside-container w-full rounded-md border bg-card">
 					<h4 className="m-3 text-lg font-medium leading-none text-ring">
-						<Link to="/faves">Favorites</Link>
+						<Link to="/player/faves">Favorites</Link>
 					</h4>
 					<ScrollArea className="scroll-container w-full">
 						<div className="p-2.5">

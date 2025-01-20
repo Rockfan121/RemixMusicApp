@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import type { QueuedTrack } from "@/types/openwhydObjects";
+import type { Track } from "@/types/openwhydObjects";
 import {
 	ListBulletIcon,
 	LoopIcon,
@@ -13,10 +13,18 @@ import {
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 
+export const getYTUrl = (eId: string) => {
+	let result = eId.substring(4);
+	result = `https://www.youtube.com/watch?v=${result}`;
+	return result;
+};
+
 export function MusicPlayer({
 	children,
+	firstTrack,
 }: {
-	children: Array<QueuedTrack>;
+	children: Array<Track>;
+	firstTrack: number;
 }) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(true);
@@ -27,8 +35,9 @@ export function MusicPlayer({
 	useEffect(() => {
 		if (typeof document !== "undefined") {
 			setHasWindow(true);
+			setCurrentSongIndex(firstTrack);
 		}
-	}, []);
+	}, [firstTrack]);
 
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
@@ -47,17 +56,23 @@ export function MusicPlayer({
 		);
 	};
 
-	// const nextSongAfterError = () => {
-	// 	console.log("REACT PLAYER ERROR!");
-	// 	setCurrentSongIndex((prevIndex) =>
-	// 		prevIndex + 1 < playlist.length ? prevIndex + 1 : 0
-	// 	);
-	// };
+	const nextSongAfterError = () => {
+		console.log("REACT PLAYER ERROR!");
+		nextSong();
+	};
 
 	const prevSong = () => {
 		setCurrentSongIndex((prevIndex) =>
 			prevIndex - 1 >= 0 ? prevIndex - 1 : children.length - 1,
 		);
+	};
+
+	const getUrl = () => {
+		let result = "";
+		if (children.length > 0) {
+			result = getYTUrl(children[currentSongIndex].eId);
+		}
+		return result;
 	};
 
 	return (
@@ -97,11 +112,11 @@ export function MusicPlayer({
 				</div>
 			</div>
 			<h4 className="font-bold px-4 truncate">
-				{children[currentSongIndex].title}
+				{children.length > 0 ? children[currentSongIndex].name : "No song"}
 			</h4>
 			{hasWindow && (
 				<ReactPlayer
-					url={children[currentSongIndex].url}
+					url={getUrl()}
 					height="120px"
 					width="700px"
 					playing={isPlaying}
@@ -110,6 +125,7 @@ export function MusicPlayer({
 					volume={1}
 					muted={isMuted}
 					loop={isLooped}
+					onError={nextSongAfterError}
 				/>
 			)}
 		</div>
