@@ -45,9 +45,9 @@ export default function PlaylistsList({
 							className="aspect-square h-fit w-fit object-cover"
 						/>
 					</div>
-					<figcaption className="pt-1 text-sm text-muted-foreground">
+					<figcaption className="pt-1 font-semibold text-sm text-muted-foreground">
 						{`${userNameResolved}`} <br />
-						<span className="font-semibold text-foreground">{`${p.name}`}</span>
+						<span className="text-foreground">{`${p.name}`}</span>
 					</figcaption>
 				</figure>
 			</Link>
@@ -76,7 +76,9 @@ export default function PlaylistsList({
 		content = (
 			<Alert className="mx-10 w-auto">
 				<InfoCircledIcon className="h-4 w-4" />
-				<AlertDescription className="p-1">{listEmptyText}</AlertDescription>
+				<AlertDescription className="p-1 font-semibold">
+					{listEmptyText}
+				</AlertDescription>
 			</Alert>
 		);
 
@@ -88,7 +90,7 @@ export default function PlaylistsList({
 	return (
 		<>
 			<div className="flex space-x-5 mx-6 mb-4">
-				<h4 className="mx-4 text-lg text-ring">{listIntro}</h4>
+				<h4 className="mx-4 text-xl font-bold text-ring">{listIntro}</h4>
 				{searchInput}
 			</div>
 			{contentGrid}

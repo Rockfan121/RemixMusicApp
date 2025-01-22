@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { Track } from "@/types/openwhydObjects";
-import { ExternalLinkIcon, StarIcon } from "@radix-ui/react-icons";
+import { ExternalLinkIcon, PlayIcon, StarIcon } from "@radix-ui/react-icons";
 
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useLocation, useOutletContext } from "@remix-run/react";
@@ -60,15 +60,20 @@ export default function TracksList() {
 					<TableRow>
 						<TableHead>No</TableHead>
 						<TableHead className="hidden sm:table-cell"> </TableHead>
+						<TableHead> </TableHead>
 						<TableHead>Title</TableHead>
 						<TableHead className="text-center">Link</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					{TRACKS.map((track: Track, i: number, _) => (
-						<TableRow key={track._id} onClick={() => callback(TRACKS, i)}>
-							<TableCell className="font-medium">{i + 1}</TableCell>
-							<TableCell className="hidden sm:table-cell w-16">
+						<TableRow
+							key={track._id}
+							className="group text-base"
+							onClick={() => callback(TRACKS, i)}
+						>
+							<TableCell>{i + 1}</TableCell>
+							<TableCell className="hidden sm:table-cell w-16 pl-0 pr-4">
 								<img
 									alt="Track cover"
 									aria-hidden
@@ -76,7 +81,10 @@ export default function TracksList() {
 									src={track.img}
 								/>
 							</TableCell>
-							<TableCell>{track.name}</TableCell>
+							<TableCell className="px-0">
+								<PlayIcon className="ml-5 h-6 w-6 text-background group-hover:text-foreground text-right" />
+							</TableCell>
+							<TableCell className="px-1">{track.name}</TableCell>
 							<TableCell className="text-center">
 								<a href={getYTUrl(track.eId)}>
 									<ExternalLinkIcon className="inline ml-6 h-5 w-5" />

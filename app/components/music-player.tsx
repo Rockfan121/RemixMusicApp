@@ -27,7 +27,7 @@ export function MusicPlayer({
 	firstTrack: number;
 }) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
-	const [isPlaying, setIsPlaying] = useState(true);
+	const [isPlaying, setIsPlaying] = useState(false);
 	const [isLooped, setIsLooped] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
