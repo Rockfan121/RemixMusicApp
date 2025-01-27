@@ -28,7 +28,6 @@ interface ContextType {
 
 export default function TracksList() {
 	const TRACKS = useLoaderData<typeof loader>();
-
 	const { callback } = useOutletContext<ContextType>();
 
 	const location = useLocation();

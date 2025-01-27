@@ -14,24 +14,24 @@ export function PlaylistScrollArea({
 }) {
 	return (
 		<div className="aside-container w-full rounded-md border bg-card">
-			<h4 className="m-3 text-lg font-semibold leading-none text-ring">
+			<h4 className="m-3 mb-1 text-lg font-semibold leading-none text-ring">
 				<Link to={link}>{title}</Link>
 			</h4>
 			<ScrollArea className="scroll-container w-full">
 				<div className="p-2.5">
 					{children.map((tag) => (
 						<span key={tag}>
-							<div className="text-sm/3 pt-1">
-								<span className="inline-block w-64 px-2 truncate font-semibold text-foreground">
+							<div className="text-sm/4 py-2 hover:bg-accent">
+								<span className="inline-block w-64 pl-2 truncate font-semibold text-foreground">
 									<RowsIcon className="inline" />{" "}
 									{` ${tag}-abcdefghijkabcdefghijkabcdefghijkabcdefghijk`}
 								</span>
 								<br />
-								<span className="pl-7 text-sm text-muted-foreground">
+								<span className="inline-block w-64 pl-7 truncate text-muted-foreground">
 									username
 								</span>
 							</div>
-							<Separator className="my-2" />
+							<Separator/>
 						</span>
 					))}
 				</div>

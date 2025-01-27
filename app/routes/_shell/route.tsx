@@ -1,4 +1,4 @@
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Outlet,
 	isRouteErrorResponse,
@@ -11,7 +11,7 @@ import { PlaylistScrollArea } from "@/components/playlist-scroll-area";
 import { getUser } from "@/lib/auth.server";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 
-export const links: LinksFunction = () => {
+/* export const links: LinksFunction = () => {
 	return [
 		{
 			rel: "icon",
@@ -19,9 +19,9 @@ export const links: LinksFunction = () => {
 			type: "image/ico",
 		},
 	];
-};
+}; */
 
-const tags = Array.from({ length: 3 }).map((_, i, a) => `Playlist no ${i}`);
+const tags = Array.from({ length: 5 }).map((_, i, a) => `Playlist no ${i}`);
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	const user = await getUser(context, request);

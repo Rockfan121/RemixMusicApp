@@ -1,7 +1,7 @@
 import type { SubmissionResult } from "@conform-to/react";
 import { parse } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { json } from "@remix-run/node";
+//import { json } from "@remix-run/node";
 import type { ZodTypeAny, output } from "zod";
 
 export class PublicError extends Error {
@@ -98,7 +98,7 @@ class FormIntent<
 					lastReturn: undefined,
 				} satisfies IntentResult<typeof intent>,
 			});
-			return json(results, 400) as unknown as IntentResults<Definitions>;
+			return Response.json({results}, {status: 400}) as unknown as IntentResults<Definitions>;
 		}
 
 		try {
@@ -129,9 +129,9 @@ class FormIntent<
 					} satisfies IntentResult<typeof intent>,
 				});
 
-				return json(
-					results,
-					publicError.status,
+				return Response.json(
+					{results},
+					{status: publicError.status},
 				) as unknown as IntentResults<Definitions>;
 			}
 
