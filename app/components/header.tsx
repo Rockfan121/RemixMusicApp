@@ -40,7 +40,7 @@ export function Header({
 	return (
 		<>
 			<Form id="logout-form" method="POST" action="/logout" />
-			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 bg-primary">
+			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 bg-primary h-11">
 				<div className="flex items-center space-x-3">
 					<Link className="flex items-center space-x-2 text-white" to="/">
 						<RocketIcon className="mx-1 h-8 w-8" />
@@ -148,7 +148,7 @@ export function Header({
 						<Button
 							form="logout-form"
 							type="submit"
-							className="w-10 h-10 rounded-full border"
+							className="w-10 h-10 rounded-full border  text-white"
 							size="icon"
 							variant="ghost"
 							title="Logout"

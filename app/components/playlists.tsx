@@ -5,6 +5,7 @@ import type { Playlist } from "@/types/openwhydObjects";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import type React from "react";
+import ScrollToTop from "react-scroll-to-top";
 
 export default function PlaylistsList({
 	children,
@@ -94,6 +95,7 @@ export default function PlaylistsList({
 				{searchInput}
 			</div>
 			{contentGrid}
+			<ScrollToTop smooth className="toTopButton" />
 		</>
 	);
 }

@@ -180,3 +180,9 @@
 .toggled-button {
 	@apply rounded-full border-2 border-white;
 }
+
+.toTopButton {
+	bottom: 120px !important;
+	padding: 5px;
+	box-shadow: 7px 0px 15px 0 dimgrey, -7px 0px 15px 0 dimgrey !important;
+}

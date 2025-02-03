@@ -98,7 +98,10 @@ class FormIntent<
 					lastReturn: undefined,
 				} satisfies IntentResult<typeof intent>,
 			});
-			return Response.json({results}, {status: 400}) as unknown as IntentResults<Definitions>;
+			return Response.json(
+				{ results },
+				{ status: 400 },
+			) as unknown as IntentResults<Definitions>;
 		}
 
 		try {
@@ -130,8 +133,8 @@ class FormIntent<
 				});
 
 				return Response.json(
-					{results},
-					{status: publicError.status},
+					{ results },
+					{ status: publicError.status },
 				) as unknown as IntentResults<Definitions>;
 			}
 

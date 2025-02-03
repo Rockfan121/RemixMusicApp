@@ -31,7 +31,7 @@ export function PlaylistScrollArea({
 									username
 								</span>
 							</div>
-							<Separator/>
+							<Separator />
 						</span>
 					))}
 				</div>

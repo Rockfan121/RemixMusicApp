@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import type { Track } from "@/types/openwhydObjects";
 import { ExternalLinkIcon, PlayIcon, StarIcon } from "@radix-ui/react-icons";
+import ScrollToTop from "react-scroll-to-top";
 
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useLocation, useOutletContext } from "@remix-run/react";
@@ -93,6 +94,7 @@ export default function TracksList() {
 					))}
 				</TableBody>
 			</Table>
+			<ScrollToTop smooth className="toTopButton" />
 		</>
 	);
 }
