@@ -1,7 +1,7 @@
-import type { AppLoadContext } from "@remix-run/node";
 import bcrypt from "bcryptjs";
 import { SqliteError } from "better-sqlite3";
 import { and, eq } from "drizzle-orm";
+import type { AppLoadContext } from "react-router";
 
 import { password, user } from "@/db.server/schema";
 

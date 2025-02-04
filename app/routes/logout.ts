@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, redirect } from "@remix-run/node";
+import { type ActionFunctionArgs, redirect } from "react-router";
 
 import { DEFAULT_FAILURE_REDIRECT } from "@/config.shared";
 import { getAuthenticator } from "@/lib/auth.server";

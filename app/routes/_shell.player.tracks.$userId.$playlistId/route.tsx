@@ -11,8 +11,8 @@ import type { Track } from "@/types/openwhydObjects";
 import { ExternalLinkIcon, PlayIcon, StarIcon } from "@radix-ui/react-icons";
 import ScrollToTop from "react-scroll-to-top";
 
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useLocation, useOutletContext } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useLocation, useOutletContext } from "react-router";
 
 let PLAYLIST_URL = "";
 export const loader = async ({ params }: LoaderFunctionArgs) => {

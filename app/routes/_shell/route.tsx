@@ -1,10 +1,10 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import {
 	Outlet,
 	isRouteErrorResponse,
 	useRouteError,
 	useRouteLoaderData,
-} from "@remix-run/react";
+} from "react-router";
 
 import { Header } from "@/components/header";
 import { PlaylistScrollArea } from "@/components/playlist-scroll-area";

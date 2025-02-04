@@ -1,7 +1,7 @@
 import { MusicPlayer } from "@/components/music-player";
 import type { Track } from "@/types/openwhydObjects";
-import { Outlet } from "@remix-run/react";
 import { useState } from "react";
+import { Outlet } from "react-router";
 
 interface ContextType {
 	callback: (a: Array<Track>, b: number) => void;

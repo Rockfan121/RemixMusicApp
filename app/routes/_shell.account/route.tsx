@@ -4,13 +4,13 @@ import type {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
 	MetaFunction,
-} from "@remix-run/node";
+} from "react-router";
 import {
 	Form,
 	useActionData,
 	useLoaderData,
 	useNavigation,
-} from "@remix-run/react";
+} from "react-router";
 
 import { title } from "@/config.shared";
 import { formIntent } from "@/lib/forms.server";

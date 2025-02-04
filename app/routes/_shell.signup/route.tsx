@@ -1,10 +1,11 @@
 import { getFormProps, getInputProps } from "@conform-to/react";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
+import * as React from "react";
 import type {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
 	MetaFunction,
-} from "@remix-run/node";
+} from "react-router";
 import {
 	Form,
 	Link,
@@ -12,8 +13,7 @@ import {
 	useLocation,
 	useNavigation,
 	useSearchParams,
-} from "@remix-run/react";
-import * as React from "react";
+} from "react-router";
 
 import { Button } from "@/components/ui/button";
 import {

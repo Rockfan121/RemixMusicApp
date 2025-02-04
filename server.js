@@ -1,8 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { createRequestHandler } from "@remix-run/express";
-import { installGlobals } from "@remix-run/node";
+import { createRequestHandler } from "@react-router/express";
 import Database from "better-sqlite3";
 import compression from "compression";
 import { drizzle } from "drizzle-orm/better-sqlite3";
@@ -19,8 +18,6 @@ if (!SESSION_SECRET) {
 if (process.env.NODE_ENV === "production" && !process.env.DB_PATH) {
 	throw new Error("The DB_PATH environment variable is required in production");
 }
-
-installGlobals();
 
 const viteDevServer =
 	process.env.NODE_ENV === "production"
@@ -47,7 +44,7 @@ migrate(drizzle(sqlite), {
 // Create a request handler for Remix
 const remixHandler = createRequestHandler({
 	build: viteDevServer
-		? () => viteDevServer.ssrLoadModule("virtual:remix/server-build")
+		? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
 		: () => import("./build/server/index.js"),
 	async getLoadContext() {
 		const { default: schema } = await (viteDevServer

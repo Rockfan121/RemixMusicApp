@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Playlist } from "@/types/openwhydObjects";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
 import type React from "react";
+import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
 
 export default function PlaylistsList({
