@@ -1,6 +1,7 @@
 import type { SubmissionResult } from "@conform-to/react";
 import { parse } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
+import { data } from "react-router";
 import type { ZodTypeAny, output } from "zod";
 
 export class PublicError extends Error {
@@ -97,10 +98,8 @@ class FormIntent<
 					lastReturn: undefined,
 				} satisfies IntentResult<typeof intent>,
 			});
-			return Response.json(
-				{ results },
-				{ status: 400 },
-			) as unknown as IntentResults<Definitions>;
+			const myResults = data(results, 400);
+			return myResults as unknown as IntentResults<Definitions>;
 		}
 
 		try {
@@ -131,10 +130,11 @@ class FormIntent<
 					} satisfies IntentResult<typeof intent>,
 				});
 
-				return Response.json(
-					{ results },
-					{ status: publicError.status },
-				) as unknown as IntentResults<Definitions>;
+				const myResults = data(
+					results,
+					publicError.status,
+				);
+				return myResults as unknown as IntentResults<Definitions>;
 			}
 
 			throw reason;
