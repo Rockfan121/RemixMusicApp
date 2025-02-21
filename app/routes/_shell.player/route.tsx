@@ -1,13 +1,15 @@
 import { MusicPlayer } from "@/components/music-player";
 import type { Track } from "@/types/openwhydObjects";
 import { useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useNavigation } from "react-router";
 
 interface ContextType {
 	callback: (a: Array<Track>, b: number) => void;
 }
 
 export default function Player() {
+	const navigation = useNavigation();
+	
 	const [playlist, setPlaylist] = useState<Array<Track>>([]);
 	const [firstTrack, setFirstTrack] = useState<number>(0);
 
@@ -22,7 +24,9 @@ export default function Player() {
 
 	return (
 		<>
-			<div className="pb-28">
+		
+			<div className={ navigation.state === "loading" ? 
+				"pb-28 content-loading" :"pb-28"}>
 				<Outlet context={contextValue} />
 			</div>
 			<footer className="w-full h-32 left-0 bottom-0 fixed bg-accent">

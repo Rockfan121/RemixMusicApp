@@ -8,7 +8,6 @@ import {
 	useRouteError,
 } from "react-router";
 
-import { GlobalPendingIndicator } from "@/components/global-pending-indicator";
 import {
 	ThemeSwitcherSafeHTML,
 	ThemeSwitcherScript,
@@ -27,7 +26,6 @@ function App({ children }: { children: React.ReactNode }) {
 				<ThemeSwitcherScript />
 			</head>
 			<body>
-				<GlobalPendingIndicator />
 				{children}
 				<ScrollRestoration />
 				<Scripts />

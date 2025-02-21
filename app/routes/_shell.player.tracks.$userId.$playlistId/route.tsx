@@ -17,6 +17,8 @@ import { useLoaderData, useLocation, useOutletContext } from "react-router";
 let PLAYLIST_URL = "";
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	PLAYLIST_URL = `https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}`;
+	await new Promise((r) => setTimeout(r, 300));
+	console.log("Fetching tracks!");
 	const res = await fetch(
 		`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}?format=json&limit=100`,
 	);

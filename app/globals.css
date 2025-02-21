@@ -157,6 +157,15 @@
 	}
 }
 
+.main-content {
+	@apply md:ml-80 px-2 pt-14;
+}
+
+.content-loading {
+	opacity: 0.25;
+  transition: opacity 200ms;
+  transition-delay: 200ms;
+}
 .aside-container {
 	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
 	height: calc(50% - theme("spacing.2"));

@@ -11,12 +11,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url);
 	const USER_ID = url.searchParams.get("q");
 	if (USER_ID !== null && USER_ID !== "") {
+		await new Promise((r) => setTimeout(r, 300));
+		console.log("Fetching playlists!");
 		const res = await fetch(
 			`https://openwhyd.org/u/${USER_ID}/playlists?format=json&limit=100`,
 		);
 
 		const resJson = await res.json();
 		const firstPlaylistId = (await resJson)[0].id;
+		await new Promise((r) => setTimeout(r, 300));
+		console.log("Fetching username!");
 		const userNameRes = await fetch(
 			`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=1`,
 		);
