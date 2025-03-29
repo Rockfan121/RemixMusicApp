@@ -130,10 +130,7 @@ class FormIntent<
 					} satisfies IntentResult<typeof intent>,
 				});
 
-				const myResults = data(
-					results,
-					publicError.status,
-				);
+				const myResults = data(results, publicError.status);
 				return myResults as unknown as IntentResults<Definitions>;
 			}
 

@@ -9,7 +9,7 @@ interface ContextType {
 
 export default function Player() {
 	const navigation = useNavigation();
-	
+
 	const [playlist, setPlaylist] = useState<Array<Track>>([]);
 	const [firstTrack, setFirstTrack] = useState<number>(0);
 
@@ -24,9 +24,11 @@ export default function Player() {
 
 	return (
 		<>
-		
-			<div className={ navigation.state === "loading" ? 
-				"pb-28 content-loading" :"pb-28"}>
+			<div
+				className={
+					navigation.state === "loading" ? "pb-28 content-loading" : "pb-28"
+				}
+			>
 				<Outlet context={contextValue} />
 			</div>
 			<footer className="w-full h-32 left-0 bottom-0 fixed bg-accent">

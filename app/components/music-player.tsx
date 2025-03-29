@@ -12,6 +12,7 @@ import {
 } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
+import { toast } from "sonner";
 
 export const getYTUrl = (eId: string) => {
 	let result = eId.substring(4);
@@ -50,18 +51,22 @@ export function MusicPlayer({
 		setIsMuted(!isMuted);
 	};
 
-	const nextSong = () => {
+	const nextSong = async () => {
+		await new Promise((r) => setTimeout(r, 200));
 		setCurrentSongIndex((prevIndex: number) =>
 			prevIndex + 1 < children.length ? prevIndex + 1 : 0,
 		);
 	};
 
-	const nextSongAfterError = () => {
-		console.log("REACT PLAYER ERROR!");
+	const nextSongAfterError = async () => {
+		//console.log("REACT PLAYER ERROR!");
+		toast.error(`Track \"${children[currentSongIndex].name}\" can't be played`);
+		await new Promise((r) => setTimeout(r, 400));
 		nextSong();
 	};
 
-	const prevSong = () => {
+	const prevSong = async () => {
+		await new Promise((r) => setTimeout(r, 200));
 		setCurrentSongIndex((prevIndex) =>
 			prevIndex - 1 >= 0 ? prevIndex - 1 : children.length - 1,
 		);

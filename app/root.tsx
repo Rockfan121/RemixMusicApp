@@ -13,6 +13,8 @@ import {
 	ThemeSwitcherScript,
 } from "@/components/theme-switcher";
 
+import { Toaster } from "@/components/ui/sonner";
+
 import "./globals.css";
 
 function App({ children }: { children: React.ReactNode }) {
@@ -29,6 +31,7 @@ function App({ children }: { children: React.ReactNode }) {
 				{children}
 				<ScrollRestoration />
 				<Scripts />
+				<Toaster />
 			</body>
 		</ThemeSwitcherSafeHTML>
 	);

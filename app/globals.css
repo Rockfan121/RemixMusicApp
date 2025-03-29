@@ -163,8 +163,8 @@
 
 .content-loading {
 	opacity: 0.25;
-  transition: opacity 200ms;
-  transition-delay: 200ms;
+	transition: opacity 200ms;
+	transition-delay: 200ms;
 }
 .aside-container {
 	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */

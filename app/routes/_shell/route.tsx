@@ -45,8 +45,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 					{tags}
 				</PlaylistScrollArea>
 			</aside>
-			<main         
-			className="main-content">{children}</main>
+			<main className="main-content">{children}</main>
 		</>
 	);
 }

@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import type { Playlist } from "@/types/openwhydObjects";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import type React from "react";
-import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
+import ConditionalLink from "./conditional-link";
 
 export default function PlaylistsList({
 	children,
@@ -33,25 +33,12 @@ export default function PlaylistsList({
 	let searchInput: React.ReactNode;
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
-			<Link
-				to={`/player/tracks/${userIdResolved}/${p.id}`}
+			<ConditionalLink
+				userId={userIdResolved}
+				userName={userNameResolved}
+				playlist={p}
 				key={p.id}
-				state={{ playlistImg: `https://openwhyd.org${p.img}` }}
-			>
-				<figure>
-					<div className="w-28 h-28 overflow-hidden rounded-md">
-						<img
-							src={`https://openwhyd.org${p.img}`}
-							alt={`${p.name} cover`}
-							className="aspect-square h-fit w-fit object-cover"
-						/>
-					</div>
-					<figcaption className="pt-1 font-semibold text-sm text-muted-foreground">
-						{`${userNameResolved}`} <br />
-						<span className="text-foreground">{`${p.name}`}</span>
-					</figcaption>
-				</figure>
-			</Link>
+			/>
 		));
 
 		contentGrid = (

@@ -20,7 +20,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	await new Promise((r) => setTimeout(r, 300));
 	console.log("Fetching tracks!");
 	const res = await fetch(
-		`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}?format=json&limit=100`,
+		`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}?format=json&limit=200`,
 	);
 	return await res.json();
 };
@@ -69,11 +69,7 @@ export default function TracksList() {
 				</TableHeader>
 				<TableBody>
 					{TRACKS.map((track: Track, i: number, _) => (
-						<TableRow
-							key={track._id}
-							className="group text-base"
-							onClick={() => callback(TRACKS, i)}
-						>
+						<TableRow key={track._id} className="group text-base">
 							<TableCell>{i + 1}</TableCell>
 							<TableCell className="hidden sm:table-cell w-16 pl-0 pr-4">
 								<img
@@ -84,7 +80,13 @@ export default function TracksList() {
 								/>
 							</TableCell>
 							<TableCell className="px-0">
-								<PlayIcon className="ml-5 h-6 w-6 text-background group-hover:text-foreground text-right" />
+								<button
+									className="h-fit w-fit mt-2 text-left"
+									type="button"
+									onClick={() => callback(TRACKS, i)}
+								>
+									<PlayIcon className="mx-2 h-6 w-6 text-background group-hover:text-foreground text-right" />
+								</button>
 							</TableCell>
 							<TableCell className="px-1">{track.name}</TableCell>
 							<TableCell className="text-center">
