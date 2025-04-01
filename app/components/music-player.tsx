@@ -60,7 +60,12 @@ export function MusicPlayer({
 
 	const nextSongAfterError = async () => {
 		//console.log("REACT PLAYER ERROR!");
-		toast.error(`Track \"${children[currentSongIndex].name}\" can't be played`);
+		toast.error(
+			`Track \"${children[currentSongIndex].name}\" can't be played`,
+			{
+				duration: 7000,
+			},
+		);
 		await new Promise((r) => setTimeout(r, 400));
 		nextSong();
 	};
