@@ -24,7 +24,7 @@
 		"@radix-ui/react-separator": "^1.1.0",
 		"@radix-ui/react-slot": "1.0.2",
 		"@radix-ui/react-tabs": "^1.1.0",
-		"@react-router/express": "^7.0.0",
+		"@react-router/express": "^7.4.1",
 		"@react-router/fs-routes": "^7.1.5",
 		"@react-router/node": "^7.0.0",
 		"@react-router/serve": "^7.0.0",
