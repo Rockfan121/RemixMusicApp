@@ -3,6 +3,12 @@ import type React from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
 
+/**
+ * Component used in PlaylistsList - it displays playlist cover and some basic information about a given playlist
+ * @param userId - the id of the user (owner of the playlist)
+ * @param userName - the name of the user (see above)
+ * @param playlist - the playlist which information will be displayed
+ */
 export default function ConditionalLink({
 	userId,
 	userName,

@@ -1,12 +1,13 @@
 import { MusicPlayer } from "@/components/music-player";
+import type { ContextType } from "@/types/myObjects";
 import type { Track } from "@/types/openwhydObjects";
 import { useState } from "react";
 import { Outlet, useNavigation } from "react-router";
 
-interface ContextType {
-	callback: (a: Array<Track>, b: number) => void;
-}
-
+/**
+ * This route displays MusicPlayer (and passes data to it), sets the callback function (used e.g. in "tracks" route)
+ * and dims the main content if it isn't loaded yet.
+ */
 export default function Player() {
 	const navigation = useNavigation();
 

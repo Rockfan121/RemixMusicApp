@@ -20,6 +20,11 @@ export const getYTUrl = (eId: string) => {
 	return result;
 };
 
+/**
+ * Component wrapping ReactPlayer, playing music from some playlist
+ * @param children - tracks from the playlist
+ * @param firstTrack - index of the track to be played first
+ */
 export function MusicPlayer({
 	children,
 	firstTrack,
@@ -59,7 +64,6 @@ export function MusicPlayer({
 	};
 
 	const nextSongAfterError = async () => {
-		//console.log("REACT PLAYER ERROR!");
 		toast.error(
 			`Track \"${children[currentSongIndex].name}\" can't be played`,
 			{
@@ -77,6 +81,10 @@ export function MusicPlayer({
 		);
 	};
 
+	/**
+	 * Returns correct URL of the track to be played now (according to currentSongIndex)
+	 * @returns URL to the appropriate video/audio
+	 */
 	const getUrl = () => {
 		let result = "";
 		if (children.length > 0) {

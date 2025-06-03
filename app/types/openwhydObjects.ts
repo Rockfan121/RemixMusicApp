@@ -1,5 +1,5 @@
 export type Playlist = {
-	id: string;
+	id: number;
 	name: string;
 	url: string;
 	nbTracks: number;
@@ -24,15 +24,12 @@ export type Track = {
 	text: string;
 	name: string;
 	eId: string;
+	ctx: string;
 	pl: PlaylistInfo;
 	img: string;
 	repost: RepostInfo;
+	order: number;
 	lov: Array<string>;
 	nbR: number;
 	nbP: number;
-};
-
-export type QueuedTrack = {
-	title: string;
-	url: string;
 };

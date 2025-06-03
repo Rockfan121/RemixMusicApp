@@ -7,6 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import type { ContextType } from "@/types/myObjects";
 import type { Track } from "@/types/openwhydObjects";
 import { ExternalLinkIcon, PlayIcon, StarIcon } from "@radix-ui/react-icons";
 import ScrollToTop from "react-scroll-to-top";
@@ -15,25 +16,27 @@ import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useLocation, useOutletContext } from "react-router";
 
 let PLAYLIST_URL = "";
+/**
+ * Fetch tracks from one of Openwhyd users playlists
+ */
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	PLAYLIST_URL = `https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}`;
 	await new Promise((r) => setTimeout(r, 300));
-	console.log("Fetching tracks!");
-	const res = await fetch(
-		`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}?format=json&limit=200`,
-	);
+	const res = await fetch(`${PLAYLIST_URL}?format=json&limit=200`);
 	return await res.json();
 };
 
-interface ContextType {
-	callback: (a: Array<Track>, b: number) => void;
-}
-
+/**
+ * Component for displaying a given playlists.
+ * It enables the user to start playing music, starting with the track clicked by the user.
+ * The callback passes data to MusicPlayer and starts the player.
+ */
 export default function TracksList() {
 	const TRACKS = useLoaderData<typeof loader>();
 	const { callback } = useOutletContext<ContextType>();
-
 	const location = useLocation();
+
+	//Getting the playlist cover (thanks to useLocation). If it's not possible, the cover of the first track is used.
 	let playlistImg = TRACKS[0].img;
 	const state = location.state;
 	if (location.state !== null) playlistImg = state.playlistImg;

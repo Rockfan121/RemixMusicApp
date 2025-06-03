@@ -7,6 +7,14 @@ import type React from "react";
 import ScrollToTop from "react-scroll-to-top";
 import ConditionalLink from "./conditional-link";
 
+/**
+ * Component for browsing playlists
+ * @param children - (optional) list of playlists to be listed
+ * @param listIntro - The heading of the playlists view (i.e. "Explore playlists", "Recent playlists"...)
+ * @param listEmptyText - The text to be displayed if there are no playlists to be listed
+ * @param userName - The Openwhyd userName - the owner of the listed playlists (used only for "Explore playlists" view)
+ * @param userId - The id of the Openwhyd userName (see above)
+ */
 export default function PlaylistsList({
 	children,
 	listIntro,
@@ -20,17 +28,15 @@ export default function PlaylistsList({
 	userName?: string;
 	userId?: string;
 }) {
-	//The way of rendering data need to be more flexible - in case of "faves" and "recent" lists usernames and userIds will be retrieved from db
-
 	let userNameResolved = "";
 	if (typeof userName !== "undefined") userNameResolved = userName;
 
 	let userIdResolved = "";
 	if (typeof userId !== "undefined") userIdResolved = userId;
 
-	let content: React.ReactNode;
-	let contentGrid: React.ReactNode;
-	let searchInput: React.ReactNode;
+	let content: React.ReactNode; //The playlists will be listed there
+	let contentGrid: React.ReactNode; //The playlists covers will be aligned to grid
+	let searchInput: React.ReactNode; //The search input for some playlist title (NOTE: it's just displayed, it doesn't work yet)
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
 			<ConditionalLink
