@@ -1,5 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import type { XPlaylist } from "@/types/myObjects";
 import { RowsIcon } from "@radix-ui/react-icons";
 import { Link } from "react-router";
 
@@ -8,7 +9,7 @@ export function PlaylistScrollArea({
 	title,
 	link,
 }: {
-	children: Array<string>;
+	children: XPlaylist[];
 	title: string;
 	link: string;
 }) {
@@ -19,20 +20,19 @@ export function PlaylistScrollArea({
 			</h4>
 			<ScrollArea className="scroll-container w-full">
 				<div className="p-2.5">
-					{children.map((tag) => (
-						<span key={tag}>
+					{children.map((c) => (
+						<Link to={`tracks/${c.url}`} key={c.url}>
 							<div className="text-sm/4 py-2 hover:bg-accent">
 								<span className="inline-block w-64 pl-2 truncate font-semibold text-foreground">
-									<RowsIcon className="inline" />{" "}
-									{` ${tag}-abcdefghijkabcdefghijkabcdefghijkabcdefghijk`}
+									<RowsIcon className="inline" /> {`${c.name}`}
 								</span>
 								<br />
 								<span className="inline-block w-64 pl-7 truncate text-muted-foreground">
-									username
+									{`${c.uNm}`}
 								</span>
 							</div>
 							<Separator />
-						</span>
+						</Link>
 					))}
 				</div>
 			</ScrollArea>

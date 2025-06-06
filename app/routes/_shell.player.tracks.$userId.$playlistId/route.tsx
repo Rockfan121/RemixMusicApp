@@ -7,20 +7,24 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { ContextType } from "@/types/myObjects";
+import type { ContextType, XPlaylist } from "@/types/myObjects";
 import type { Track } from "@/types/openwhydObjects";
 import { ExternalLinkIcon, PlayIcon, StarIcon } from "@radix-ui/react-icons";
 import ScrollToTop from "react-scroll-to-top";
 
 import type { LoaderFunctionArgs } from "react-router";
-import { useLoaderData, useLocation, useOutletContext } from "react-router";
+import {
+	useLoaderData,
+	useLocation,
+	useOutletContext,
+	useParams,
+} from "react-router";
 
-let PLAYLIST_URL = "";
 /**
  * Fetch tracks from one of Openwhyd users playlists
  */
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-	PLAYLIST_URL = `https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}`;
+	const PLAYLIST_URL = `https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}`;
 	await new Promise((r) => setTimeout(r, 300));
 	const res = await fetch(`${PLAYLIST_URL}?format=json&limit=200`);
 	return await res.json();
@@ -32,6 +36,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
  * The callback passes data to MusicPlayer and starts the player.
  */
 export default function TracksList() {
+	const params = useParams();
 	const TRACKS = useLoaderData<typeof loader>();
 	const { callback } = useOutletContext<ContextType>();
 	const location = useLocation();
@@ -40,6 +45,16 @@ export default function TracksList() {
 	let playlistImg = TRACKS[0].img;
 	const state = location.state;
 	if (location.state !== null) playlistImg = state.playlistImg;
+
+	const playlistInfo: XPlaylist = {
+		uNm: TRACKS[0].uNm,
+		uId: TRACKS[0].uId,
+		id: TRACKS[0].pl.id,
+		name: TRACKS[0].pl.name,
+		url: `${TRACKS[0].uId}/${TRACKS[0].pl.id}`,
+		nbTracks: TRACKS.length,
+		img: playlistImg,
+	};
 
 	return (
 		<>
@@ -55,7 +70,11 @@ export default function TracksList() {
 					</h4>
 					<h5 className="ml-6 mb-6 text-lg text-muted-foreground">{`${TRACKS[0].uNm}`}</h5>
 					<StarIcon className="ml-6 h-6 w-6 inline" />
-					<a href={PLAYLIST_URL}>
+					<a
+						href={`https://openwhyd.org/u/${params.userId}/playlist/${params.playlistId}`}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						<ExternalLinkIcon className="ml-4 h-6 w-6 inline" />
 					</a>
 				</div>
@@ -86,7 +105,7 @@ export default function TracksList() {
 								<button
 									className="h-fit w-fit mt-2 text-left"
 									type="button"
-									onClick={() => callback(TRACKS, i)}
+									onClick={() => callback(TRACKS, i, playlistInfo)}
 								>
 									<PlayIcon className="mx-2 h-6 w-6 text-background group-hover:text-foreground text-right" />
 								</button>

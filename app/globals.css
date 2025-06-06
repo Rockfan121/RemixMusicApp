@@ -158,7 +158,7 @@
 }
 
 .main-content {
-	@apply md:ml-80 px-2 pt-14;
+	@apply md:ml-80 px-2 pt-14 pb-28;
 }
 
 .content-loading {

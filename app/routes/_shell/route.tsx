@@ -7,9 +7,7 @@ import {
 } from "react-router";
 
 import { Header } from "@/components/header";
-import { PlaylistScrollArea } from "@/components/playlist-scroll-area";
 import { getUser } from "@/lib/auth.server";
-import { Separator } from "@radix-ui/react-dropdown-menu";
 
 /* export const links: LinksFunction = () => {
 	return [
@@ -20,8 +18,6 @@ import { Separator } from "@radix-ui/react-dropdown-menu";
 		},
 	];
 }; */
-
-const tags = Array.from({ length: 5 }).map((_, i, a) => `Playlist no ${i}`);
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	const user = await getUser(context, request);
@@ -35,17 +31,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			<Header isAuthenticated={isAuthenticated} />
-			<aside className="h-full w-80 fixed top-0 left-0 pt-14 pb-32 px-3 overflow-x-hidden hidden md:block">
-				<PlaylistScrollArea title="Recently played" link="/player/recent">
-					{tags}
-				</PlaylistScrollArea>
-				<Separator className="my-1.5" />
-
-				<PlaylistScrollArea title="Favorites" link="/player/faves">
-					{tags}
-				</PlaylistScrollArea>
-			</aside>
-			<main className="main-content">{children}</main>
+			<main>{children}</main>
 		</>
 	);
 }

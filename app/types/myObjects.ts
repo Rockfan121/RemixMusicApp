@@ -24,5 +24,5 @@ export type XPlaylist = {
  * Interface for passing callback to OutletContext (it fires MusicPlayer when user click a track e.g. in "tracks" route)
  */
 export interface ContextType {
-	callback: (a: Array<Track>, b: number) => void;
+	callback: (a: Array<Track>, b: number, c: XPlaylist) => void;
 }
