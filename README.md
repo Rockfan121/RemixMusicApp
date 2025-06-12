@@ -1,7 +1,16 @@
 # Remix Music App
 
 A Remix application for playing music from playlists created by Openwhyd users\
-*This is WIP - the layout and some basic functionality is implemented.* 😉
+*This is WIP - the layout and some basic functionality is implemented for now.* 😉
+
+## Implemented features
+
+- browsing playlists created by a particular user (with a specified uid),
+- listing tracks (and other data) of a chosen playlist,
+- playing tracks from a chosen playlist,
+- listing recently played playlists in a sidebar (using localStorage),
+- listing favorite playlists in a sidebar (using localStorage).
+
 
 ## Development
 

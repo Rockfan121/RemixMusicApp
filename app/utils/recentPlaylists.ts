@@ -47,31 +47,3 @@ export const getRecentPlaylists = (): XPlaylist[] => {
 		return [];
 	}
 };
-
-/**
- * Clears all recent playlists from localStorage
- * NOTE: It will be used later - for switching users, etc.
- */
-const clearRecentPlaylists = (): void => {
-	try {
-		localStorage.removeItem(RECENT_PLAYLISTS_KEY);
-	} catch (error) {
-		console.error("Error clearing recent playlists:", error);
-	}
-};
-
-/**
- * Checks if a playlist exists in recent playlists
- * NOTE: Probably it won't be used!
- * @param playlistId The ID of the playlist to check
- * @returns boolean indicating if the playlist exists
- */
-const isInRecentPlaylists = (playlistId: string): boolean => {
-	try {
-		const recentPlaylists = getRecentPlaylists();
-		return recentPlaylists.some((p) => p.url === playlistId);
-	} catch (error) {
-		console.error("Error checking recent playlists:", error);
-		return false;
-	}
-};

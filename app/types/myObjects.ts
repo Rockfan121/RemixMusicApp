@@ -25,4 +25,5 @@ export type XPlaylist = {
  */
 export interface ContextType {
 	callback: (a: Array<Track>, b: number, c: XPlaylist) => void;
+	favesCallback: (a: XPlaylist) => void;
 }

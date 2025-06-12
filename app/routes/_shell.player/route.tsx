@@ -2,30 +2,33 @@ import { MusicPlayer } from "@/components/music-player";
 import { PlaylistScrollArea } from "@/components/playlist-scroll-area";
 import type { ContextType, XPlaylist } from "@/types/myObjects";
 import type { Track } from "@/types/openwhydObjects";
+import { getFavoritePlaylists, toggleFavorite } from "@/utils/favesPlaylists";
 import {
 	addToRecentPlaylists,
 	getRecentPlaylists,
 } from "@/utils/recentPlaylists";
 import { Separator } from "@radix-ui/react-dropdown-menu";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigation } from "react-router";
 
 /**
  * This route displays MusicPlayer (and passes data to it), sets the callback function (used e.g. in "tracks" route)
  * and dims the main content if it isn't loaded yet.
  */
-const tags = Array.from({ length: 5 }).map((_, i, a) => `Playlist no ${i}`);
-
 export default function Player() {
 	const navigation = useNavigation();
 
 	const [playlist, setPlaylist] = useState<Array<Track>>([]);
 	const [firstTrack, setFirstTrack] = useState<number>(0);
 	const [recentPl, setRecentPl] = useState<XPlaylist[]>([]);
+	const [favesPl, setFavesPl] = useState<XPlaylist[]>([]);
 
 	useEffect(() => {
 		const recentPl = getRecentPlaylists();
 		setRecentPl(recentPl);
+
+		const favesPl = getFavoritePlaylists();
+		setFavesPl(favesPl);
 	}, []);
 
 	const handleCallback = (a: Array<Track>, b: number, c: XPlaylist) => {
@@ -36,8 +39,14 @@ export default function Player() {
 		setRecentPl(getRecentPlaylists());
 	};
 
+	const handleFavesCallback = (a: XPlaylist) => {
+		toggleFavorite(a);
+		setFavesPl(getFavoritePlaylists());
+	};
+
 	const contextValue: ContextType = {
 		callback: handleCallback,
+		favesCallback: handleFavesCallback,
 	};
 
 	return (
@@ -49,7 +58,7 @@ export default function Player() {
 				<Separator className="my-1.5" />
 
 				<PlaylistScrollArea title="Favorites" link="/player/faves">
-					{recentPl}
+					{favesPl}
 				</PlaylistScrollArea>
 			</aside>
 

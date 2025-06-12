@@ -27,10 +27,11 @@ export default function ConditionalLink({
 				onClick={() => toast.warning(`Playlist \"${playlist.name}\" is empty!`)}
 			>
 				<figure>
-					<div className="w-28 h-28 overflow-hidden rounded-md">
+					<div className="w-28 h-28 overflow-hidden rounded-md albumCover">
 						<img
-							src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
-							alt={`${playlist.name} cover`}
+							src={`https://openwhyd.org${playlist.img}`}
+							alt="Playlist cover"
+							aria-hidden
 							className="aspect-square h-fit w-fit object-cover"
 						/>
 					</div>
@@ -48,10 +49,11 @@ export default function ConditionalLink({
 				state={{ playlistImg: `https://openwhyd.org${playlist.img}` }}
 			>
 				<figure>
-					<div className="w-28 h-28 overflow-hidden rounded-md">
+					<div className="w-28 h-28 overflow-hidden rounded-md albumCover">
 						<img
 							src={`https://openwhyd.org${playlist.img}`}
-							alt={`${playlist.name} cover`}
+							alt="Playlist cover"
+							aria-hidden
 							className="aspect-square h-fit w-fit object-cover"
 						/>
 					</div>
