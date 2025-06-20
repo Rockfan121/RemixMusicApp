@@ -4,15 +4,52 @@ import type { XPlaylist } from "@/types/myObjects";
 import { RowsIcon } from "@radix-ui/react-icons";
 import { Link } from "react-router";
 
+interface PlaylistScrollAreaProps {
+	children: XPlaylist[];
+	title: string;
+	link: string;
+}
+
+/**
+ * A component  containing a list of playlists (with their titles and authors)
+ * @param  children - List of playlists to be displayed
+ * @param  title - The title of the scroll area ("Recently played", "Favorites", etc.)
+ * @param  link - The link to the page where the user can see more playlists
+ */
 export function PlaylistScrollArea({
 	children,
 	title,
 	link,
-}: {
-	children: XPlaylist[];
-	title: string;
-	link: string;
-}) {
+}: PlaylistScrollAreaProps) {
+	const EMPTY_STATE = {
+		title: "There are no playlists there!",
+		subtitle:
+			"As soon as you start playing some content, it will be displayed there",
+	};
+
+	const PlaylistItem = ({
+		title,
+		subtitle,
+		isIcon,
+	}: {
+		title: React.ReactNode;
+		subtitle: React.ReactNode;
+		isIcon: boolean;
+	}) => (
+		<>
+			<div className="text-sm/4 py-2 hover:bg-accent">
+				<span className="inline-block w-64 pl-2 truncate font-semibold text-foreground">
+					{isIcon && <RowsIcon className="inline" />} {title}
+				</span>
+				<br />
+				<span className="inline-block w-64 pl-7 truncate text-muted-foreground">
+					{subtitle}
+				</span>
+			</div>
+			<Separator />
+		</>
+	);
+
 	return (
 		<div className="aside-container w-full rounded-md border bg-card">
 			<h4 className="m-3 mb-1 text-lg font-semibold leading-none text-ring">
@@ -20,20 +57,23 @@ export function PlaylistScrollArea({
 			</h4>
 			<ScrollArea className="scroll-container w-full">
 				<div className="p-2.5">
-					{children.map((c) => (
-						<Link to={`tracks/${c.url}`} key={c.url}>
-							<div className="text-sm/4 py-2 hover:bg-accent">
-								<span className="inline-block w-64 pl-2 truncate font-semibold text-foreground">
-									<RowsIcon className="inline" /> {`${c.name}`}
-								</span>
-								<br />
-								<span className="inline-block w-64 pl-7 truncate text-muted-foreground">
-									{`${c.uNm}`}
-								</span>
-							</div>
-							<Separator />
-						</Link>
-					))}
+					{children.length > 0 ? (
+						children.map((c) => (
+							<Link
+								to={`tracks/${c.url}`}
+								key={c.url}
+								state={{ playlistImg: c.img }}
+							>
+								<PlaylistItem title={c.name} subtitle={c.uNm} isIcon={true} />
+							</Link>
+						))
+					) : (
+						<PlaylistItem
+							title={EMPTY_STATE.title}
+							subtitle={EMPTY_STATE.subtitle}
+							isIcon={false}
+						/>
+					)}
 				</div>
 			</ScrollArea>
 		</div>

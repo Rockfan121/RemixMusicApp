@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import type { Playlist } from "@/types/openwhydObjects";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import type React from "react";
+import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
-import ConditionalLink from "./conditional-link";
+import ItemCover from "./item-cover";
 
 /**
  * Component for browsing playlists
@@ -39,12 +40,17 @@ export default function PlaylistsList({
 	let searchInput: React.ReactNode; //The search input for some playlist title (NOTE: it's just displayed, it doesn't work yet)
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
-			<ConditionalLink
-				userId={userIdResolved}
-				userName={userNameResolved}
-				playlist={p}
-				key={p.id}
-			/>
+			<Link
+				to={`/player/tracks/${userIdResolved}/${p.id}`}
+				state={{ playlistImg: `https://openwhyd.org${p.img}` }}
+				key={p.url}
+			>
+				<ItemCover
+		 title={p.name}
+		 subtitle={userNameResolved}
+		 coverImg={`https://openwhyd.org${p.img}`}
+		 altText="Playlist cover"/>
+			</Link>
 		));
 
 		contentGrid = (

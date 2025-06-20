@@ -6,7 +6,7 @@ import type { Track } from "@/types/openwhydObjects";
  * @param uId - Openwhyd user id (see above)
  * @param id - playlist id (just a number, it's not unique in the set of all Openwhyd playlists)
  * @param name - playlist name
- * @param url - partial url to Openwhyd playlist - and it IS unique
+ * @param url - partial url to playlist - and it IS unique (WARNING - it differs from Playlist.url!)
  * @param nbTracks - number of tracks in the playlist
  * @param img - playlist cover image
  */
