@@ -1,7 +1,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { Playlist } from "@/types/openwhydObjects";
+import type { UserPlaylist } from "@/types/openwhyd-types";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import type React from "react";
 import { Link } from "react-router";
@@ -23,7 +23,7 @@ export default function PlaylistsList({
 	userName,
 	userId,
 }: {
-	children?: Array<Playlist>;
+	children?: Array<UserPlaylist>;
 	listIntro: string;
 	listEmptyText: string;
 	userName?: string;
@@ -38,18 +38,16 @@ export default function PlaylistsList({
 	let content: React.ReactNode; //The playlists will be listed there
 	let contentGrid: React.ReactNode; //The playlists covers will be aligned to grid
 	let searchInput: React.ReactNode; //The search input for some playlist title (NOTE: it's just displayed, it doesn't work yet)
+
 	if (typeof children !== "undefined" && children.length > 0) {
 		content = children.map((p) => (
-			<Link
-				to={`/player/tracks/${userIdResolved}/${p.id}`}
-				state={{ playlistImg: `https://openwhyd.org${p.img}` }}
-				key={p.url}
-			>
+			<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
 				<ItemCover
-		 title={p.name}
-		 subtitle={userNameResolved}
-		 coverImg={`https://openwhyd.org${p.img}`}
-		 altText="Playlist cover"/>
+					title={p.name}
+					subtitle={userNameResolved}
+					coverImg={`https://openwhyd.org${p.img}`}
+					altText="UserPlaylist cover"
+				/>
 			</Link>
 		));
 

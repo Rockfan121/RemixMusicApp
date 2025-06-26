@@ -1,12 +1,16 @@
 import { MusicPlayer } from "@/components/music-player";
 import { PlaylistScrollArea } from "@/components/playlist-scroll-area";
-import type { ContextType, XPlaylist } from "@/types/myObjects";
-import type { Track } from "@/types/openwhydObjects";
-import { getFavoritePlaylists, toggleFavorite } from "@/utils/favesPlaylists";
+import {
+	getFavoritePlaylists,
+	toggleFavorite,
+} from "@/helpers/favorite-playlists";
 import {
 	addToRecentPlaylists,
 	getRecentPlaylists,
-} from "@/utils/recentPlaylists";
+} from "@/helpers/recent-playlists";
+import type { ContextType } from "@/types/context-type";
+import type { Track } from "@/types/openwhyd-types";
+import type { XPlaylist } from "@/types/xplaylist-type";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigation } from "react-router";

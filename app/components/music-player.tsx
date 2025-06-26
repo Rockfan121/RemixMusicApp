@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import type { Track } from "@/types/openwhydObjects";
+import { timeout200, timeout400 } from "@/helpers/timeouts";
+import type { Track } from "@/types/openwhyd-types";
 import {
 	ListBulletIcon,
 	LoopIcon,
@@ -57,7 +58,7 @@ export function MusicPlayer({
 	};
 
 	const nextSong = async () => {
-		await new Promise((r) => setTimeout(r, 200));
+		await new Promise(timeout200);
 		setCurrentSongIndex((prevIndex: number) =>
 			prevIndex + 1 < children.length ? prevIndex + 1 : 0,
 		);
@@ -70,12 +71,12 @@ export function MusicPlayer({
 				duration: 7000,
 			},
 		);
-		await new Promise((r) => setTimeout(r, 400));
+		await new Promise(timeout400);
 		nextSong();
 	};
 
 	const prevSong = async () => {
-		await new Promise((r) => setTimeout(r, 200));
+		await new Promise(timeout200);
 		setCurrentSongIndex((prevIndex) =>
 			prevIndex - 1 >= 0 ? prevIndex - 1 : children.length - 1,
 		);
@@ -111,6 +112,7 @@ export function MusicPlayer({
 						<TrackNextIcon />
 					</Button>
 				</div>
+
 				<div className="flex items-center space-x-1">
 					<Button
 						onClick={toggleLooped}
@@ -129,9 +131,11 @@ export function MusicPlayer({
 					</Button>
 				</div>
 			</div>
+
 			<h4 className="font-bold px-4 truncate">
 				{children.length > 0 ? children[currentSongIndex].name : "No song"}
 			</h4>
+
 			{hasWindow && (
 				<ReactPlayer
 					url={getUrl()}

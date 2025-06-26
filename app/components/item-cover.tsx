@@ -1,8 +1,8 @@
 interface ItemCoverProps {
 	title: string;
- subtitle: string;
- coverImg: string;
- altText: string;
+	subtitle: string;
+	coverImg: string;
+	altText: string;
 }
 
 /**
@@ -16,22 +16,22 @@ export default function ItemCover({
 	title,
 	subtitle,
 	coverImg,
-	altText
+	altText,
 }: ItemCoverProps) {
 	return (
-				<figure>
-					<div className="w-28 h-28 overflow-hidden rounded-md albumCover">
-						<img
-							src={coverImg}
-							alt={altText}
-							aria-hidden
-							className="aspect-square h-fit w-fit object-cover"
-						/>
-					</div>
-					<figcaption className="pt-1 font-semibold text-sm text-muted-foreground">
-						{title} <br />
-						<span className="text-foreground">{subtitle}</span>
-					</figcaption>
-				</figure>
-		);
+		<figure>
+			<div className="w-28 h-28 overflow-hidden rounded-md albumCover">
+				<img
+					src={coverImg}
+					alt={altText}
+					aria-hidden
+					className="aspect-square h-fit w-fit object-cover"
+				/>
+			</div>
+			<figcaption className="pt-1 font-semibold text-sm text-muted-foreground">
+				{title} <br />
+				<span className="text-foreground">{subtitle}</span>
+			</figcaption>
+		</figure>
+	);
 }

@@ -1,7 +1,7 @@
-import type { XPlaylist } from "@/types/myObjects";
+import type { XPlaylist } from "@/types/xplaylist-type";
 
 const RECENT_PLAYLISTS_KEY = "recentPlaylists";
-const MAX_RECENT_PLAYLISTS = 100;
+const MAX_RECENT_PLAYLISTS = 200;
 
 /**
  * Adds a playlist to recent playlists in localStorage
@@ -15,7 +15,7 @@ export const addToRecentPlaylists = (playlist: XPlaylist): void => {
 
 		// Remove the playlist if it already exists (to avoid duplicates)
 		const filteredPlaylists = recentPlaylists.filter(
-			(p) => p.url !== playlist.url,
+			(p) => p.id !== playlist.id,
 		);
 
 		// Add the new playlist to the beginning (most recent)

@@ -1,6 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import type { XPlaylist } from "@/types/myObjects";
+import { myUrl } from "@/types/xplaylist-helpers";
+import type { XPlaylist } from "@/types/xplaylist-type";
 import { RowsIcon } from "@radix-ui/react-icons";
 import { Link } from "react-router";
 
@@ -22,9 +23,8 @@ export function PlaylistScrollArea({
 	link,
 }: PlaylistScrollAreaProps) {
 	const EMPTY_STATE = {
-		title: "There are no playlists there!",
-		subtitle:
-			"As soon as you start playing some content, it will be displayed there",
+		title: "There are no playlists there",
+		subtitle: "Start enjoying the app 🎶",
 	};
 
 	const PlaylistItem = ({
@@ -59,11 +59,7 @@ export function PlaylistScrollArea({
 				<div className="p-2.5">
 					{children.length > 0 ? (
 						children.map((c) => (
-							<Link
-								to={`tracks/${c.url}`}
-								key={c.url}
-								state={{ playlistImg: c.img }}
-							>
+							<Link to={myUrl(c)} key={c.id}>
 								<PlaylistItem title={c.name} subtitle={c.uNm} isIcon={true} />
 							</Link>
 						))

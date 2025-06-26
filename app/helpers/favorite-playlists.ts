@@ -1,4 +1,4 @@
-import type { XPlaylist } from "@/types/myObjects";
+import type { XPlaylist } from "@/types/xplaylist-type";
 
 // Constants
 const FAVES_PLAYLISTS_KEY = "favoritePlaylists";
@@ -19,7 +19,7 @@ const initializeMap = (): Map<string, XPlaylist> => {
 				// Convert stored array to Map
 				const playlists = JSON.parse(stored) as XPlaylist[];
 				playlistsMap = new Map(
-					playlists.map((playlist) => [playlist.url, playlist]),
+					playlists.map((playlist) => [playlist.id, playlist]),
 				);
 			}
 		} catch (error) {
@@ -50,11 +50,11 @@ const saveToStorage = (): void => {
 const addToFavorites = (playlist: XPlaylist): boolean => {
 	try {
 		const map = initializeMap();
-		if (map.has(playlist.url)) {
+		if (map.has(playlist.id)) {
 			return false; // Already exists
 		}
 
-		map.set(playlist.url, playlist);
+		map.set(playlist.id, playlist);
 		saveToStorage();
 		return true;
 	} catch (error) {
@@ -65,13 +65,13 @@ const addToFavorites = (playlist: XPlaylist): boolean => {
 
 /**
  * Removes a playlist from favorites
- * @param playlistUrl The ID of the playlist to remove
+ * @param playlistId The ID of the playlist to remove
  * @returns boolean indicating if the operation was successful
  */
-const removeFromFavorites = (playlistUrl: string): boolean => {
+const removeFromFavorites = (playlistId: string): boolean => {
 	try {
 		const map = initializeMap();
-		const deleted = map.delete(playlistUrl);
+		const deleted = map.delete(playlistId);
 		if (deleted) {
 			saveToStorage();
 		}
@@ -93,11 +93,11 @@ export const getFavoritePlaylists = (): XPlaylist[] => {
 
 /**
  * Checks if a playlist is in favorites
- * @param playlistUrl The ID of the playlist to check
+ * @param playlistId The ID of the playlist to check
  * @returns boolean indicating if the playlist is in favorites
  */
-export const isPlaylistFavorite = (playlistUrl: string): boolean => {
-	return initializeMap().has(playlistUrl);
+export const isPlaylistFavorite = (playlistId: string): boolean => {
+	return initializeMap().has(playlistId);
 };
 
 /**
@@ -106,8 +106,8 @@ export const isPlaylistFavorite = (playlistUrl: string): boolean => {
  * @returns boolean indicating new favorite status (true if added, false if removed)
  */
 export const toggleFavorite = (playlist: XPlaylist): boolean => {
-	if (isPlaylistFavorite(playlist.url)) {
-		return !removeFromFavorites(playlist.url);
+	if (isPlaylistFavorite(playlist.id)) {
+		return !removeFromFavorites(playlist.id);
 	}
 	return addToFavorites(playlist);
 };

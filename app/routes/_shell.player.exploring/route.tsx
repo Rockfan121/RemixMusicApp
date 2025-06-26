@@ -6,6 +6,7 @@ import { Form, useLoaderData } from "react-router";
 
 import PlaylistsList from "@/components/playlists";
 import { Input } from "@/components/ui/input";
+import { timeout300 } from "@/helpers/timeouts";
 
 /**
  * Loader of "exploring" route checks if there is the "q" param in URL. The param is supposed to be user id of some Openwhyd user.
@@ -17,7 +18,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const USER_ID = url.searchParams.get("q");
 
 	if (USER_ID !== null && USER_ID !== "") {
-		await new Promise((r) => setTimeout(r, 300));
+		await new Promise(timeout300);
 		const res = await fetch(
 			`https://openwhyd.org/u/${USER_ID}/playlists?format=json&limit=100`,
 		);
@@ -25,7 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		const resJson = await res.json();
 		if (typeof resJson !== "undefined" && !Object.hasOwn(resJson, "error")) {
 			const firstPlaylistId = (await resJson)[0].id;
-			await new Promise((r) => setTimeout(r, 300));
+			await new Promise(timeout300);
 			const userNameRes = await fetch(
 				`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=1`,
 			);
