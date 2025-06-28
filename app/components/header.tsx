@@ -28,7 +28,9 @@ import {
 
 export function Header({
 	isAuthenticated,
-}: { isAuthenticated: boolean | undefined }) {
+}: {
+	isAuthenticated: boolean | undefined;
+}) {
 	const hydrated = useHydrated();
 	const [, rerender] = React.useState({});
 	const setTheme = React.useCallback((theme: string) => {

@@ -1,15 +1,18 @@
 {
 	"editor.defaultFormatter": "biomejs.biome",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit"
+	},
 	"[yaml]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
+		"editor.defaultFormatter": null
 	},
 	"[markdown]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
 	},
 	"[toml]": {
-		"editor.defaultFormatter": "tamasfe.even-better-toml"
+		"editor.defaultFormatter": null
 	},
 	"[css]": {
-		"editor.defaultFormatter": "stylelint.vscode-stylelint"
+		"editor.defaultFormatter": "bradlc.vscode-tailwindcss"
 	}
 }

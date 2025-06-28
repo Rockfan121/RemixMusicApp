@@ -1,7 +1,7 @@
 import { useForm as useConformForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 
-import type { ZodTypeAny, output } from "zod";
+import type { output, ZodTypeAny } from "zod";
 
 export function useForm<Schema extends ZodTypeAny>(
 	schema: Schema,

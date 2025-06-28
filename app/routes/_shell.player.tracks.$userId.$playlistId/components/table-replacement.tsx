@@ -1,5 +1,5 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 /**
  * Component for displaying info for nonexistent or empty playlist

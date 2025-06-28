@@ -1,3 +1,6 @@
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigation } from "react-router";
 import { MusicPlayer } from "@/components/music-player";
 import { PlaylistScrollArea } from "@/components/playlist-scroll-area";
 import {
@@ -11,9 +14,6 @@ import {
 import type { ContextType } from "@/types/context-type";
 import type { Track } from "@/types/openwhyd-types";
 import type { XPlaylist } from "@/types/xplaylist-type";
-import { Separator } from "@radix-ui/react-dropdown-menu";
-import { useEffect, useState } from "react";
-import { Outlet, useNavigation } from "react-router";
 
 /**
  * This route displays MusicPlayer (and passes data to it), sets the callback function (used e.g. in "tracks" route)

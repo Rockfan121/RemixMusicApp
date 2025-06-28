@@ -1,10 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
-
 import type { LoaderFunctionArgs } from "react-router";
 import { Form, useLoaderData } from "react-router";
-
 import PlaylistsList from "@/components/playlists";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { timeout300 } from "@/helpers/timeouts";
 

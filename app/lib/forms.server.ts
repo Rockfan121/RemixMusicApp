@@ -2,7 +2,7 @@ import type { SubmissionResult } from "@conform-to/react";
 import { parse } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { data } from "react-router";
-import type { ZodTypeAny, output } from "zod";
+import type { output, ZodTypeAny } from "zod";
 
 export class PublicError extends Error {
 	constructor(

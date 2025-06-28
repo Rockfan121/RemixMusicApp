@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router";
 import {
-	Outlet,
 	isRouteErrorResponse,
+	Outlet,
 	useRouteError,
 	useRouteLoaderData,
 } from "react-router";

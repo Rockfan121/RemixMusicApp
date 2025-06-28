@@ -1,6 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { timeout200, timeout400 } from "@/helpers/timeouts";
-import type { Track } from "@/types/openwhyd-types";
 import {
 	ListBulletIcon,
 	LoopIcon,
@@ -14,6 +11,9 @@ import {
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { timeout200, timeout400 } from "@/helpers/timeouts";
+import type { Track } from "@/types/openwhyd-types";
 
 export const getYTUrl = (eId: string) => {
 	let result = eId.substring(4);

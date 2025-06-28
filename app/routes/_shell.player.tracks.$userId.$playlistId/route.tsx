@@ -1,9 +1,9 @@
-import { timeout300 } from "@/helpers/timeouts";
-import type { XPlaylist } from "@/types/xplaylist-type";
-
-import { MAX_FETCHED_ITEMS } from "@/constants";
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useParams } from "react-router";
+
+import { MAX_FETCHED_ITEMS } from "@/constants";
+import { timeout300 } from "@/helpers/timeouts";
+import type { XPlaylist } from "@/types/xplaylist-type";
 import TableReplacement from "./components/table-replacement";
 import TracksHeader from "./components/tracks-header";
 import TracksTable from "./components/tracks-table";

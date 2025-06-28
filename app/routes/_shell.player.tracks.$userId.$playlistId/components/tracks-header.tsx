@@ -1,7 +1,3 @@
-import { isPlaylistFavorite } from "@/helpers/favorite-playlists";
-import type { ContextType } from "@/types/context-type";
-import { imgUrl, openwhydUrl } from "@/types/xplaylist-helpers";
-import type { XPlaylist } from "@/types/xplaylist-type";
 import {
 	ExternalLinkIcon,
 	StarFilledIcon,
@@ -9,10 +5,16 @@ import {
 } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router";
+import { isPlaylistFavorite } from "@/helpers/favorite-playlists";
+import type { ContextType } from "@/types/context-type";
+import { imgUrl, openwhydUrl } from "@/types/xplaylist-helpers";
+import type { XPlaylist } from "@/types/xplaylist-type";
 
 export default function TracksHeader({
 	xplaylistInfo,
-}: { xplaylistInfo: XPlaylist }) {
+}: {
+	xplaylistInfo: XPlaylist;
+}) {
 	const { favesCallback } = useOutletContext<ContextType>();
 	const [favorite, setFavorite] = useState(false);
 

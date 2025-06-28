@@ -1,9 +1,32 @@
+import { RowsIcon } from "@radix-ui/react-icons";
+import { Link } from "react-router";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { myUrl } from "@/types/xplaylist-helpers";
 import type { XPlaylist } from "@/types/xplaylist-type";
-import { RowsIcon } from "@radix-ui/react-icons";
-import { Link } from "react-router";
+
+const PlaylistItem = ({
+	title,
+	subtitle,
+	isIcon,
+}: {
+	title: React.ReactNode;
+	subtitle: React.ReactNode;
+	isIcon: boolean;
+}) => (
+	<>
+		<div className="text-sm/4 py-2 hover:bg-accent">
+			<span className="inline-block w-64 pl-2 truncate font-semibold text-foreground">
+				{isIcon && <RowsIcon className="inline" />} {title}
+			</span>
+			<br />
+			<span className="inline-block w-64 pl-7 truncate text-muted-foreground">
+				{subtitle}
+			</span>
+		</div>
+		<Separator />
+	</>
+);
 
 interface PlaylistScrollAreaProps {
 	children: XPlaylist[];
@@ -26,29 +49,6 @@ export function PlaylistScrollArea({
 		title: "There are no playlists there",
 		subtitle: "Start enjoying the app 🎶",
 	};
-
-	const PlaylistItem = ({
-		title,
-		subtitle,
-		isIcon,
-	}: {
-		title: React.ReactNode;
-		subtitle: React.ReactNode;
-		isIcon: boolean;
-	}) => (
-		<>
-			<div className="text-sm/4 py-2 hover:bg-accent">
-				<span className="inline-block w-64 pl-2 truncate font-semibold text-foreground">
-					{isIcon && <RowsIcon className="inline" />} {title}
-				</span>
-				<br />
-				<span className="inline-block w-64 pl-7 truncate text-muted-foreground">
-					{subtitle}
-				</span>
-			</div>
-			<Separator />
-		</>
-	);
 
 	return (
 		<div className="aside-container w-full rounded-md border bg-card">

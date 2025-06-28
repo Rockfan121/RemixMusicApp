@@ -1,11 +1,11 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import type { UserPlaylist } from "@/types/openwhyd-types";
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import type React from "react";
 import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import type { UserPlaylist } from "@/types/openwhyd-types";
 import ItemCover from "./item-cover";
 
 /**

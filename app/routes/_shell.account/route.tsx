@@ -11,10 +11,6 @@ import {
 	useLoaderData,
 	useNavigation,
 } from "react-router";
-
-import { title } from "@/config.shared";
-import { formIntent } from "@/lib/forms.server";
-
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -26,7 +22,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { title } from "@/config.shared";
 import { requireUser } from "@/lib/auth.server";
+import { formIntent } from "@/lib/forms.server";
 import { getUserById, updateUser } from "@/lib/user.server";
 import { updateAccountFormSchema, useUpdateAccountForm } from "./form";
 

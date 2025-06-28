@@ -28,7 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DEFAULT_SUCCESS_REDIRECT, title } from "@/config.shared";
 import { getAuthenticator } from "@/lib/auth.server";
-import { PublicError, formIntent } from "@/lib/forms.server";
+import { formIntent, PublicError } from "@/lib/forms.server";
 import { validateRedirect } from "@/lib/redirects";
 import { createUser } from "@/lib/user.server";
 
