@@ -1,7 +1,7 @@
+import { MAX_RECENT_PLAYLISTS } from "@/config.shared";
 import type { XPlaylist } from "@/types/xplaylist-type";
 
 const RECENT_PLAYLISTS_KEY = "recentPlaylists";
-const MAX_RECENT_PLAYLISTS = 200;
 
 /**
  * Adds a playlist to recent playlists in localStorage

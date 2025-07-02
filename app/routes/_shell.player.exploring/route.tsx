@@ -1,10 +1,13 @@
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
-import type { LoaderFunctionArgs } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Form, useLoaderData } from "react-router";
 import PlaylistsList from "@/components/playlists";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
+
+const PAGE_TITLE = "Explore playlists";
 
 /**
  * Loader of "exploring" route checks if there is the "q" param in URL. The param is supposed to be user id of some Openwhyd user.
@@ -41,6 +44,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	};
 };
 
+export const meta: MetaFunction = () => {
+	return [{ title: title(PAGE_TITLE) }];
+};
+
 export default function Exploring() {
 	const { res, firstPlaylistRes } = useLoaderData<typeof loader>();
 	let userNameRes = "";
@@ -69,7 +76,7 @@ export default function Exploring() {
 				</Form>
 			</search>
 			<PlaylistsList
-				listIntro="Explore playlists"
+				listIntro={PAGE_TITLE}
 				listEmptyText="Enter correct userId of one of Openwhyd users and click the button to view all their playlists"
 				userName={userNameRes}
 				userId={userIdRes}

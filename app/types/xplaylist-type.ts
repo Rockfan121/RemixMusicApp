@@ -6,7 +6,7 @@
  * @param uNm - Openwhyd user name (the playlist owner)
  * @param plId - playlist id (not unique, just a string with a number)
  * @param nbTracks - number of tracks in the playlist
- * @param isDeleted - playlist status
+ * @param doesExist - playlist status
  */
 export type XPlaylist = {
 	id: string;
@@ -15,5 +15,5 @@ export type XPlaylist = {
 	uNm: string;
 	plId: string;
 	nbTracks: number;
-	isDeleted: boolean;
+	doesExist: boolean;
 };

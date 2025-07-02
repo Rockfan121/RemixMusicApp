@@ -61,11 +61,23 @@ export function ErrorBoundary() {
 	}
 
 	return (
-		<App>
-			<div className="container prose py-8">
-				<h1>{status}</h1>
-				<p>{message}</p>
-			</div>
-		</App>
+		<ThemeSwitcherSafeHTML lang="en">
+			<head>
+				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<title>{message}</title>
+				<Links />
+				<ThemeSwitcherScript />
+			</head>
+			<body>
+				<div className="container prose py-8">
+					<h1>{status}</h1>
+					<p>{message}</p>
+					<ScrollRestoration />
+					<Scripts />
+					<Toaster />
+				</div>
+			</body>
+		</ThemeSwitcherSafeHTML>
 	);
 }

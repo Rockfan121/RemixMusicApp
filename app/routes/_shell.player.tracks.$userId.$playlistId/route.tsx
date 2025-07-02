@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData, useParams } from "react-router";
 
-import { MAX_FETCHED_ITEMS } from "@/constants";
+import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import type { XPlaylist } from "@/types/xplaylist-type";
 import TableReplacement from "./components/table-replacement";
@@ -42,6 +42,22 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	};
 };
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (typeof data !== "undefined") {
+		if (!Object.hasOwn(data.PLAYLIST_INFO[0], "name")) {
+			return [{ title: title("Playlist not found") }];
+		}
+		return [
+			{
+				title: title(
+					`${data.PLAYLIST_INFO[0].name} by ${data.PLAYLIST_INFO[0].uNm}`,
+				),
+			},
+		];
+	}
+	return [{ title: title("Playlist not found") }];
+};
+
 /**
  * Component for displaying a given playlists.
  * It enables the user to start playing music, starting with the track clicked by the user.
@@ -52,21 +68,21 @@ export default function TracksView() {
 	const params = useParams();
 
 	if (!Object.hasOwn(PLAYLIST_INFO[0], "name")) {
-		const deletedPlaylistInfo: XPlaylist = {
+		const nonexistentPlaylist: XPlaylist = {
 			// No playlist found - it doesn't exist
 			id: `${params.userId}_${params.playlistId}`,
 			name: "",
-			uId: typeof params.userId !== "undefined" ? params.userId : "",
+			uId: `${params.userId}`,
 			uNm: "",
-			plId: typeof params.playlistId !== "undefined" ? params.playlistId : "",
+			plId: `${params.playlistId}`,
 			nbTracks: 0,
-			isDeleted: true,
+			doesExist: true,
 		};
 
 		return (
 			<>
-				<TracksHeader xplaylistInfo={deletedPlaylistInfo} />
-				<TableReplacement isDeleted={true} />
+				<TracksHeader xplaylistInfo={nonexistentPlaylist} />
+				<TableReplacement doesExist={true} />
 			</>
 		);
 	}
@@ -78,7 +94,7 @@ export default function TracksView() {
 		uNm: PLAYLIST_INFO[0].uNm,
 		plId: PLAYLIST_INFO[0].plId,
 		nbTracks: PLAYLIST_INFO[0].nbTracks,
-		isDeleted: false,
+		doesExist: false,
 	};
 
 	if (Object.keys(TRACKS).length === 0) {
@@ -86,7 +102,7 @@ export default function TracksView() {
 			// No tracks found - the playlist is empty
 			<>
 				<TracksHeader xplaylistInfo={xplaylistInfo} />
-				<TableReplacement isDeleted={false} />
+				<TableReplacement doesExist={false} />
 			</>
 		);
 	}

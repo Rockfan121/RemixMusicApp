@@ -39,10 +39,7 @@ enum Intents {
 }
 
 export const meta: MetaFunction = () => {
-	return [
-		{ title: title() },
-		{ name: "description", content: "Welcome to Remix!" },
-	];
+	return [{ title: title() }];
 };
 
 export async function loader({ context, request }: LoaderFunctionArgs) {

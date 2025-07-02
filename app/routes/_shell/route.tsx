@@ -8,7 +8,6 @@ import {
 
 import { Header } from "@/components/header";
 import { getUser } from "@/lib/auth.server";
-
 /* export const links: LinksFunction = () => {
 	return [
 		{
