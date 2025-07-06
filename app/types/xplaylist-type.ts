@@ -1,5 +1,5 @@
 /**
- * Extended version of ApiPlaylist type (see ../types/openwhyd-types)
+ * Extended version of ApiPlaylist type (see openwhyd-types.ts)
  * @param id - Openwhyd playlist unique id, formatted as uId_plId
  * @param name - playlist name
  * @param uId - Openwhyd user id (the playlist owner)

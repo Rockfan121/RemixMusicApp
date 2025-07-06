@@ -1,7 +1,6 @@
 import { ExternalLinkIcon, PlayIcon } from "@radix-ui/react-icons";
 import { useOutletContext } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
-import { getYTUrl } from "@/components/music-player";
 import {
 	Table,
 	TableBody,
@@ -10,6 +9,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { getYTUrl } from "@/helpers/media-url";
 import type { ContextType } from "@/types/context-type";
 import type { Track } from "@/types/openwhyd-types";
 import type { XPlaylist } from "@/types/xplaylist-type";

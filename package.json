@@ -57,7 +57,7 @@
 		"zod-form-data": "2.0.2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.0.0",
+		"@biomejs/biome": "2.0.6",
 		"@react-router/dev": "^7.0.0",
 		"@tailwindcss/typography": "0.5.10",
 		"@types/bcryptjs": "2.4.6",

@@ -11,7 +11,6 @@ A Remix application for playing music from playlists created by Openwhyd users\
 - listing recently played playlists in a sidebar (using localStorage),
 - listing favorite playlists in a sidebar (using localStorage).
 
-
 ## Development
 
 - Remix template: [jacob-ebey/remix-shadcn](https://github.com/jacob-ebey/remix-shadcn/) (the template with a login flow and a SQLite database backed by Drizzle ORM)
