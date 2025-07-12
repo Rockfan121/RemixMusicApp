@@ -26,7 +26,7 @@
 		--destructive-foreground: 225.9 5% 90%;
 		--border: 225.9 30% 50%;
 		--input: 225.9 30% 18%;
-		--ring: 225.9 70.7% 40.2%;
+		--ring: 225.9 70.7% 35%;
 		--radius: 0.5rem;
 
 		--background-dark: 225.9 50% 5%;
@@ -68,7 +68,7 @@
 		--destructive-foreground-sky: 200.4 5% 100%;
 		--border-sky: 200.4 30% 50%;
 		--input-sky: 200.4 30% 50%;
-		--ring-sky: 200.4 98% 45%;
+		--ring-sky: 200.4 70% 55%;
 
 		/*dark violet; ; zippystarter: max saturation  min lightness*/
 		--background-dkviolet: 278 50% 5%;
@@ -180,6 +180,10 @@
 }
 .navbar-button {
 	@apply text-lg font-semibold text-white py-4;
+}
+
+.navbar-icon {
+	@apply mr-1 h-5 w-5;
 }
 
 .untoggled-button {

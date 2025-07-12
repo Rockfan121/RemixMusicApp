@@ -1,4 +1,5 @@
 import {
+	CounterClockwiseClockIcon,
 	Crosshair2Icon,
 	ExitIcon,
 	LaptopIcon,
@@ -6,7 +7,6 @@ import {
 	RocketIcon,
 	StarFilledIcon,
 	SunIcon,
-	SymbolIcon,
 } from "@radix-ui/react-icons";
 import * as React from "react";
 import { Form, Link } from "react-router";
@@ -25,6 +25,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { NavbarButton } from "./navbar-button";
 
 export function Header({
 	isAuthenticated,
@@ -52,24 +53,17 @@ export function Header({
 					</Link>
 				</div>
 				<div className="flex items-center space-x-1">
-					<Button asChild variant="ghost" className="navbar-button">
-						<Link to="/player/exploring">
-							<Crosshair2Icon className="mr-1 h-5 w-5" />
-							<span className="hidden md:inline">Playlists</span>
-						</Link>
-					</Button>
-					<Button asChild variant="ghost" className="navbar-button">
-						<Link to="/player/recent">
-							<SymbolIcon className="mr-1 h-5 w-5" />
-							<span className="hidden md:inline">Recently played</span>
-						</Link>
-					</Button>
-					<Button asChild variant="ghost" className="navbar-button">
-						<Link to="/player/faves">
-							<StarFilledIcon className="mr-1 h-5 w-5" />
-							<span className="hidden md:inline">Favorites</span>
-						</Link>
-					</Button>
+					<NavbarButton link="/player/exploring" label="Explore">
+						<Crosshair2Icon className="navbar-icon" />
+					</NavbarButton>
+
+					<NavbarButton link="/player/recent" label="Recently played">
+						<CounterClockwiseClockIcon className="navbar-icon" />
+					</NavbarButton>
+
+					<NavbarButton link="/player/faves" label="Favorites">
+						<StarFilledIcon className="navbar-icon" />
+					</NavbarButton>
 				</div>
 				<div className="flex items-center space-x-4">
 					<DropdownMenu>

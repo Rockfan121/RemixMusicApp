@@ -1,5 +1,5 @@
 import { RowsIcon } from "@radix-ui/react-icons";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { myUrl } from "@/types/xplaylist-helpers";
@@ -16,7 +16,7 @@ const PlaylistItem = ({
 }) => (
 	<>
 		<div className="text-sm/4 py-2 hover:bg-accent">
-			<span className="inline-block w-64 pl-2 truncate font-semibold text-foreground">
+			<span className="inline-block w-64 pl-2 truncate font-semibold">
 				{isIcon && <RowsIcon className="inline" />} {title}
 			</span>
 			<br />
@@ -59,9 +59,13 @@ export function PlaylistScrollArea({
 				<div className="p-2.5">
 					{children.length > 0 ? (
 						children.map((c) => (
-							<Link to={myUrl(c)} key={c.id}>
+							<NavLink
+								to={myUrl(c)}
+								key={c.id}
+								className={({ isActive }) => (isActive ? "text-ring" : "")}
+							>
 								<PlaylistItem title={c.name} subtitle={c.uNm} isIcon={true} />
-							</Link>
+							</NavLink>
 						))
 					) : (
 						<PlaylistItem
