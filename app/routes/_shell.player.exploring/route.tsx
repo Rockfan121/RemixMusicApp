@@ -1,4 +1,5 @@
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import { useEffect } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Form, useLoaderData } from "react-router";
 import PlaylistsList from "@/components/playlists";
@@ -35,12 +36,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			return {
 				res: await resJson,
 				firstPlaylistRes: await userNameRes.json(),
+				query: USER_ID,
 			};
 		}
 	}
 	return {
 		res: {},
 		firstPlaylistRes: {},
+		query: USER_ID,
 	};
 };
 
@@ -49,7 +52,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Exploring() {
-	const { res, firstPlaylistRes } = useLoaderData<typeof loader>();
+	const { res, firstPlaylistRes, query } = useLoaderData<typeof loader>();
 	let userNameRes = "";
 	let userIdRes = "";
 	if (Object.keys(firstPlaylistRes).length) {
@@ -57,13 +60,21 @@ export default function Exploring() {
 		userIdRes = firstPlaylistRes[0].uId;
 	}
 
+	useEffect(() => {
+		const searchField = document.getElementById("query");
+		if (searchField instanceof HTMLInputElement) {
+			searchField.value = query || "";
+		}
+	}, [query]);
+
 	return (
 		<>
 			<search>
 				<Form id="search-form">
 					<div className="flex mx-6 mb-10 w-60 max-w-sm items-center space-x-1">
 						<Input
-							id="q"
+							defaultValue={query || ""}
+							id="query"
 							name="q"
 							placeholder="Openwhyd userId"
 							type="search"
