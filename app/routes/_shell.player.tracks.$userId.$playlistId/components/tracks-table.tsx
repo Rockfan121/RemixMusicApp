@@ -9,7 +9,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { getYTUrl } from "@/helpers/media-url";
+import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import type { ContextType } from "@/types/context-type";
 import type { Track } from "@/types/openwhyd-types";
 import type { XPlaylist } from "@/types/xplaylist-type";
@@ -66,7 +66,7 @@ export default function TracksTable({
 							<TableCell className="px-1">{track.name}</TableCell>
 							<TableCell className="text-center">
 								<a
-									href={getYTUrl(track.eId)}
+									href={getMusicServiceAndUrl(track.eId)}
 									target="_blank"
 									rel="noopener noreferrer"
 								>

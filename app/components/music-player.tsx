@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { getYTUrl } from "@/helpers/media-url";
+import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { timeout200, timeout400 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
@@ -102,7 +102,6 @@ export function MusicPlayer({
 	};
 
 	const handleProgress = (progress: ProgressState) => {
-		console.log("onProgress", progress);
 		if (!seeking) {
 			setPlayed(progress.played);
 		}
@@ -112,7 +111,7 @@ export function MusicPlayer({
 	const getUrl = () => {
 		let result = "";
 		if (children.length > 0) {
-			result = getYTUrl(children[currentSongIndex].eId);
+			result = getMusicServiceAndUrl(children[currentSongIndex].eId);
 		}
 		return result;
 	};
