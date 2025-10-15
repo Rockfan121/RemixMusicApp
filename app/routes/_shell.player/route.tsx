@@ -23,7 +23,9 @@ export default function Player() {
 	const navigation = useNavigation();
 
 	const [playlist, setPlaylist] = useState<Array<Track>>([]);
-	const [firstTrack, setFirstTrack] = useState<number>(0);
+	const [firstTrackNo, setFirstTrackNo] = useState<number>(0);
+	const [timestamp, setTimestamp] = useState<number>(0);
+
 	const [recentPl, setRecentPl] = useState<XPlaylist[]>([]);
 	const [favesPl, setFavesPl] = useState<XPlaylist[]>([]);
 
@@ -37,7 +39,8 @@ export default function Player() {
 
 	const handleCallback = (a: Array<Track>, b: number, c: XPlaylist) => {
 		setPlaylist(a);
-		setFirstTrack(b);
+		setFirstTrackNo(b);
+		setTimestamp(Date.now());
 
 		addToRecentPlaylists(c);
 		setRecentPl(getRecentPlaylists());
@@ -77,7 +80,11 @@ export default function Player() {
 			</div>
 
 			<footer className="w-full h-24 left-0 bottom-0 fixed bg-accent">
-				<MusicPlayer firstTrack={firstTrack}>{playlist}</MusicPlayer>
+				<MusicPlayer
+					playlist={playlist}
+					firstTrackNo={firstTrackNo}
+					timestamp={timestamp}
+				/>
 			</footer>
 		</>
 	);

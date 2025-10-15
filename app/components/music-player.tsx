@@ -8,7 +8,7 @@ import {
 	TrackNextIcon,
 	TrackPreviousIcon,
 } from "@radix-ui/react-icons";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -17,18 +17,19 @@ import { timeout200, timeout400 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 
+interface MusicPlayerProps {
+	playlist: Array<Track>;
+	firstTrackNo: number;
+	timestamp: number;
+}
 /**
  * Component wrapping ReactPlayer, playing music from some playlist
- * @param children - tracks from the playlist
- * @param firstTrack - index of the track to be played first
  */
 export function MusicPlayer({
-	children,
-	firstTrack,
-}: {
-	children: Array<Track>;
-	firstTrack: number;
-}) {
+	playlist,
+	firstTrackNo,
+	timestamp,
+}: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(true);
 	const [isLooped, setIsLooped] = useState(false);
@@ -38,13 +39,23 @@ export function MusicPlayer({
 	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
 
 	const playerRef = useRef<ReactPlayer | null>(null);
+	const startPlayingFromBeginning = useCallback(() => {
+		setPlayed(0);
+		setIsPlaying(true);
+		if (playerRef.current !== null) {
+			playerRef.current.seekTo(0);
+		}
+	}, []);
 
 	useEffect(() => {
 		if (typeof document !== "undefined") {
 			setHasWindow(true);
-			setCurrentSongIndex(firstTrack);
+			setCurrentSongIndex(firstTrackNo);
+			//console.log("MusicPlayer timestamp:");
+			console.log(timestamp);
+			startPlayingFromBeginning();
 		}
-	}, [firstTrack]);
+	}, [firstTrackNo, timestamp, startPlayingFromBeginning]);
 
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
@@ -57,16 +68,19 @@ export function MusicPlayer({
 		setIsMuted(!isMuted);
 	};
 
-	const nextSong = async () => {
+	const nextSong = async () => { 
+
 		await new Promise(timeout200);
 		setCurrentSongIndex((prevIndex: number) =>
-			prevIndex + 1 < children.length ? prevIndex + 1 : 0,
+			prevIndex + 1 < playlist.length ? prevIndex + 1 : 0,
 		);
+		startPlayingFromBeginning();
 	};
 
 	const nextSongAfterError = async () => {
+		console.log("onError");
 		toast.error(
-			`Track \"${children[currentSongIndex].name}\" can't be played`,
+			`Track \"${playlist[currentSongIndex].name}\" can't be played`,
 			{
 				duration: 7000,
 			},
@@ -78,12 +92,29 @@ export function MusicPlayer({
 	const prevSong = async () => {
 		await new Promise(timeout200);
 		setCurrentSongIndex((prevIndex) =>
-			prevIndex - 1 >= 0 ? prevIndex - 1 : children.length - 1,
+			prevIndex - 1 >= 0 ? prevIndex - 1 : playlist.length - 1,
 		);
+		startPlayingFromBeginning();
 	};
 
 	const handleStart = () => {
-		setPlayed(0);
+		console.log("onStart");
+		startPlayingFromBeginning();
+	};
+
+	const handlePlay = () => {
+		console.log("onPlay");
+	};
+
+	const handlePause = () => {
+		console.log("onPause");
+	};
+
+	const handleEnded = async () => {
+		console.log("onEnded");
+		//setUrl("");
+		//await new Promise(timeout200);
+		nextSong();
 	};
 
 	const handleSeekMouseDown = () => {
@@ -102,6 +133,7 @@ export function MusicPlayer({
 	};
 
 	const handleProgress = (progress: ProgressState) => {
+		//console.log("onProgress");
 		if (!seeking) {
 			setPlayed(progress.played);
 		}
@@ -110,8 +142,8 @@ export function MusicPlayer({
 	//Returns correct URL of the track to be played now (according to currentSongIndex)
 	const getUrl = () => {
 		let result = "";
-		if (children.length > 0) {
-			result = getMusicServiceAndUrl(children[currentSongIndex].eId);
+		if (playlist.length > 0) {
+			result = getMusicServiceAndUrl(playlist[currentSongIndex].eId);
 		}
 		return result;
 	};
@@ -150,7 +182,9 @@ export function MusicPlayer({
 
 			<div className="flex items-center flex-col grow space-y-2">
 				<h4 className="font-bold px-4 truncate">
-					{children.length > 0 ? children[currentSongIndex].name : "No song"}
+					{hasWindow && playlist.length > 0
+						? playlist[currentSongIndex].name
+						: "No song"}
 				</h4>
 				<input
 					className="w-full"
@@ -172,16 +206,18 @@ export function MusicPlayer({
 					height="80px"
 					width="80px"
 					playing={isPlaying}
-					onEnded={nextSong}
+					onStart={handleStart}
+					onPlay={handlePlay}
+					onPause={handlePause}
+					onEnded={handleEnded}
 					volume={1}
 					muted={isMuted}
 					loop={isLooped}
-					onStart={handleStart}
 					onError={nextSongAfterError}
 					onProgress={handleProgress}
+					onReady={() => console.log("onReady")}
 				/>
 			)}
-			{/* </div> */}
 		</div>
 	);
 }
