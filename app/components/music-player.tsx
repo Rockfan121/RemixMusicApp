@@ -13,7 +13,7 @@ import ReactPlayer from "react-player";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { timeout200, timeout400, timeout1000 } from "@/helpers/timeouts";
+import { timeout200, timeout1000 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 
@@ -68,18 +68,26 @@ export function MusicPlayer({
 		setIsMuted(!isMuted);
 	};
 
-	const nextSong = async () => {
+	const changeSong = async (getNextIndex: (prevIndex: number) => number) => {
 		await new Promise(timeout200);
-		setCurrentSongIndex((prevIndex: number) =>
-			prevIndex + 1 < playlist.length ? prevIndex + 1 : 0,
-		);
+		setCurrentSongIndex((prevIndex) => getNextIndex(prevIndex));
 		startPlayingFromBeginning();
 	};
 
+	const nextSong = async () => {
+		await changeSong((prevIndex) =>
+			prevIndex + 1 < playlist.length ? prevIndex + 1 : 0,
+		);
+	};
+
 	const someOtherSong = async (index: number) => {
-		await new Promise(timeout200);
-		setCurrentSongIndex(index);
-		startPlayingFromBeginning();
+		await changeSong(() => index);
+	};
+
+	const prevSong = async () => {
+		await changeSong((prevIndex) =>
+			prevIndex - 1 >= 0 ? prevIndex - 1 : playlist.length - 1,
+		);
 	};
 
 	const handleError = async () => {
@@ -93,31 +101,14 @@ export function MusicPlayer({
 		await new Promise(timeout1000);
 
 		const errantUrl = getCurrentUrl();
-		console.log(`Errant URL: ${errantUrl}`);
-		console.log(`Errant index: ${currentSongIndex}`);
-		
-
 		let newIndex = currentSongIndex;
 		let newUrl = getUrl(newIndex);
-		while (errantUrl === newUrl){
-			console.log("Errant song! Continue searching...");
 
+		while (errantUrl === newUrl) {
 			newIndex = newIndex + 1 < playlist.length ? newIndex + 1 : 0;
 			newUrl = getUrl(newIndex);
-
-			console.log(`New URL: ${newUrl}`);
-			console.log(`New index: ${newIndex}`);
 		}
-		console.log("Time for someOtherSong!");
 		someOtherSong(newIndex);
-	};
-
-	const prevSong = async () => {
-		await new Promise(timeout200);
-		setCurrentSongIndex((prevIndex) =>
-			prevIndex - 1 >= 0 ? prevIndex - 1 : playlist.length - 1,
-		);
-		startPlayingFromBeginning();
 	};
 
 	const handleStart = () => {
@@ -127,16 +118,16 @@ export function MusicPlayer({
 
 	const handlePlay = () => {
 		console.log("onPlay");
+		setIsPlaying(true);
 	};
 
 	const handlePause = () => {
 		console.log("onPause");
+		setIsPlaying(false);
 	};
 
 	const handleEnded = async () => {
 		console.log("onEnded");
-		//setUrl("");
-		//await new Promise(timeout200);
 		nextSong();
 	};
 
@@ -156,7 +147,6 @@ export function MusicPlayer({
 	};
 
 	const handleProgress = (progress: ProgressState) => {
-		//console.log("onProgress");
 		if (!seeking) {
 			setPlayed(progress.played);
 		}
