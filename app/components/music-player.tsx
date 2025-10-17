@@ -92,12 +92,9 @@ export function MusicPlayer({
 
 	const handleError = async () => {
 		console.log("onError");
-		toast.error(
-			`Track \"${playlist[currentSongIndex].name}\" can't be played`,
-			{
-				duration: 5000,
-			},
-		);
+		toast.error(`Track "${playlist[currentSongIndex].name}" can't be played`, {
+			duration: 5000,
+		});
 		await new Promise(timeout1000);
 
 		const errantUrl = getCurrentUrl();
