@@ -13,7 +13,7 @@ import ReactPlayer from "react-player";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { timeout200, timeout400 } from "@/helpers/timeouts";
+import { timeout200, timeout400, timeout1000 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 
@@ -68,8 +68,7 @@ export function MusicPlayer({
 		setIsMuted(!isMuted);
 	};
 
-	const nextSong = async () => { 
-
+	const nextSong = async () => {
 		await new Promise(timeout200);
 		setCurrentSongIndex((prevIndex: number) =>
 			prevIndex + 1 < playlist.length ? prevIndex + 1 : 0,
@@ -77,16 +76,40 @@ export function MusicPlayer({
 		startPlayingFromBeginning();
 	};
 
-	const nextSongAfterError = async () => {
+	const someOtherSong = async (index: number) => {
+		await new Promise(timeout200);
+		setCurrentSongIndex(index);
+		startPlayingFromBeginning();
+	};
+
+	const handleError = async () => {
 		console.log("onError");
 		toast.error(
 			`Track \"${playlist[currentSongIndex].name}\" can't be played`,
 			{
-				duration: 7000,
+				duration: 5000,
 			},
 		);
-		await new Promise(timeout400);
-		nextSong();
+		await new Promise(timeout1000);
+
+		const errantUrl = getCurrentUrl();
+		console.log(`Errant URL: ${errantUrl}`);
+		console.log(`Errant index: ${currentSongIndex}`);
+		
+
+		let newIndex = currentSongIndex;
+		let newUrl = getUrl(newIndex);
+		while (errantUrl === newUrl){
+			console.log("Errant song! Continue searching...");
+
+			newIndex = newIndex + 1 < playlist.length ? newIndex + 1 : 0;
+			newUrl = getUrl(newIndex);
+
+			console.log(`New URL: ${newUrl}`);
+			console.log(`New index: ${newIndex}`);
+		}
+		console.log("Time for someOtherSong!");
+		someOtherSong(newIndex);
 	};
 
 	const prevSong = async () => {
@@ -140,10 +163,14 @@ export function MusicPlayer({
 	};
 
 	//Returns correct URL of the track to be played now (according to currentSongIndex)
-	const getUrl = () => {
+	const getCurrentUrl = () => {
+		return getUrl(currentSongIndex);
+	};
+
+	const getUrl = (index: number) => {
 		let result = "";
 		if (playlist.length > 0) {
-			result = getMusicServiceAndUrl(playlist[currentSongIndex].eId);
+			result = getMusicServiceAndUrl(playlist[index].eId);
 		}
 		return result;
 	};
@@ -202,7 +229,7 @@ export function MusicPlayer({
 			{hasWindow && (
 				<ReactPlayer
 					ref={playerRef}
-					url={getUrl()}
+					url={getCurrentUrl()}
 					height="80px"
 					width="80px"
 					playing={isPlaying}
@@ -213,7 +240,7 @@ export function MusicPlayer({
 					volume={1}
 					muted={isMuted}
 					loop={isLooped}
-					onError={nextSongAfterError}
+					onError={handleError}
 					onProgress={handleProgress}
 					onReady={() => console.log("onReady")}
 				/>
