@@ -31,7 +31,12 @@ function App({ children }: { children: React.ReactNode }) {
 				{children}
 				<ScrollRestoration />
 				<Scripts />
-				<Toaster />
+				<Toaster
+					closeButton={true}
+					invert={true}
+					offset={{ bottom: "120px", right: "118px", left: "16px" }}
+					mobileOffset={{ bottom: "120px" }}
+				/>
 			</body>
 		</ThemeSwitcherSafeHTML>
 	);

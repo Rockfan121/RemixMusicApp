@@ -156,82 +156,94 @@ export function MusicPlayer({
 
 	const getUrl = (index: number) => {
 		let result = "";
-		if (playlist.length > 0) {
+		if (playlist.length > index) {
 			result = getMusicServiceAndUrl(playlist[index].eId);
 		}
 		return result;
 	};
 
 	return (
-		<div className="flex w-full items-center space-x-5 px-4 py-1">
-			<div className="flex items-center space-x-1">
-				<Button onClick={togglePlayPause} className="rounded-full" size="icon">
-					{isPlaying ? <PauseIcon /> : <PlayIcon />}
-				</Button>
-				<Button onClick={prevSong} className="rounded-full" size="icon">
-					<TrackPreviousIcon />
-				</Button>
-				<Button onClick={nextSong} className="rounded-full" size="icon">
-					<TrackNextIcon />
-				</Button>
-			</div>
+		<div className="flex w-full items-center flex-col grow p-0 m-0">
+			<input
+				className="w-full -my-2"
+				type="range"
+				min={0}
+				max={0.999999}
+				step="any"
+				value={played}
+				onMouseDown={handleSeekMouseDown}
+				onChange={handleSeekChange}
+				onMouseUp={handleSeekMouseUp}
+			/>
+			<div className="flex w-full items-center space-x-5 px-3 py-1">
+				<div className="flex items-center space-x-1">
+					<Button onClick={prevSong} className="rounded-full" size="icon">
+						<TrackPreviousIcon className="size-5" />
+					</Button>
+					<Button
+						onClick={togglePlayPause}
+						className="rounded-full"
+						size="icon-lg"
+					>
+						{isPlaying ? (
+							<PauseIcon className="size-6" />
+						) : (
+							<PlayIcon className="size-6" />
+						)}
+					</Button>
+					<Button onClick={nextSong} className="rounded-full" size="icon">
+						<TrackNextIcon className="size-5" />
+					</Button>
+				</div>
 
-			<div className="flex items-center space-x-1">
-				<Button
-					onClick={toggleLooped}
-					className={isLooped ? "toggled-button" : "untoggled-button"}
-					size="icon"
-				>
-					{isLooped ? "1" : <ListBulletIcon />}
-					<LoopIcon />
-				</Button>
-				<Button
-					onClick={toggleMuted}
-					className={isMuted ? "untoggled-button" : "toggled-button"}
-					size="icon"
-				>
-					{isMuted ? <SpeakerOffIcon /> : <SpeakerLoudIcon />}
-				</Button>
-			</div>
+				<div className="flex items-center space-x-1">
+					<Button
+						onClick={toggleLooped}
+						className={isLooped ? "toggled-button" : "untoggled-button"}
+						size="icon"
+					>
+						{isLooped ? "1" : <ListBulletIcon className="size-5" />}
+						<LoopIcon className="size-5" />
+					</Button>
+					<Button
+						onClick={toggleMuted}
+						className={isMuted ? "untoggled-button" : "toggled-button"}
+						size="icon"
+					>
+						{isMuted ? (
+							<SpeakerOffIcon className="size-5" />
+						) : (
+							<SpeakerLoudIcon className="size-5" />
+						)}
+					</Button>
+				</div>
 
-			<div className="flex items-center flex-col grow space-y-2">
-				<h4 className="font-bold px-4 truncate">
-					{hasWindow && playlist.length > 0
+				<h4 className="font-bold truncate grow">
+					{hasWindow && playlist.length > currentSongIndex
 						? playlist[currentSongIndex].name
 						: "No song"}
 				</h4>
-				<input
-					className="w-full"
-					type="range"
-					min={0}
-					max={0.999999}
-					step="any"
-					value={played}
-					onMouseDown={handleSeekMouseDown}
-					onChange={handleSeekChange}
-					onMouseUp={handleSeekMouseUp}
-				/>
-			</div>
 
-			{hasWindow && (
-				<ReactPlayer
-					ref={playerRef}
-					url={getCurrentUrl()}
-					height="80px"
-					width="80px"
-					playing={isPlaying}
-					onStart={handleStart}
-					onPlay={handlePlay}
-					onPause={handlePause}
-					onEnded={handleEnded}
-					volume={1}
-					muted={isMuted}
-					loop={isLooped}
-					onError={handleError}
-					onProgress={handleProgress}
-					onReady={() => console.log("onReady")}
-				/>
-			)}
+				{hasWindow && (
+					<ReactPlayer
+						ref={playerRef}
+						url={getCurrentUrl()}
+						height="78px"
+						width="78px"
+						playing={isPlaying}
+						onStart={handleStart}
+						onPlay={handlePlay}
+						onPause={handlePause}
+						onEnded={handleEnded}
+						volume={1}
+						muted={isMuted}
+						loop={isLooped}
+						onError={handleError}
+						onProgress={handleProgress}
+						onReady={() => console.log("onReady")}
+					/>
+				)}
+			</div>
 		</div>
 	);
 }

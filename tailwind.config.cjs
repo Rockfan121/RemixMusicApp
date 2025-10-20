@@ -22,6 +22,9 @@ module.exports = {
 			},
 		},
 		extend: {
+			boxShadow: {
+				"3xl": "0px 0px 20px 10px white",
+			},
 			colors: {
 				border: lightDarkVar("border"),
 				input: lightDarkVar("input"),

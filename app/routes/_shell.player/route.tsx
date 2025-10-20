@@ -79,7 +79,7 @@ export default function Player() {
 				<Outlet context={contextValue} />
 			</div>
 
-			<footer className="w-full h-24 left-0 bottom-0 fixed bg-accent">
+			<footer className="w-full h-24 left-0 bottom-0 fixed bg-card shadow-3xl shadow-primary">
 				<MusicPlayer
 					playlist={playlist}
 					firstTrackNo={firstTrackNo}
