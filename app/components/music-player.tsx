@@ -10,17 +10,20 @@ import {
 } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
+import { Link } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { timeout200, timeout1000 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
+import { Duration } from "./duration";
 
 interface MusicPlayerProps {
 	playlist: Array<Track>;
 	firstTrackNo: number;
 	timestamp: number;
+	playlistUrl: string;
 }
 /**
  * Component wrapping ReactPlayer, playing music from some playlist
@@ -29,12 +32,14 @@ export function MusicPlayer({
 	playlist,
 	firstTrackNo,
 	timestamp,
+	playlistUrl,
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
-	const [isPlaying, setIsPlaying] = useState(true);
+	const [isPlaying, setIsPlaying] = useState(false);
 	const [isLooped, setIsLooped] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 	const [played, setPlayed] = useState(0);
+	const [duration, setDuration] = useState(0);
 	const [seeking, setSeeking] = useState(false);
 	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
 
@@ -53,9 +58,9 @@ export function MusicPlayer({
 			setCurrentSongIndex(firstTrackNo);
 			//console.log("MusicPlayer timestamp:");
 			console.log(timestamp);
-			startPlayingFromBeginning();
+			if (playlist.length > 0) startPlayingFromBeginning();
 		}
-	}, [firstTrackNo, timestamp, startPlayingFromBeginning]);
+	}, [firstTrackNo, timestamp, startPlayingFromBeginning, playlist]);
 
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
@@ -149,6 +154,10 @@ export function MusicPlayer({
 		}
 	};
 
+	const handleDuration = (duration: number) => {
+		setDuration(duration);
+	};
+
 	//Returns correct URL of the track to be played now (according to currentSongIndex)
 	const getCurrentUrl = () => {
 		return getUrl(currentSongIndex);
@@ -218,18 +227,27 @@ export function MusicPlayer({
 					</Button>
 				</div>
 
-				<h4 className="font-bold truncate grow">
-					{hasWindow && playlist.length > currentSongIndex
-						? playlist[currentSongIndex].name
-						: "No song"}
-				</h4>
+				<div className="truncate flex grow flex-col">
+					<h4 className="flex font-bold">
+						{hasWindow && playlist.length > currentSongIndex ? (
+							<Link to={playlistUrl}>{playlist[currentSongIndex].name}</Link>
+						) : (
+							"No song"
+						)}
+					</h4>
+					<div className="flex text-xs">
+						<Duration seconds={duration * played} />
+						<span className="mx-0.5">/</span>
+						<Duration seconds={duration} />
+					</div>
+				</div>
 
 				{hasWindow && (
 					<ReactPlayer
 						ref={playerRef}
 						url={getCurrentUrl()}
-						height="78px"
-						width="78px"
+						height="74px"
+						width="74px"
 						playing={isPlaying}
 						onStart={handleStart}
 						onPlay={handlePlay}
@@ -241,6 +259,8 @@ export function MusicPlayer({
 						onError={handleError}
 						onProgress={handleProgress}
 						onReady={() => console.log("onReady")}
+						onDuration={handleDuration}
+						style={{ marginTop: "5px" }}
 					/>
 				)}
 			</div>

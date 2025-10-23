@@ -13,6 +13,7 @@ import {
 } from "@/helpers/recent-playlists";
 import type { ContextType } from "@/types/context-type";
 import type { Track } from "@/types/openwhyd-types";
+import { myUrl } from "@/types/xplaylist-helpers";
 import type { XPlaylist } from "@/types/xplaylist-type";
 
 /**
@@ -25,6 +26,7 @@ export default function Player() {
 	const [playlist, setPlaylist] = useState<Array<Track>>([]);
 	const [firstTrackNo, setFirstTrackNo] = useState<number>(0);
 	const [timestamp, setTimestamp] = useState<number>(0);
+	const [playlistUrl, setPlaylistUrl] = useState<string>("");
 
 	const [recentPl, setRecentPl] = useState<XPlaylist[]>([]);
 	const [favesPl, setFavesPl] = useState<XPlaylist[]>([]);
@@ -41,6 +43,7 @@ export default function Player() {
 		setPlaylist(a);
 		setFirstTrackNo(b);
 		setTimestamp(Date.now());
+		setPlaylistUrl(myUrl(c));
 
 		addToRecentPlaylists(c);
 		setRecentPl(getRecentPlaylists());
@@ -84,6 +87,7 @@ export default function Player() {
 					playlist={playlist}
 					firstTrackNo={firstTrackNo}
 					timestamp={timestamp}
+					playlistUrl={playlistUrl}
 				/>
 			</footer>
 		</>
