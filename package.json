@@ -48,6 +48,7 @@
 		"remix-auth": "3.6.0",
 		"remix-auth-form": "1.4.0",
 		"remix-utils": "7.5.0",
+		"screenfull": "^6.0.2",
 		"sonner": "^2.0.3",
 		"tailwind-merge": "2.2.1",
 		"tailwindcss-animate": "1.0.7",

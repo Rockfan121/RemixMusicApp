@@ -1,4 +1,5 @@
 import {
+	EnterFullScreenIcon,
 	ListBulletIcon,
 	LoopIcon,
 	PauseIcon,
@@ -11,6 +12,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Link } from "react-router";
+import screenfull from "screenfull";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
@@ -158,6 +160,15 @@ export function MusicPlayer({
 		setDuration(duration);
 	};
 
+	const handleClickFullscreen = () => {
+		const playerElement = hasWindow
+			? document.querySelector(".react-player")
+			: null;
+		if (playerElement) {
+			screenfull.request(playerElement);
+		}
+	};
+
 	//Returns correct URL of the track to be played now (according to currentSongIndex)
 	const getCurrentUrl = () => {
 		return getUrl(currentSongIndex);
@@ -184,14 +195,14 @@ export function MusicPlayer({
 				onChange={handleSeekChange}
 				onMouseUp={handleSeekMouseUp}
 			/>
-			<div className="flex w-full items-center space-x-5 px-3 py-1">
-				<div className="flex items-center space-x-1">
-					<Button onClick={prevSong} className="rounded-full" size="icon">
+			<div className="flex w-full items-center space-x-3 sm:space-x-5 px-1 sm:px-3 py-1">
+				<div className="flex items-center space-x-0 sm:space-x-0.5">
+					<Button onClick={prevSong} className="player-button" size="icon">
 						<TrackPreviousIcon className="size-5" />
 					</Button>
 					<Button
 						onClick={togglePlayPause}
-						className="rounded-full"
+						className="player-button"
 						size="icon-lg"
 					>
 						{isPlaying ? (
@@ -200,12 +211,12 @@ export function MusicPlayer({
 							<PlayIcon className="size-6" />
 						)}
 					</Button>
-					<Button onClick={nextSong} className="rounded-full" size="icon">
+					<Button onClick={nextSong} className="player-button" size="icon">
 						<TrackNextIcon className="size-5" />
 					</Button>
 				</div>
 
-				<div className="flex items-center space-x-1">
+				<div className="flex items-center space-x-0.5">
 					<Button
 						onClick={toggleLooped}
 						className={isLooped ? "toggled-button" : "untoggled-button"}
@@ -224,6 +235,14 @@ export function MusicPlayer({
 						) : (
 							<SpeakerLoudIcon className="size-5" />
 						)}
+					</Button>
+
+					<Button
+						onClick={handleClickFullscreen}
+						className="toggled-button"
+						size="icon"
+					>
+						<EnterFullScreenIcon className="size-5" />
 					</Button>
 				</div>
 
@@ -246,8 +265,10 @@ export function MusicPlayer({
 					<ReactPlayer
 						ref={playerRef}
 						url={getCurrentUrl()}
+						className="react-player"
 						height="74px"
 						width="74px"
+						controls={true}
 						playing={isPlaying}
 						onStart={handleStart}
 						onPlay={handlePlay}
