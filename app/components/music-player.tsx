@@ -38,7 +38,7 @@ export function MusicPlayer({
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
-	const [isLooped, setIsLooped] = useState(false);
+	const [howLooped, setHowLooped] = useState(1);
 	const [isMuted, setIsMuted] = useState(false);
 	const [played, setPlayed] = useState(0);
 	const [duration, setDuration] = useState(0);
@@ -69,7 +69,7 @@ export function MusicPlayer({
 	};
 
 	const toggleLooped = () => {
-		setIsLooped(!isLooped);
+		setHowLooped((howLooped + 1) % 3);
 	};
 	const toggleMuted = () => {
 		setIsMuted(!isMuted);
@@ -132,7 +132,8 @@ export function MusicPlayer({
 
 	const handleEnded = async () => {
 		console.log("onEnded");
-		nextSong();
+		if (currentSongIndex + 1 < playlist.length || howLooped > 0) nextSong();
+		else handlePause();
 	};
 
 	const handleSeekMouseDown = () => {
@@ -219,10 +220,16 @@ export function MusicPlayer({
 				<div className="flex items-center space-x-0.5">
 					<Button
 						onClick={toggleLooped}
-						className={isLooped ? "toggled-button" : "untoggled-button"}
+						className={howLooped === 0 ? "untoggled-button" : "toggled-button"}
 						size="icon"
 					>
-						{isLooped ? "1" : <ListBulletIcon className="size-5" />}
+						{howLooped === 1 ? (
+							<ListBulletIcon className="size-5" />
+						) : howLooped === 2 ? (
+							"1"
+						) : (
+							""
+						)}
 						<LoopIcon className="size-5" />
 					</Button>
 					<Button
@@ -276,7 +283,7 @@ export function MusicPlayer({
 						onEnded={handleEnded}
 						volume={1}
 						muted={isMuted}
-						loop={isLooped}
+						loop={howLooped === 2}
 						onError={handleError}
 						onProgress={handleProgress}
 						onReady={() => console.log("onReady")}
