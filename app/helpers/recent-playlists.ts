@@ -1,4 +1,4 @@
-import { MAX_RECENT_PLAYLISTS } from "@/config.shared";
+import { MAX_PLAYLISTS } from "@/config.shared";
 import type { XPlaylist } from "@/types/xplaylist-type";
 
 const RECENT_PLAYLISTS_KEY = "recentPlaylists";
@@ -22,7 +22,7 @@ export const addToRecentPlaylists = (playlist: XPlaylist): void => {
 		filteredPlaylists.unshift(playlist);
 
 		// Keep only the most recent MAX_PLAYLISTS
-		const trimmedPlaylists = filteredPlaylists.slice(0, MAX_RECENT_PLAYLISTS);
+		const trimmedPlaylists = filteredPlaylists.slice(0, MAX_PLAYLISTS);
 
 		// Save back to localStorage
 		localStorage.setItem(

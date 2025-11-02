@@ -1,8 +1,9 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData, useParams } from "react-router";
 
-import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
+import { apiPlaylist, userPlaylist } from "@/services/openwhyd";
 import type { XPlaylist } from "@/types/xplaylist-type";
 import TableReplacement from "./components/table-replacement";
 import TracksHeader from "./components/tracks-header";
@@ -12,16 +13,14 @@ import TracksTable from "./components/tracks-table";
  * Fetch tracks from one of Openwhyd users playlists
  */
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-	const PLAYLIST_INFO_URL = `https://openwhyd.org/api/playlist/
-		${params.userId}_${params.playlistId}`;
 	await new Promise(timeout300);
-	const api_res = await fetch(PLAYLIST_INFO_URL);
+	const api_res = await fetch(apiPlaylist(params.userId, params.playlistId));
 
 	if (api_res.status === 200) {
-		const PLAYLIST_TRACKS_URL = `https://openwhyd.org/u/${params.userId}/playlist/
-			${params.playlistId}?format=json&limit=${MAX_FETCHED_ITEMS}`;
 		await new Promise(timeout300);
-		const user_res = await fetch(PLAYLIST_TRACKS_URL);
+		const user_res = await fetch(
+			userPlaylist(params.userId, params.playlistId),
+		);
 
 		const text_user_res = await user_res.clone();
 		if ((await text_user_res.text())[0] === "m") {
@@ -76,13 +75,13 @@ export default function TracksView() {
 			uNm: "",
 			plId: `${params.playlistId}`,
 			nbTracks: 0,
-			doesExist: true,
+			doesExist: false,
 		};
 
 		return (
 			<>
 				<TracksHeader xplaylistInfo={nonexistentPlaylist} />
-				<TableReplacement doesExist={true} />
+				<TableReplacement doesExist={false} />
 			</>
 		);
 	}
@@ -94,7 +93,7 @@ export default function TracksView() {
 		uNm: PLAYLIST_INFO[0].uNm,
 		plId: PLAYLIST_INFO[0].plId,
 		nbTracks: PLAYLIST_INFO[0].nbTracks,
-		doesExist: false,
+		doesExist: true,
 	};
 
 	if (Object.keys(TRACKS).length === 0) {
@@ -102,7 +101,7 @@ export default function TracksView() {
 			// No tracks found - the playlist is empty
 			<>
 				<TracksHeader xplaylistInfo={xplaylistInfo} />
-				<TableReplacement doesExist={false} />
+				<TableReplacement doesExist={true} />
 			</>
 		);
 	}

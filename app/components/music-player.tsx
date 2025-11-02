@@ -16,7 +16,7 @@ import screenfull from "screenfull";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { timeout200, timeout1000 } from "@/helpers/timeouts";
+import { timeout200, timeout1000, timeout1500 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 import { Duration } from "./duration";
@@ -100,7 +100,7 @@ export function MusicPlayer({
 	const handleError = async () => {
 		console.log("onError");
 		toast.error(`Track "${playlist[currentSongIndex].name}" can't be played`, {
-			duration: 5000,
+			duration: 4000,
 		});
 		await new Promise(timeout1000);
 
@@ -161,11 +161,20 @@ export function MusicPlayer({
 		setDuration(duration);
 	};
 
-	const handleClickFullscreen = () => {
+	const handleClickFullscreen = async () => {
 		const playerElement = hasWindow
 			? document.querySelector(".react-player")
 			: null;
 		if (playerElement) {
+			toast.message(
+				<div className="font-bold text-2xl text-ring">
+					To leave fullscreen, press <span className="italic">Esc</span> button.
+				</div>,
+				{
+					duration: 1500,
+				},
+			);
+			await new Promise(timeout1500);
 			screenfull.request(playerElement);
 		}
 	};
@@ -275,7 +284,7 @@ export function MusicPlayer({
 						className="react-player"
 						height="74px"
 						width="74px"
-						controls={true}
+						controls={false}
 						playing={isPlaying}
 						onStart={handleStart}
 						onPlay={handlePlay}

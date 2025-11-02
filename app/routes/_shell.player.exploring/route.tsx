@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
+import { apiUser, userListOfPlaylists } from "@/services/openwhyd";
 
 const PAGE_TITLE = "Explore playlists";
 
@@ -21,28 +22,23 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 	if (USER_ID !== null && USER_ID !== "") {
 		await new Promise(timeout300);
-		const res = await fetch(
-			`https://openwhyd.org/u/${USER_ID}/playlists?format=json&limit=100`,
-		);
+		const res = await fetch(userListOfPlaylists(USER_ID));
 
 		const resJson = await res.json();
 		if (typeof resJson !== "undefined" && !Object.hasOwn(resJson, "error")) {
-			const firstPlaylistId = (await resJson)[0].id;
 			await new Promise(timeout300);
-			const userNameRes = await fetch(
-				`https://openwhyd.org/u/${USER_ID}/playlist/${firstPlaylistId}?format=json&limit=1`,
-			);
+			const userNameRes = await fetch(apiUser(USER_ID));
 
 			return {
 				res: await resJson,
-				firstPlaylistRes: await userNameRes.json(),
+				userRes: await userNameRes.json(),
 				query: USER_ID,
 			};
 		}
 	}
 	return {
 		res: {},
-		firstPlaylistRes: {},
+		userRes: {},
 		query: USER_ID,
 	};
 };
@@ -52,12 +48,12 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Exploring() {
-	const { res, firstPlaylistRes, query } = useLoaderData<typeof loader>();
+	const { res, userRes, query } = useLoaderData<typeof loader>();
 	let userNameRes = "";
 	let userIdRes = "";
-	if (Object.keys(firstPlaylistRes).length) {
-		userNameRes = firstPlaylistRes[0].uNm;
-		userIdRes = firstPlaylistRes[0].uId;
+	if (Object.keys(userRes).length) {
+		userNameRes = userRes.name;
+		userIdRes = userRes.id;
 	}
 
 	useEffect(() => {
