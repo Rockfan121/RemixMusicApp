@@ -15,8 +15,10 @@ export const getMusicServiceAndUrl = (eId: string) => {
 			return getVimeoUrl(id);
 		case "bc":
 			return getBandcampUrl(id);
+		case "fi":
+			return id;
 	}
-	return "";
+	return eId;
 };
 
 const getYouTubeUrl = (id: string) => {
