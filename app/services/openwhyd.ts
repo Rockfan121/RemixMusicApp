@@ -23,3 +23,7 @@ export function userPlaylist(
 	return `https://openwhyd.org/u/${userId}/playlist/
 			${playlistId}?format=json&limit=${MAX_FETCHED_ITEMS}`;
 }
+
+export function playlistImg(playlist_Id: string | undefined) {
+	return `https://openwhyd.org/img/playlist/${playlist_Id}`;
+}

@@ -5,7 +5,8 @@ import ScrollToTop from "react-scroll-to-top";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { UserPlaylist } from "@/types/openwhyd-types";
+import { playlistImg } from "@/services/openwhyd";
+import type { ApiPlaylist, UserPlaylist } from "@/types/openwhyd-types";
 import ItemCover from "./item-cover";
 
 /**
@@ -23,7 +24,7 @@ export default function PlaylistsList({
 	userName,
 	userId,
 }: {
-	children?: Array<UserPlaylist>;
+	children?: Array<UserPlaylist> | Array<ApiPlaylist>;
 	listIntro: string;
 	listEmptyText: string;
 	userName?: string;
@@ -40,16 +41,31 @@ export default function PlaylistsList({
 	let searchInput: React.ReactNode; //The search input for some playlist title (NOTE: it's just displayed, it doesn't work yet)
 
 	if (typeof children !== "undefined" && children.length > 0) {
-		content = children.map((p) => (
-			<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
-				<ItemCover
-					title={p.name}
-					subtitle={userNameResolved}
-					coverImg={`https://openwhyd.org${p.img}`}
-					altText="UserPlaylist cover"
-				/>
-			</Link>
-		));
+		if (Object.hasOwn(children[0], "uNm")) {
+			const apiPlaylists = children as ApiPlaylist[];
+			content = apiPlaylists.map((p) => (
+				<Link to={`/player/tracks/${p.uId}/${p.plId}`} key={p.id}>
+					<ItemCover
+						title={p.name}
+						subtitle={p.uNm}
+						coverImg={playlistImg(p.id)}
+						altText="ApiPlaylist cover"
+					/>
+				</Link>
+			));
+		} else {
+			const userPlaylists = children as UserPlaylist[];
+			content = userPlaylists.map((p) => (
+				<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
+					<ItemCover
+						title={p.name}
+						subtitle={userNameResolved}
+						coverImg={p.img}
+						altText="UserPlaylist cover"
+					/>
+				</Link>
+			));
+		}
 
 		contentGrid = (
 			<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16">

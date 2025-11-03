@@ -168,7 +168,8 @@ export function MusicPlayer({
 		if (playerElement) {
 			toast.message(
 				<div className="font-bold text-2xl text-ring">
-					To leave fullscreen, press <span className="italic">Esc</span> button.
+					To leave fullscreen, press <span className="italic">Esc</span> on
+					keyboard.
 				</div>,
 				{
 					duration: 1500,

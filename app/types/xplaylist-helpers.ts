@@ -1,3 +1,4 @@
+import { playlistImg } from "@/services/openwhyd";
 import type { XPlaylist } from "./xplaylist-type";
 
 export function myUrl(pl: XPlaylist) {
@@ -7,5 +8,5 @@ export function openwhydUrl(pl: XPlaylist) {
 	return `https://openwhyd.org/u/${pl.uId}/playlist/${pl.plId}`;
 }
 export function imgUrl(pl: XPlaylist) {
-	return `https://openwhyd.org/img/playlist/${pl.id}`;
+	return playlistImg(pl.id);
 }
