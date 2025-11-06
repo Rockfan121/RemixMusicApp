@@ -20,7 +20,7 @@ export default function ItemCover({
 }: ItemCoverProps) {
 	return (
 		<figure>
-			<div className="w-28 h-28 overflow-hidden rounded-md albumCover">
+			<div className="w-28 h-28 overflow-hidden rounded-md album-cover">
 				<img
 					src={coverImg}
 					alt={altText}

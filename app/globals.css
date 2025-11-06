@@ -199,7 +199,7 @@
 	@apply rounded-full border-2 border-white;
 }
 
-.toTopButton {
+.to-top-button {
 	bottom: 120px !important;
 	padding: 5px;
 	box-shadow:
@@ -207,6 +207,14 @@
 		-7px 0px 15px 0 dimgrey !important;
 }
 
-.albumCover {
+.album-cover {
 	background-image: url("https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=300&dpr=2&q=80");
+}
+
+.search-input {
+	background-image: url("https://cdn.pixabay.com/photo/2013/03/29/13/40/magnifying-glass-97635_640.png");
+	background-position: 5px 5px;
+	background-size: 2em;
+	background-repeat: no-repeat;
+	padding: 12px 20px 12px 38px;
 }

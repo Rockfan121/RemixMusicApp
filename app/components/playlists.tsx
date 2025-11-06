@@ -1,11 +1,11 @@
 import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import type React from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { playlistImg } from "@/services/openwhyd";
+import { playlistImg, userPlaylist } from "@/services/openwhyd";
 import type { ApiPlaylist, UserPlaylist } from "@/types/openwhyd-types";
 import ItemCover from "./item-cover";
 
@@ -30,6 +30,8 @@ export default function PlaylistsList({
 	userName?: string;
 	userId?: string;
 }) {
+	const [localQuery, setLocalQuery] = useState("");
+
 	let userNameResolved = "";
 	if (typeof userName !== "undefined") userNameResolved = userName;
 
@@ -40,10 +42,20 @@ export default function PlaylistsList({
 	let contentGrid: React.ReactNode; //The playlists covers will be aligned to grid
 	let searchInput: React.ReactNode; //The search input for some playlist title (NOTE: it's just displayed, it doesn't work yet)
 
+	function handleQueryChange(e: { target: { value: string } }) {
+		setLocalQuery(e.target.value);
+	}
+
 	if (typeof children !== "undefined" && children.length > 0) {
 		if (Object.hasOwn(children[0], "uNm")) {
 			const apiPlaylists = children as ApiPlaylist[];
-			content = apiPlaylists.map((p) => (
+			const filteredApiPlaylist =
+				localQuery !== ""
+					? apiPlaylists.filter((p) =>
+							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
+						)
+					: apiPlaylists;
+			content = filteredApiPlaylist.map((p) => (
 				<Link to={`/player/tracks/${p.uId}/${p.plId}`} key={p.id}>
 					<ItemCover
 						title={p.name}
@@ -55,12 +67,19 @@ export default function PlaylistsList({
 			));
 		} else {
 			const userPlaylists = children as UserPlaylist[];
-			content = userPlaylists.map((p) => (
+			const filteredUserPlaylists =
+				localQuery !== ""
+					? userPlaylists.filter((p) =>
+							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
+						)
+					: userPlaylists;
+
+			content = filteredUserPlaylists.map((p) => (
 				<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
 					<ItemCover
 						title={p.name}
 						subtitle={userNameResolved}
-						coverImg={p.img}
+						coverImg={`https://openwhyd.org${p.img}`}
 						altText="UserPlaylist cover"
 					/>
 				</Link>
@@ -75,15 +94,14 @@ export default function PlaylistsList({
 
 		searchInput = (
 			<div className="flex w-60 max-w-sm items-center space-x-1">
-				<Input placeholder="Search" type="search" />
-				<Button type="submit" size="icon" className="bg-secondary border">
-					<MagnifyingGlassIcon />
-				</Button>
-				{/* <div
-						aria-hidden
-						hidden={true}
-						id="search-spinner"
-					/> */}
+				<Input
+					className="search-input"
+					placeholder="Search"
+					type="search"
+					id="localQuery"
+					name="pl"
+					onChange={handleQueryChange}
+				/>
 			</div>
 		);
 	} else {
@@ -108,7 +126,7 @@ export default function PlaylistsList({
 				{searchInput}
 			</div>
 			{contentGrid}
-			<ScrollToTop smooth className="toTopButton" />
+			<ScrollToTop smooth className="to-top-button" />
 		</>
 	);
 }

@@ -33,7 +33,7 @@ export default function TracksHeader({
 
 	return (
 		<div className="mx-6 playlist-container p-6 mb-8 border-2 rounded-md h-52 flex bg-card">
-			<div className="albumCover aspect-square h-40 w-40 rounded-xl object-cover">
+			<div className="album-cover aspect-square h-40 w-40 rounded-xl object-cover">
 				<img
 					src={imgUrl(xplaylistInfo)}
 					alt="Playlist cover"
