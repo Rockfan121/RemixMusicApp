@@ -3,7 +3,7 @@ import type { MetaFunction } from "react-router";
 import PlaylistsList from "@/components/playlists";
 import { title } from "@/config.shared";
 import { getFavoritePlaylists } from "@/helpers/favorite-playlists";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 const PAGE_TITLE = "Your favorites";
 
@@ -12,7 +12,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Faves() {
-	const [favesPl, setFavesPl] = useState<XPlaylist[]>([]);
+	const [favesPl, setFavesPl] = useState<ApiPlaylist[]>([]);
 	useEffect(() => {
 		const favesPl = getFavoritePlaylists();
 		setFavesPl(favesPl);

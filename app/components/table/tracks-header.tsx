@@ -6,27 +6,27 @@ import {
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router";
 import { isPlaylistFavorite } from "@/helpers/favorite-playlists";
+import { imgUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
 import type { ContextType } from "@/types/context-type";
-import { imgUrl, openwhydUrl } from "@/types/xplaylist-helpers";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 export default function TracksHeader({
-	xplaylistInfo,
+	apiplaylistInfo,
 }: {
-	xplaylistInfo: XPlaylist;
+	apiplaylistInfo: ApiPlaylist;
 }) {
 	const { favesCallback } = useOutletContext<ContextType>();
 	const [favorite, setFavorite] = useState(false);
 
 	useEffect(() => {
-		const isFavorite = isPlaylistFavorite(`${xplaylistInfo.id}`);
+		const isFavorite = isPlaylistFavorite(`${apiplaylistInfo.id}`);
 		setFavorite(isFavorite);
-	}, [xplaylistInfo]);
+	}, [apiplaylistInfo]);
 
 	/**
 	 * Function to both call favesCallback and update local state
 	 */
-	const fireFavesCallback = (playlist: XPlaylist) => {
+	const fireFavesCallback = (playlist: ApiPlaylist) => {
 		favesCallback(playlist);
 		setFavorite(!favorite);
 	};
@@ -35,7 +35,7 @@ export default function TracksHeader({
 		<div className="mx-6 playlist-container p-6 mb-8 border-2 rounded-md h-52 flex bg-card">
 			<div className="album-cover aspect-square h-40 w-40 rounded-xl object-cover">
 				<img
-					src={imgUrl(xplaylistInfo)}
+					src={imgUrl(apiplaylistInfo)}
 					alt="Playlist cover"
 					aria-hidden
 					className="aspect-square h-40 w-40 rounded-md object-cover"
@@ -43,12 +43,12 @@ export default function TracksHeader({
 			</div>
 			<div>
 				<h4 className="ml-6 mb-1 text-2xl font-bold leading-none text-ring">
-					{`${xplaylistInfo.name}`}
+					{`${apiplaylistInfo.name}`}
 				</h4>
-				<h5 className="ml-6 mb-6 text-lg text-muted-foreground">{`${xplaylistInfo.uNm}`}</h5>
+				<h5 className="ml-6 mb-6 text-lg text-muted-foreground">{`${apiplaylistInfo.uNm}`}</h5>
 				<button
 					type="button"
-					onClick={() => fireFavesCallback(xplaylistInfo)}
+					onClick={() => fireFavesCallback(apiplaylistInfo)}
 					aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
 					name="favorite"
 					value={favorite ? "false" : "true"}
@@ -61,7 +61,7 @@ export default function TracksHeader({
 				</button>
 
 				<a
-					href={openwhydUrl(xplaylistInfo)}
+					href={openwhydUrl(apiplaylistInfo)}
 					target="_blank"
 					rel="noopener noreferrer"
 				>

@@ -32,7 +32,7 @@ export function hotPlaylist() {
 	return `https://openwhyd.org/hot?format=json&limit=${MAX_FETCHED_ITEMS}`;
 }
 
-export function allPlaylist(){
+export function allPlaylist() {
 	return `https://openwhyd.org/all?format=json&limit=${MAX_FETCHED_ITEMS}`;
 }
 

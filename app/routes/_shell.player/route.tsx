@@ -11,10 +11,9 @@ import {
 	addToRecentPlaylists,
 	getRecentPlaylists,
 } from "@/helpers/recent-playlists";
+import { myUrl } from "@/types/apiplaylist-helpers";
 import type { ContextType } from "@/types/context-type";
-import type { Track } from "@/types/openwhyd-types";
-import { myUrl } from "@/types/xplaylist-helpers";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
 
 /**
  * This route displays MusicPlayer (and passes data to it), sets the callback function (used e.g. in "tracks" route)
@@ -28,8 +27,8 @@ export default function Player() {
 	const [timestamp, setTimestamp] = useState<number>(0);
 	const [playlistUrl, setPlaylistUrl] = useState<string>("");
 
-	const [recentPl, setRecentPl] = useState<XPlaylist[]>([]);
-	const [favesPl, setFavesPl] = useState<XPlaylist[]>([]);
+	const [recentPl, setRecentPl] = useState<ApiPlaylist[]>([]);
+	const [favesPl, setFavesPl] = useState<ApiPlaylist[]>([]);
 
 	useEffect(() => {
 		const recentPl = getRecentPlaylists();
@@ -39,7 +38,7 @@ export default function Player() {
 		setFavesPl(favesPl);
 	}, []);
 
-	const handleCallback = (a: Array<Track>, b: number, c: XPlaylist) => {
+	const handleCallback = (a: Array<Track>, b: number, c: ApiPlaylist) => {
 		setPlaylist(a);
 		setFirstTrackNo(b);
 		setTimestamp(Date.now());
@@ -49,7 +48,7 @@ export default function Player() {
 		setRecentPl(getRecentPlaylists());
 	};
 
-	const handleFavesCallback = (a: XPlaylist) => {
+	const handleFavesCallback = (a: ApiPlaylist) => {
 		toggleFavorite(a);
 		setFavesPl(getFavoritePlaylists());
 	};

@@ -6,7 +6,7 @@ import TracksTable from "@/components/table/tracks-table";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { apiPlaylist, userPlaylist } from "@/services/openwhyd";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 /**
  * Fetch tracks from one of Openwhyd users playlists
@@ -66,7 +66,7 @@ export default function TracksView() {
 	const params = useParams();
 
 	if (!Object.hasOwn(PLAYLIST_INFO[0], "name")) {
-		const nonexistentPlaylist: XPlaylist = {
+		const nonexistentPlaylist: ApiPlaylist = {
 			// No playlist found - it doesn't exist
 			id: `${params.userId}_${params.playlistId}`,
 			name: "",
@@ -74,32 +74,30 @@ export default function TracksView() {
 			uNm: "",
 			plId: `${params.playlistId}`,
 			nbTracks: 0,
-			doesExist: false,
 		};
 
 		return (
 			<>
-				<TracksHeader xplaylistInfo={nonexistentPlaylist} />
+				<TracksHeader apiplaylistInfo={nonexistentPlaylist} />
 				<TableReplacement doesExist={false} />
 			</>
 		);
 	}
 
-	const xplaylistInfo: XPlaylist = {
+	const apiplaylistInfo: ApiPlaylist = {
 		id: PLAYLIST_INFO[0].id,
 		name: PLAYLIST_INFO[0].name,
 		uId: PLAYLIST_INFO[0].uId,
 		uNm: PLAYLIST_INFO[0].uNm,
 		plId: PLAYLIST_INFO[0].plId,
 		nbTracks: PLAYLIST_INFO[0].nbTracks,
-		doesExist: true,
 	};
 
 	if (Object.keys(TRACKS).length === 0) {
 		return (
 			// No tracks found - the playlist is empty
 			<>
-				<TracksHeader xplaylistInfo={xplaylistInfo} />
+				<TracksHeader apiplaylistInfo={apiplaylistInfo} />
 				<TableReplacement doesExist={true} />
 			</>
 		);
@@ -108,8 +106,8 @@ export default function TracksView() {
 	return (
 		// Playlist and tracks found - display them
 		<>
-			<TracksHeader xplaylistInfo={xplaylistInfo} />
-			<TracksTable xplaylistInfo={xplaylistInfo}>{TRACKS}</TracksTable>
+			<TracksHeader apiplaylistInfo={apiplaylistInfo} />
+			<TracksTable apiplaylistInfo={apiplaylistInfo}>{TRACKS}</TracksTable>
 		</>
 	);
 }

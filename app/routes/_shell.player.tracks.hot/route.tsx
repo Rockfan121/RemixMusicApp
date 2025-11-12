@@ -1,6 +1,3 @@
 export default function HotTracks() {
-
-	return (
-		<h2>Hot tracks</h2>
-	);
+	return <h2>Hot tracks</h2>;
 }

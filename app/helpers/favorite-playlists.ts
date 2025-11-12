@@ -1,30 +1,30 @@
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 // Constants
 const FAVES_PLAYLISTS_KEY = "favoritePlaylists";
 
 // Private state
-let playlistsMap: Map<string, XPlaylist> | null = null;
+let playlistsMap: Map<string, ApiPlaylist> | null = null;
 
 /**
  * Initialize the Map from localStorage if not already initialized
  */
-const initializeMap = (): Map<string, XPlaylist> => {
+const initializeMap = (): Map<string, ApiPlaylist> => {
 	if (playlistsMap === null) {
 		try {
 			const stored = localStorage.getItem(FAVES_PLAYLISTS_KEY);
 			if (!stored) {
-				playlistsMap = new Map<string, XPlaylist>();
+				playlistsMap = new Map<string, ApiPlaylist>();
 			} else {
 				// Convert stored array to Map
-				const playlists = JSON.parse(stored) as XPlaylist[];
+				const playlists = JSON.parse(stored) as ApiPlaylist[];
 				playlistsMap = new Map(
 					playlists.map((playlist) => [playlist.id, playlist]),
 				);
 			}
 		} catch (error) {
 			console.error("Failed to initialize favorites map:", error);
-			playlistsMap = new Map<string, XPlaylist>();
+			playlistsMap = new Map<string, ApiPlaylist>();
 		}
 	}
 	return playlistsMap;
@@ -47,7 +47,7 @@ const saveToStorage = (): void => {
  * @param playlist The playlist to add
  * @returns boolean indicating if the operation was successful
  */
-const addToFavorites = (playlist: XPlaylist): boolean => {
+const addToFavorites = (playlist: ApiPlaylist): boolean => {
 	try {
 		const map = initializeMap();
 		if (map.has(playlist.id)) {
@@ -86,7 +86,7 @@ const removeFromFavorites = (playlistId: string): boolean => {
  * Gets all favorite playlists
  * @returns Array of favorite playlists
  */
-export const getFavoritePlaylists = (): XPlaylist[] => {
+export const getFavoritePlaylists = (): ApiPlaylist[] => {
 	const result = Array.from(initializeMap().values());
 	return result.reverse();
 };
@@ -105,7 +105,7 @@ export const isPlaylistFavorite = (playlistId: string): boolean => {
  * @param playlist The playlist to toggle
  * @returns boolean indicating new favorite status (true if added, false if removed)
  */
-export const toggleFavorite = (playlist: XPlaylist): boolean => {
+export const toggleFavorite = (playlist: ApiPlaylist): boolean => {
 	if (isPlaylistFavorite(playlist.id)) {
 		return !removeFromFavorites(playlist.id);
 	}

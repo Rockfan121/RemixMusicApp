@@ -1,5 +1,5 @@
 import { MAX_PLAYLISTS } from "@/config.shared";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 const RECENT_PLAYLISTS_KEY = "recentPlaylists";
 
@@ -8,7 +8,7 @@ const RECENT_PLAYLISTS_KEY = "recentPlaylists";
  * If the playlist already exists, it will be moved to the front (most recent)
  * @param playlist The playlist to add
  */
-export const addToRecentPlaylists = (playlist: XPlaylist): void => {
+export const addToRecentPlaylists = (playlist: ApiPlaylist): void => {
 	try {
 		// Get current playlists
 		const recentPlaylists = getRecentPlaylists();
@@ -38,7 +38,7 @@ export const addToRecentPlaylists = (playlist: XPlaylist): void => {
  * Retrieves all recent playlists, ordered by most recent first
  * @returns Array of recent playlists
  */
-export const getRecentPlaylists = (): XPlaylist[] => {
+export const getRecentPlaylists = (): ApiPlaylist[] => {
 	try {
 		const storedPlaylists = localStorage.getItem(RECENT_PLAYLISTS_KEY);
 		return storedPlaylists ? JSON.parse(storedPlaylists) : [];

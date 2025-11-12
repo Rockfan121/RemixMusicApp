@@ -3,7 +3,7 @@ import type { MetaFunction } from "react-router";
 import PlaylistsList from "@/components/playlists";
 import { title } from "@/config.shared";
 import { getRecentPlaylists } from "@/helpers/recent-playlists";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 const PAGE_TITLE = "Your recently played";
 
@@ -12,7 +12,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Recent() {
-	const [recentPl, setRecentPl] = useState<XPlaylist[]>([]);
+	const [recentPl, setRecentPl] = useState<ApiPlaylist[]>([]);
 	useEffect(() => {
 		const recentPl = getRecentPlaylists();
 		setRecentPl(recentPl);

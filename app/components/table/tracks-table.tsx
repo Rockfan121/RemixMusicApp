@@ -11,12 +11,11 @@ import {
 } from "@/components/ui/table";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import type { ContextType } from "@/types/context-type";
-import type { Track } from "@/types/openwhyd-types";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
 
 interface TracksTableProps {
 	children: Track[];
-	xplaylistInfo: XPlaylist;
+	apiplaylistInfo: ApiPlaylist;
 }
 
 /**
@@ -26,7 +25,7 @@ interface TracksTableProps {
  */
 export default function TracksTable({
 	children,
-	xplaylistInfo,
+	apiplaylistInfo,
 }: TracksTableProps) {
 	const { callback } = useOutletContext<ContextType>();
 
@@ -58,7 +57,7 @@ export default function TracksTable({
 								<button
 									className="h-fit w-fit mt-2 text-left"
 									type="button"
-									onClick={() => callback(children, i, xplaylistInfo)}
+									onClick={() => callback(children, i, apiplaylistInfo)}
 								>
 									<PlayIcon className="mx-2 h-6 w-6 text-background group-hover:text-foreground text-right" />
 								</button>

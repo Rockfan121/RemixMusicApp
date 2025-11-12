@@ -1,4 +1,4 @@
-import { InfoCircledIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import type React from "react";
 import { useState } from "react";
 import { Link } from "react-router";

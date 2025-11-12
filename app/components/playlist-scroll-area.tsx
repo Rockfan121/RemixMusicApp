@@ -2,8 +2,8 @@ import { RowsIcon } from "@radix-ui/react-icons";
 import { Link, NavLink } from "react-router";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { myUrl } from "@/types/xplaylist-helpers";
-import type { XPlaylist } from "@/types/xplaylist-type";
+import { myUrl } from "@/types/apiplaylist-helpers";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 const PlaylistItem = ({
 	title,
@@ -29,7 +29,7 @@ const PlaylistItem = ({
 );
 
 interface PlaylistScrollAreaProps {
-	children: XPlaylist[];
+	children: ApiPlaylist[];
 	title: string;
 	link: string;
 }
