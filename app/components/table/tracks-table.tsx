@@ -77,7 +77,7 @@ export default function TracksTable({
 					))}
 				</TableBody>
 			</Table>
-			<ScrollToTop smooth className="toTopButton" />
+			<ScrollToTop smooth className="to-top-button" />
 		</>
 	);
 }

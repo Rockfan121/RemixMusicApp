@@ -1,13 +1,12 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData, useParams } from "react-router";
-
+import TableReplacement from "@/components/table/table-replacement";
+import TracksHeader from "@/components/table/tracks-header";
+import TracksTable from "@/components/table/tracks-table";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { apiPlaylist, userPlaylist } from "@/services/openwhyd";
 import type { XPlaylist } from "@/types/xplaylist-type";
-import TableReplacement from "./components/table-replacement";
-import TracksHeader from "./components/tracks-header";
-import TracksTable from "./components/tracks-table";
 
 /**
  * Fetch tracks from one of Openwhyd users playlists

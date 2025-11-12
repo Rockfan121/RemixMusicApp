@@ -27,3 +27,19 @@ export function userPlaylist(
 export function playlistImg(playlist_Id: string | undefined) {
 	return `https://openwhyd.org/img/playlist/${playlist_Id}`;
 }
+
+export function hotPlaylist() {
+	return `https://openwhyd.org/hot?format=json&limit=${MAX_FETCHED_ITEMS}`;
+}
+
+export function allPlaylist(){
+	return `https://openwhyd.org/all?format=json&limit=${MAX_FETCHED_ITEMS}`;
+}
+
+export function userLikesPlaylist(userId: string | undefined) {
+	return `https://openwhyd.org/u/${userId}/likes?format=json&limit=${MAX_FETCHED_ITEMS}`;
+}
+
+export function userAllPlaylist(userId: string | undefined) {
+	return `https://openwhyd.org/u/${userId}?format=json&limit=${MAX_FETCHED_ITEMS}`;
+}
