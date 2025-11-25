@@ -6,7 +6,7 @@ export const DEFAULT_SUCCESS_REDIRECT = "/account";
 export const MAX_PLAYLISTS = 200;
 
 // Maximum number of items to fetch from Openwhyd API once a time
-export const MAX_FETCHED_ITEMS = 500;
+export const MAX_FETCHED_ITEMS = 300;
 
 export function title(pageTitle?: string) {
 	if (!pageTitle) return APP_NAME;

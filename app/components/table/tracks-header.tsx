@@ -31,14 +31,16 @@ export default function TracksHeader({
 		setFavorite(!favorite);
 	};
 
+	const playlistCover = imgUrl(apiplaylistInfo);
+
 	return (
 		<div className="mx-6 playlist-container p-6 mb-8 border-2 rounded-md h-52 flex bg-card">
-			<div className="album-cover aspect-square h-40 w-40 rounded-xl object-cover">
+			<div className="playlist-background-image playlist-image rounded-xl">
 				<img
-					src={imgUrl(apiplaylistInfo)}
+					src={playlistCover}
 					alt="Playlist cover"
 					aria-hidden
-					className="aspect-square h-40 w-40 rounded-md object-cover"
+					className="playlist-image rounded-md"
 				/>
 			</div>
 			<div>
