@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
  * Component for displaying info for nonexistent or empty playlist
  * @param doesExist - status of the playlist - true if just empty, false if deleted
  */
-export default function TableReplacement({
+export default function TracksReplacement({
 	doesExist,
 }: {
 	doesExist: boolean;

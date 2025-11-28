@@ -1,8 +1,6 @@
 import type { MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import TableReplacement from "@/components/table/table-replacement";
-import TracksHeader from "@/components/table/tracks-header";
-import TracksTable from "@/components/table/tracks-table";
+import TracksContainer from "@/components/table/tracks-container";
 import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { allPlaylist } from "@/services/openwhyd";
@@ -17,8 +15,8 @@ export const loader = async () => {
 	const all_res = await fetch(allPlaylist());
 
 	return all_res.status === 200
-		? { ALL_TRACKS: await all_res.json() }
-		: { ALL_TRACKS: {} };
+		? { TRACKS: await all_res.json() }
+		: { TRACKS: {} };
 };
 
 export const meta: MetaFunction = () => {
@@ -26,9 +24,9 @@ export const meta: MetaFunction = () => {
 };
 
 export default function AllTracks() {
-	const { ALL_TRACKS } = useLoaderData<typeof loader>();
+	const { TRACKS } = useLoaderData<typeof loader>();
 
-	const apiplaylistInfo: ApiPlaylist = {
+	const allPlaylistInfo: ApiPlaylist = {
 		id: PlaylistType.All,
 		name: PAGE_TITLE,
 		uId: "",
@@ -37,21 +35,5 @@ export default function AllTracks() {
 		nbTracks: MAX_FETCHED_ITEMS,
 	};
 
-	if (Object.keys(ALL_TRACKS).length === 0) {
-		return (
-			// No tracks found - the playlist is empty
-			<>
-				<TracksHeader apiplaylistInfo={apiplaylistInfo} />
-				<TableReplacement doesExist={true} />
-			</>
-		);
-	}
-
-	return (
-		// Playlist and tracks found - display them
-		<>
-			<TracksHeader apiplaylistInfo={apiplaylistInfo} />
-			<TracksTable apiplaylistInfo={apiplaylistInfo}>{ALL_TRACKS}</TracksTable>
-		</>
-	);
+	return <TracksContainer playlistInfo={allPlaylistInfo} tracks={TRACKS} />;
 }

@@ -1,16 +1,14 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData, useParams } from "react-router";
-import TableReplacement from "@/components/table/table-replacement";
+import TracksContainer from "@/components/table/tracks-container";
 import TracksHeader from "@/components/table/tracks-header";
-import TracksTable from "@/components/table/tracks-table";
+import TracksReplacement from "@/components/table/tracks-replacement";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { apiPlaylist, userPlaylist } from "@/services/openwhyd";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 
-/**
- * Fetch tracks from one of Openwhyd users playlists
- */
+//Fetch tracks from one of Openwhyd users playlists
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	await new Promise(timeout300);
 	const api_res = await fetch(apiPlaylist(params.userId, params.playlistId));
@@ -56,11 +54,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [{ title: title("Playlist not found") }];
 };
 
-/**
- * Component for displaying a given playlists.
- * It enables the user to start playing music, starting with the track clicked by the user.
- * The callback passes data to MusicPlayer and starts the player.
- */
 export default function TracksView() {
 	const { PLAYLIST_INFO, TRACKS } = useLoaderData<typeof loader>();
 	const params = useParams();
@@ -79,12 +72,12 @@ export default function TracksView() {
 		return (
 			<>
 				<TracksHeader apiplaylistInfo={nonexistentPlaylist} />
-				<TableReplacement doesExist={false} />
+				<TracksReplacement doesExist={false} />
 			</>
 		);
 	}
 
-	const apiplaylistInfo: ApiPlaylist = {
+	const playlistInfo: ApiPlaylist = {
 		id: PLAYLIST_INFO[0].id,
 		name: PLAYLIST_INFO[0].name,
 		uId: PLAYLIST_INFO[0].uId,
@@ -93,21 +86,5 @@ export default function TracksView() {
 		nbTracks: PLAYLIST_INFO[0].nbTracks,
 	};
 
-	if (Object.keys(TRACKS).length === 0) {
-		return (
-			// No tracks found - the playlist is empty
-			<>
-				<TracksHeader apiplaylistInfo={apiplaylistInfo} />
-				<TableReplacement doesExist={true} />
-			</>
-		);
-	}
-
-	return (
-		// Playlist and tracks found - display them
-		<>
-			<TracksHeader apiplaylistInfo={apiplaylistInfo} />
-			<TracksTable apiplaylistInfo={apiplaylistInfo}>{TRACKS}</TracksTable>
-		</>
-	);
+	return <TracksContainer playlistInfo={playlistInfo} tracks={TRACKS} />;
 }

@@ -1,3 +1,3 @@
 export default function UserTracks() {
-	return <h2>All user's tracks</h2>;
+	return <h2>User's all tracks</h2>;
 }

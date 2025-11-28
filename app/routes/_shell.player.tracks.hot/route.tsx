@@ -1,8 +1,6 @@
 import type { MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import TableReplacement from "@/components/table/table-replacement";
-import TracksHeader from "@/components/table/tracks-header";
-import TracksTable from "@/components/table/tracks-table";
+import TracksContainer from "@/components/table/tracks-container";
 import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { hotPlaylist } from "@/services/openwhyd";
@@ -17,8 +15,8 @@ export const loader = async () => {
 	const hot_res = await fetch(hotPlaylist());
 
 	return hot_res.status === 200
-		? { HOT_TRACKS: await hot_res.json() }
-		: { HOT_TRACKS: {} };
+		? { TRACKS: await hot_res.json() }
+		: { TRACKS: {} };
 };
 
 export const meta: MetaFunction = () => {
@@ -26,9 +24,9 @@ export const meta: MetaFunction = () => {
 };
 
 export default function HotTracks() {
-	const { HOT_TRACKS } = useLoaderData<typeof loader>();
+	const { TRACKS } = useLoaderData<typeof loader>();
 
-	const apiplaylistInfo: ApiPlaylist = {
+	const hotPlaylistInfo: ApiPlaylist = {
 		id: PlaylistType.Hot,
 		name: PAGE_TITLE,
 		uId: "",
@@ -37,23 +35,7 @@ export default function HotTracks() {
 		nbTracks: MAX_FETCHED_ITEMS,
 	};
 
-	if (Object.keys(HOT_TRACKS.tracks).length === 0) {
-		return (
-			// No tracks found - the playlist is empty
-			<>
-				<TracksHeader apiplaylistInfo={apiplaylistInfo} />
-				<TableReplacement doesExist={true} />
-			</>
-		);
-	}
-
 	return (
-		// Playlist and tracks found - display them
-		<>
-			<TracksHeader apiplaylistInfo={apiplaylistInfo} />
-			<TracksTable apiplaylistInfo={apiplaylistInfo}>
-				{HOT_TRACKS.tracks}
-			</TracksTable>
-		</>
+		<TracksContainer playlistInfo={hotPlaylistInfo} tracks={TRACKS.tracks} />
 	);
 }
