@@ -20,7 +20,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		);
 
 		const text_user_res = await user_res.clone();
-		if ((await text_user_res.text())[0] === "m") {
+		if (user_res.status !== 200 || (await text_user_res.text())[0] === "m") {
 			return {
 				PLAYLIST_INFO: await api_res.json(),
 				TRACKS: {},

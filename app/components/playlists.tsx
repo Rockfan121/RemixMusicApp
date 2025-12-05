@@ -5,7 +5,8 @@ import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { playlistImg, userPlaylist } from "@/services/openwhyd";
+import { playlistImg } from "@/services/openwhyd";
+import { imgUrl, myUrl } from "@/types/apiplaylist-helpers";
 import type { ApiPlaylist, UserPlaylist } from "@/types/openwhyd-types";
 import ItemCover from "./item-cover";
 
@@ -56,11 +57,11 @@ export default function PlaylistsList({
 						)
 					: apiPlaylists;
 			content = filteredApiPlaylist.map((p) => (
-				<Link to={`/player/tracks/${p.uId}/${p.plId}`} key={p.id}>
+				<Link to={myUrl(p)} key={p.id}>
 					<ItemCover
 						title={p.name}
 						subtitle={p.uNm}
-						coverImg={playlistImg(p.id)}
+						coverImg={imgUrl(p)}
 						altText="ApiPlaylist cover"
 					/>
 				</Link>
