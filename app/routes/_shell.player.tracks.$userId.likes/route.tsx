@@ -4,10 +4,10 @@ import TracksContainer from "@/components/table/tracks-container";
 import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { apiPlaylist, userLikesPlaylist } from "@/services/openwhyd";
-import { PlaylistType } from "@/types/apiplaylist-helpers";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
+import { PlaylistsIDs, PlaylistsNames } from "@/types/playlists-types";
 
-const PAGE_TITLE = "Likes";
+const PAGE_TITLE = PlaylistsNames.UserLikes;
 
 //Fetch all tracks by one of Openwhyd users
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -51,7 +51,7 @@ export default function UserAllTracks() {
 	const { PLAYLIST_INFO, TRACKS } = useLoaderData<typeof loader>();
 
 	const userLikesInfo: ApiPlaylist = {
-		id: PlaylistType.UserLikes,
+		id: PlaylistsIDs.UserLikes,
 		name: `${PAGE_TITLE}`,
 		uId: PLAYLIST_INFO[0].uId,
 		uNm: PLAYLIST_INFO[0].uNm,

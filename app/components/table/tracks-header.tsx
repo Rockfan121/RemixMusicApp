@@ -31,7 +31,7 @@ export default function TracksHeader({
 		setFavorite(!favorite);
 	};
 
-	const playlistCover = imgUrl(apiplaylistInfo);
+	const playlistCover = imgUrl(apiplaylistInfo.id);
 
 	return (
 		<div className="mx-6 playlist-container p-6 mb-8 border-2 rounded-md h-52 flex bg-card">

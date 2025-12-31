@@ -1,13 +1,12 @@
 import type { MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
-import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { hotPlaylist } from "@/services/openwhyd";
-import { PlaylistType } from "@/types/apiplaylist-helpers";
-import type { ApiPlaylist } from "@/types/openwhyd-types";
+import { hotPlaylistInfo, PlaylistsNames } from "@/types/playlists-types";
 
-const PAGE_TITLE = "Hot tracks";
+const PAGE_TITLE = PlaylistsNames.Hot;
 
 //Fetch list of hot tracks on Openwhyd
 export const loader = async () => {
@@ -25,15 +24,6 @@ export const meta: MetaFunction = () => {
 
 export default function HotTracks() {
 	const { TRACKS } = useLoaderData<typeof loader>();
-
-	const hotPlaylistInfo: ApiPlaylist = {
-		id: PlaylistType.Hot,
-		name: PAGE_TITLE,
-		uId: "",
-		uNm: "",
-		plId: "",
-		nbTracks: MAX_FETCHED_ITEMS,
-	};
 
 	return (
 		<TracksContainer playlistInfo={hotPlaylistInfo} tracks={TRACKS.tracks} />

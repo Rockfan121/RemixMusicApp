@@ -1,8 +1,8 @@
-import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigation } from "react-router";
+import { Link, Outlet, useNavigation } from "react-router";
 import { MusicPlayer } from "@/components/music-player";
 import { PlaylistScrollArea } from "@/components/playlist-scroll-area";
+import { Separator } from "@/components/ui/separator";
 import {
 	getFavoritePlaylists,
 	toggleFavorite,
@@ -14,6 +14,11 @@ import {
 import { myUrl } from "@/types/apiplaylist-helpers";
 import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
+import {
+	HOT_TRACKS_LINK,
+	PlaylistsNames,
+	RECENT_TRACKS_LINK,
+} from "@/types/playlists-types";
 
 /**
  * This route displays MusicPlayer (and passes data to it), sets the callback function (used e.g. in "tracks" route)
@@ -60,7 +65,15 @@ export default function Player() {
 
 	return (
 		<>
-			<aside className="h-full w-80 fixed top-0 left-0 pt-14 pb-32 px-3 overflow-x-hidden hidden md:block">
+			<aside className="h-full w-80 fixed top-0 left-0 pt-12 pb-32 px-3 overflow-hidden hidden md:block border-r-2 border-secondary">
+				<h4 className="m-3 mb-1 text-[17px] font-semibold leading-none text-ring">
+					<Link to={RECENT_TRACKS_LINK}>{PlaylistsNames.All}</Link>
+				</h4>
+				<Separator className="my-2.5" />
+				<h4 className="m-3 mb-1 text-[17px] font-semibold leading-none text-ring">
+					<Link to={HOT_TRACKS_LINK}>{PlaylistsNames.Hot}</Link>
+				</h4>
+				<Separator className="my-2.5" />
 				<PlaylistScrollArea title="Recently played" link="/player/recent">
 					{recentPl}
 				</PlaylistScrollArea>

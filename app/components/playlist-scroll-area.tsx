@@ -52,7 +52,7 @@ export function PlaylistScrollArea({
 
 	return (
 		<div className="aside-container w-full rounded-md border bg-card">
-			<h4 className="m-3 mb-1 text-lg font-semibold leading-none text-ring">
+			<h4 className="m-3 mb-1 text-[17px] font-semibold leading-none text-ring">
 				<Link to={link}>{title}</Link>
 			</h4>
 			<ScrollArea className="scroll-container w-full">

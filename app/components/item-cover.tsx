@@ -28,9 +28,9 @@ export default function ItemCover({
 					className="aspect-square h-fit w-fit object-cover"
 				/>
 			</div>
-			<figcaption className="pt-1 font-semibold text-sm text-muted-foreground">
+			<figcaption className="pt-1 font-semibold text-sm text-foreground">
 				{title} <br />
-				<span className="text-foreground">{subtitle}</span>
+				<span className="text-muted-foreground">{subtitle}</span>
 			</figcaption>
 		</figure>
 	);

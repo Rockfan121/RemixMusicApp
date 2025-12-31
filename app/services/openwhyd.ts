@@ -9,7 +9,7 @@ export function apiPlaylist(
 }
 
 export function apiUser(userId: string | undefined) {
-	return `https://openwhyd.org/api/user/${userId}`;
+	return `https://openwhyd.org/api/user/${userId}?countPosts=true&countLikes=true`;
 }
 
 export function userListOfPlaylists(userId: string | undefined) {

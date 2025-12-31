@@ -5,9 +5,14 @@ import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { playlistImg } from "@/services/openwhyd";
 import { imgUrl, myUrl } from "@/types/apiplaylist-helpers";
 import type { ApiPlaylist, UserPlaylist } from "@/types/openwhyd-types";
+import {
+	allPlaylistInfo,
+	hotPlaylistInfo,
+	PlaylistsIDs,
+	PlaylistsNames,
+} from "@/types/playlists-types";
 import ItemCover from "./item-cover";
 
 /**
@@ -39,7 +44,8 @@ export default function PlaylistsList({
 	let userIdResolved = "";
 	if (typeof userId !== "undefined") userIdResolved = userId;
 
-	let content: React.ReactNode; //The playlists will be listed there
+	let playlists: React.ReactNode; //The playlists will be listed there
+	let specialPlaylists: React.ReactNode; //The playlists like All, Hot, Likes
 	let contentGrid: React.ReactNode; //The playlists covers will be aligned to grid
 	let searchInput: React.ReactNode; //The search input for some playlist title (NOTE: it's just displayed, it doesn't work yet)
 
@@ -56,18 +62,41 @@ export default function PlaylistsList({
 							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
 						)
 					: apiPlaylists;
-			content = filteredApiPlaylist.map((p) => (
+			playlists = filteredApiPlaylist.map((p) => (
 				<Link to={myUrl(p)} key={p.id}>
 					<ItemCover
 						title={p.name}
 						subtitle={p.uNm}
-						coverImg={imgUrl(p)}
+						coverImg={imgUrl(p.id)}
 						altText="ApiPlaylist cover"
 					/>
 				</Link>
 			));
 		} else {
 			const userPlaylists = children as UserPlaylist[];
+			let userSpecialPlaylists: ApiPlaylist[];
+
+			userSpecialPlaylists = [
+				{
+					id: PlaylistsIDs.UserAll,
+					name: PlaylistsNames.UserAll,
+					uId: userIdResolved,
+					uNm: userNameResolved,
+					//url: `/player/tracks/${userIdResolved}/all`,
+					nbTracks: 1, //zmienic zapytanie - wetdy bedzie rowniez to zwracac
+					plId: "",
+				},
+				{
+					id: PlaylistsIDs.UserLikes,
+					name: PlaylistsNames.UserLikes,
+					uId: userIdResolved,
+					uNm: userNameResolved,
+					//url: `/player/tracks/${userIdResolved}/likes`,
+					plId: "",
+					nbTracks: 1, //zmienic zapytanie - wetdy bedzie rowniez to zwracac
+				},
+			];
+
 			const filteredUserPlaylists =
 				localQuery !== ""
 					? userPlaylists.filter((p) =>
@@ -75,7 +104,18 @@ export default function PlaylistsList({
 						)
 					: userPlaylists;
 
-			content = filteredUserPlaylists.map((p) => (
+			specialPlaylists = userSpecialPlaylists.map((p) => (
+				<Link to={myUrl(p)} key={p.id}>
+					<ItemCover
+						title={p.name}
+						subtitle={p.uNm}
+						coverImg={imgUrl(p.id)}
+						altText="UserPlaylist cover"
+					/>
+				</Link>
+			));
+
+			playlists = filteredUserPlaylists.map((p) => (
 				<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
 					<ItemCover
 						title={p.name}
@@ -89,7 +129,8 @@ export default function PlaylistsList({
 
 		contentGrid = (
 			<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16">
-				{content}
+				{specialPlaylists}
+				{playlists}
 			</div>
 		);
 
@@ -106,7 +147,22 @@ export default function PlaylistsList({
 			</div>
 		);
 	} else {
-		content = (
+		let globalSpecialPlaylists: ApiPlaylist[];
+
+		globalSpecialPlaylists = [allPlaylistInfo, hotPlaylistInfo];
+
+		specialPlaylists = globalSpecialPlaylists.map((p) => (
+			<Link to={myUrl(p)} key={p.id}>
+				<ItemCover
+					title={p.name}
+					subtitle={p.uNm}
+					coverImg={imgUrl(p.id)}
+					altText="UserPlaylist cover"
+				/>
+			</Link>
+		));
+
+		playlists = (
 			<Alert className="mx-10 w-auto">
 				<InfoCircledIcon className="h-4 w-4" />
 				<AlertDescription className="p-1 font-semibold">
@@ -115,7 +171,14 @@ export default function PlaylistsList({
 			</Alert>
 		);
 
-		contentGrid = content;
+		contentGrid = (
+			<>
+				{playlists}
+				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16 mt-10">
+					{specialPlaylists}
+				</div>
+			</>
+		);
 
 		searchInput = <div />;
 	}
