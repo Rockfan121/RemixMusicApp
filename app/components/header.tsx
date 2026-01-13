@@ -52,7 +52,7 @@ export function Header({
 						</span>
 					</Link>
 				</div>
-				<div className="flex items-center space-x-1">
+				<div className="flex items-center space-x-0.5">
 					<NavbarButton link="/player/exploring" label="Explore">
 						<Crosshair2Icon className="navbar-icon" />
 					</NavbarButton>

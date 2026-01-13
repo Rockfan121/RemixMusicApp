@@ -1,12 +1,35 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@config "../tailwind.config.cjs";
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+}
 
 /*
   Theme variables
 */
 
 @layer base {
+	button:not(:disabled),
+	[role="button"]:not(:disabled) {
+		cursor: pointer;
+	}
+
 	:root {
 		/*blue; zippystarter: max saturation  min lightness*/
 		--background: 225.9 100% 95%;
@@ -27,7 +50,7 @@
 		--destructive-foreground: 225.9 5% 90%;
 		--border: 225.9 30% 50%;
 		--input: 225.9 30% 18%;
-		--ring: 225.9 70.7% 35%;
+		--ring-3: 225.9 70.7% 35%;
 		--radius: 0.5rem;
 
 		--background-dark: 225.9 50% 5%;
@@ -48,7 +71,7 @@
 		--destructive-foreground-dark: 225.9 5% 90%;
 		--border-dark: 225.9 30% 18%;
 		--input-dark: 225.9 30% 18%;
-		--ring-dark: 225.9 70.7% 60%;
+		--ring-3-dark: 225.9 70.7% 60%;
 
 		/*dark sky - #19a1e6  zippystarter: max saturation  max lightness*/
 		--background-sky: 200.4 50% 10%;
@@ -69,7 +92,7 @@
 		--destructive-foreground-sky: 200.4 5% 100%;
 		--border-sky: 200.4 30% 50%;
 		--input-sky: 200.4 30% 50%;
-		--ring-sky: 200.4 70% 55%;
+		--ring-3-sky: 200.4 70% 55%;
 
 		/*dark violet; ; zippystarter: max saturation  min lightness*/
 		--background-dkviolet: 278 50% 5%;
@@ -90,7 +113,7 @@
 		--destructive-foreground-dkviolet: 278 5% 90%;
 		--border-dkviolet: 278 30% 18%;
 		--input-dkviolet: 278 30% 18%;
-		--ring-dkviolet: 278 50% 60%;
+		--ring-3-dkviolet: 278 50% 60%;
 	}
 }
 
@@ -169,18 +192,18 @@
 }
 .aside-container {
 	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
-	height: calc(50% - theme("spacing.12"));
+	height: calc(50% - (--spacing(12)));
 }
 .scroll-container {
 	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
-	height: calc(100% - theme("spacing.11"));
+	height: calc(100% - (--spacing(11)));
 }
 .playlist-container {
 	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
-	width: calc(100% - theme("spacing.12"));
+	width: calc(100% - (--spacing(12)));
 }
 .navbar-button {
-	@apply text-lg font-semibold text-white py-4;
+	@apply text-lg font-semibold text-white py-4 border-2;
 }
 
 .navbar-icon {

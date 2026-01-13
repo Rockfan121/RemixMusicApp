@@ -48,6 +48,10 @@ export function ThemeSwitcherScript() {
 		/>
 	);
 }
+export function lightOrDarkTheme() {
+	const theme = getTheme();
+	return theme === "dkviolet" || theme === "sky" ? "dark" : theme;
+}
 
 export function getTheme() {
 	return validateTheme(

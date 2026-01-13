@@ -78,7 +78,7 @@ export default function Account() {
 			<Form {...getFormProps(accountForm)} method="POST" replace>
 				<input type="hidden" name="intent" value={Intents.UpdateAccount} />
 
-				<Card className="w-full max-w-screen-sm mx-auto">
+				<Card className="w-full max-w-(--breakpoint-sm) mx-auto">
 					<CardHeader className="space-y-1">
 						<CardTitle>Account</CardTitle>
 						<CardDescription>Edit your info below.</CardDescription>

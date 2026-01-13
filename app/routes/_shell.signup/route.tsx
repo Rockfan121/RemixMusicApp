@@ -152,7 +152,7 @@ export default function Signup() {
 			>
 				<input type="hidden" name="intent" value={Intents.Signup} />
 
-				<Card className="w-full max-w-screen-sm mx-auto">
+				<Card className="w-full max-w-(--breakpoint-sm) mx-auto">
 					<CardHeader className="space-y-1">
 						<CardTitle>Signup</CardTitle>
 						<CardDescription>

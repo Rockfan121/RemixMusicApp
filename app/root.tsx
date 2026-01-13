@@ -33,7 +33,6 @@ function App({ children }: { children: React.ReactNode }) {
 				<Scripts />
 				<Toaster
 					closeButton={true}
-					invert={true}
 					offset={{ bottom: "120px", right: "118px", left: "16px" }}
 					mobileOffset={{ bottom: "120px" }}
 				/>

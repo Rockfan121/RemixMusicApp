@@ -28,7 +28,7 @@ module.exports = {
 			colors: {
 				border: lightDarkVar("border"),
 				input: lightDarkVar("input"),
-				ring: lightDarkVar("ring"),
+				ring: lightDarkVar("ring-3"),
 				background: lightDarkVar("background"),
 				foreground: lightDarkVar("foreground"),
 				primary: {

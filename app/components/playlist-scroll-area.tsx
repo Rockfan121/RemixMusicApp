@@ -62,7 +62,7 @@ export function PlaylistScrollArea({
 							<NavLink
 								to={myUrl(c)}
 								key={c.id}
-								className={({ isActive }) => (isActive ? "text-ring" : "")}
+								className={({ isActive }) => (isActive ? "text-ring/75" : "")}
 							>
 								<PlaylistItem title={c.name} subtitle={c.uNm} isIcon={true} />
 							</NavLink>

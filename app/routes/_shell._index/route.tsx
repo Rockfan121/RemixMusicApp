@@ -148,7 +148,7 @@ export default function Index() {
 			>
 				<input type="hidden" name="intent" value={Intents.Login} />
 
-				<Card className="w-full max-w-screen-sm mx-auto">
+				<Card className="w-full max-w-(--breakpoint-sm) mx-auto">
 					<CardHeader className="space-y-1">
 						<CardTitle>Login</CardTitle>
 						<CardDescription>
