@@ -36,11 +36,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	};
 };
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (typeof data !== "undefined") {
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
+	if (typeof loaderData !== "undefined") {
 		return [
 			{
-				title: title(`${PAGE_TITLE} - ${data.USER_INFO.uNm}`),
+				title: title(`${PAGE_TITLE} - ${loaderData.USER_INFO.name}`),
 			},
 		];
 	}

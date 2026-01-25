@@ -1,5 +1,5 @@
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { getTheme, lightOrDarkTheme } from "../theme-switcher";
+import { lightOrDarkTheme } from "../theme-switcher";
 
 const Toaster = ({ ...props }: ToasterProps) => {
 	const theme = lightOrDarkTheme();

@@ -191,15 +191,12 @@
 	transition-delay: 200ms;
 }
 .aside-container {
-	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
 	height: calc(50% - (--spacing(12)));
 }
 .scroll-container {
-	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
 	height: calc(100% - (--spacing(11)));
 }
 .playlist-container {
-	/* biome-ignore lint/correctness/noUnknownFunction: temporary solution - ignoring rule will be removed in future commits */
 	width: calc(100% - (--spacing(12)));
 }
 .navbar-button {

@@ -38,15 +38,15 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	};
 };
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (typeof data !== "undefined") {
-		if (!Object.hasOwn(data.PLAYLIST_INFO[0], "name")) {
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
+	if (typeof loaderData !== "undefined") {
+		if (!Object.hasOwn(loaderData.PLAYLIST_INFO[0], "name")) {
 			return [{ title: title("Playlist not found") }];
 		}
 		return [
 			{
 				title: title(
-					`${data.PLAYLIST_INFO[0].name} by ${data.PLAYLIST_INFO[0].uNm}`,
+					`${loaderData.PLAYLIST_INFO[0].name} by ${loaderData.PLAYLIST_INFO[0].uNm}`,
 				),
 			},
 		];

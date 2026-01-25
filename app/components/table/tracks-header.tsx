@@ -9,6 +9,7 @@ import { isPlaylistFavorite } from "@/helpers/favorite-playlists";
 import { imgUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
 import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
+import { PlaylistsIDs } from "@/types/playlists-types";
 
 export default function TracksHeader({
 	apiplaylistInfo,
@@ -62,13 +63,17 @@ export default function TracksHeader({
 					)}
 				</button>
 
-				<a
-					href={openwhydUrl(apiplaylistInfo)}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<ExternalLinkIcon className="ml-4 h-6 w-6 inline" />
-				</a>
+				{apiplaylistInfo.id !== PlaylistsIDs.UserStream ? (
+					<a
+						href={openwhydUrl(apiplaylistInfo)}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<ExternalLinkIcon className="ml-4 h-6 w-6 inline" />
+					</a>
+				) : (
+					""
+				)}
 			</div>
 		</div>
 	);

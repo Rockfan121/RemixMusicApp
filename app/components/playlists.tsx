@@ -57,14 +57,13 @@ export default function PlaylistsList({
 	let playlists: React.ReactNode; //The playlists will be listed there
 	let specialPlaylists: React.ReactNode; //The playlists like All, Hot, Likes
 	let contentGrid: React.ReactNode; //The playlists covers will be aligned to grid
-	let searchInput: React.ReactNode; //The search input for some playlist title (NOTE: it's just displayed, it doesn't work yet)
+	let searchInput: React.ReactNode; //The search input for some playlist title
 
 	function handleQueryChange(e: { target: { value: string } }) {
 		setLocalQuery(e.target.value);
 	}
 
 	if (typeof children !== "undefined" && children.length > 0) {
-		//if (Object.hasOwn(children[0], "uNm")) {
 		if (userIdResolved === "") {
 			const apiPlaylists = children as ApiPlaylist[];
 			const filteredApiPlaylist =
@@ -85,17 +84,15 @@ export default function PlaylistsList({
 			));
 		} else {
 			const userPlaylists = children as UserPlaylist[];
-			let userSpecialPlaylists: ApiPlaylist[];
-
-			userSpecialPlaylists = [
+			const userSpecialPlaylists = [
 				{
 					id: PlaylistsIDs.UserAll,
 					name: PlaylistsNames.UserAll,
 					uId: userIdResolved,
 					uNm: userNameResolved,
 					//url: `/player/tracks/${userIdResolved}/all`,
-					nbTracks: noOfPostsResolved,
 					plId: "",
+					nbTracks: noOfPostsResolved,
 				},
 				{
 					id: PlaylistsIDs.UserLikes,
@@ -167,9 +164,7 @@ export default function PlaylistsList({
 			</div>
 		);
 	} else {
-		let globalSpecialPlaylists: ApiPlaylist[];
-
-		globalSpecialPlaylists = [allPlaylistInfo, hotPlaylistInfo];
+		const globalSpecialPlaylists = [allPlaylistInfo, hotPlaylistInfo];
 
 		specialPlaylists = globalSpecialPlaylists.map((p) => (
 			<Link to={myUrl(p)} key={p.id}>
