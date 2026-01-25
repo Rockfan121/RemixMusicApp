@@ -51,9 +51,13 @@ export default function Exploring() {
 	const { res, userRes, query } = useLoaderData<typeof loader>();
 	let userNameRes = "";
 	let userIdRes = "";
+	let noOfPosts = -1;
+	let noOfLikes = -1;
 	if (Object.keys(userRes).length) {
 		userNameRes = userRes.name;
 		userIdRes = userRes.id;
+		noOfPosts = userRes.nbPosts;
+		noOfLikes = userRes.nbLikes;
 	}
 
 	useEffect(() => {
@@ -87,6 +91,8 @@ export default function Exploring() {
 				listEmptyText="Enter correct userId of one of Openwhyd users and click the button to view all their playlists"
 				userName={userNameRes}
 				userId={userIdRes}
+				noOfLikes={noOfLikes}
+				noOfPosts={noOfPosts}
 			>
 				{res}
 			</PlaylistsList>

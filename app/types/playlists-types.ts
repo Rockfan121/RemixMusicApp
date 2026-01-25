@@ -6,6 +6,7 @@ export const PlaylistsIDs = {
 	Hot: "hot",
 	UserAll: "uAll",
 	UserLikes: "uLikes",
+	UserStream: "uStream",
 } as const;
 
 export const PlaylistsNames = {
@@ -13,6 +14,7 @@ export const PlaylistsNames = {
 	Hot: "Hot tracks",
 	UserAll: "All tracks",
 	UserLikes: "Likes",
+	UserStream: "Stream",
 } as const;
 
 export const HOT_TRACKS_LINK = "/player/tracks/hot";

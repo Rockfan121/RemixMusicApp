@@ -3,11 +3,11 @@ import { useLoaderData } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
-import { apiUser, userAllPlaylist } from "@/services/openwhyd";
+import { apiUser, userStreamPlaylist } from "@/services/openwhyd";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 import { PlaylistsIDs, PlaylistsNames } from "@/types/playlists-types";
 
-const PAGE_TITLE = PlaylistsNames.UserAll;
+const PAGE_TITLE = PlaylistsNames.UserStream;
 
 //Fetch all tracks by one of Openwhyd users
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -16,7 +16,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 	if (api_res.status === 200) {
 		await new Promise(timeout300);
-		const user_res = await fetch(userAllPlaylist(params.userId));
+		const user_res = await fetch(userStreamPlaylist(params.userId));
 
 		if (user_res.status !== 200) {
 			return {
@@ -47,17 +47,17 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [{ title: title("Playlist not found") }];
 };
 
-export default function UserAllTracks() {
+export default function UserStreamTracks() {
 	const { USER_INFO, TRACKS } = useLoaderData<typeof loader>();
 
-	const userAllPlaylistInfo: ApiPlaylist = {
-		id: PlaylistsIDs.UserAll,
+	const userStreamInfo: ApiPlaylist = {
+		id: PlaylistsIDs.UserStream,
 		name: `${PAGE_TITLE}`,
 		uId: USER_INFO.id,
 		uNm: USER_INFO.name,
 		plId: "",
-		nbTracks: USER_INFO.nbPosts,
+		nbTracks: -1,
 	};
 
-	return <TracksContainer playlistInfo={userAllPlaylistInfo} tracks={TRACKS} />;
+	return <TracksContainer playlistInfo={userStreamInfo} tracks={TRACKS} />;
 }

@@ -16,6 +16,8 @@ export function myUrl(pl: ApiPlaylist) {
 			return `/player/tracks/${pl.uId}/all`;
 		case PlaylistsIDs.UserLikes:
 			return `/player/tracks/${pl.uId}/likes`;
+		case PlaylistsIDs.UserStream:
+			return `/player/tracks/${pl.uId}/stream`;
 		default:
 			return `/player/tracks/${pl.uId}/${pl.plId}`;
 	}
@@ -30,6 +32,8 @@ export function openwhydUrl(pl: ApiPlaylist) {
 			return `https://openwhyd.org/u/${pl.uId}`;
 		case PlaylistsIDs.UserLikes:
 			return `https://openwhyd.org/u/${pl.uId}/likes`;
+		case PlaylistsIDs.UserStream:
+			return "";
 		default:
 			return `https://openwhyd.org/u/${pl.uId}/playlist/${pl.plId}`;
 	}
@@ -44,6 +48,8 @@ export function imgUrl(id: string) {
 			return "https://cdn.pixabay.com/photo/2015/03/11/17/36/sheet-music-668974_640.jpg";
 		case PlaylistsIDs.UserLikes:
 			return "https://cdn.pixabay.com/photo/2022/06/25/21/12/music-heart-7284225_640.jpg";
+		case PlaylistsIDs.UserStream:
+			return "https://cdn.pixabay.com/photo/2015/03/11/16/36/musical-note-668879_640.jpg";
 		default:
 			return playlistImg(id);
 	}

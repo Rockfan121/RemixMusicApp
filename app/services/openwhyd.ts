@@ -43,3 +43,7 @@ export function userLikesPlaylist(userId: string | undefined) {
 export function userAllPlaylist(userId: string | undefined) {
 	return `https://openwhyd.org/u/${userId}?format=json&limit=${MAX_FETCHED_ITEMS}`;
 }
+
+export function userStreamPlaylist(userId: string | undefined) {
+	return `https://openwhyd.org/stream?id=${userId}&format=json&limit=${MAX_FETCHED_ITEMS}`;
+}

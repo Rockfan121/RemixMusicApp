@@ -29,12 +29,16 @@ export default function PlaylistsList({
 	listEmptyText,
 	userName,
 	userId,
+	noOfLikes,
+	noOfPosts,
 }: {
 	children?: Array<UserPlaylist> | Array<ApiPlaylist>;
 	listIntro: string;
 	listEmptyText: string;
 	userName?: string;
 	userId?: string;
+	noOfLikes?: number;
+	noOfPosts?: number;
 }) {
 	const [localQuery, setLocalQuery] = useState("");
 
@@ -43,6 +47,12 @@ export default function PlaylistsList({
 
 	let userIdResolved = "";
 	if (typeof userId !== "undefined") userIdResolved = userId;
+
+	let noOfPostsResolved = -1;
+	if (typeof noOfPosts !== "undefined") noOfPostsResolved = noOfPosts;
+
+	let noOfLikesResolved = -1;
+	if (typeof noOfLikes !== "undefined") noOfLikesResolved = noOfLikes;
 
 	let playlists: React.ReactNode; //The playlists will be listed there
 	let specialPlaylists: React.ReactNode; //The playlists like All, Hot, Likes
@@ -54,7 +64,8 @@ export default function PlaylistsList({
 	}
 
 	if (typeof children !== "undefined" && children.length > 0) {
-		if (Object.hasOwn(children[0], "uNm")) {
+		//if (Object.hasOwn(children[0], "uNm")) {
+		if (userIdResolved === "") {
 			const apiPlaylists = children as ApiPlaylist[];
 			const filteredApiPlaylist =
 				localQuery !== ""
@@ -83,7 +94,7 @@ export default function PlaylistsList({
 					uId: userIdResolved,
 					uNm: userNameResolved,
 					//url: `/player/tracks/${userIdResolved}/all`,
-					nbTracks: 1, //zmienic zapytanie - wetdy bedzie rowniez to zwracac
+					nbTracks: noOfPostsResolved,
 					plId: "",
 				},
 				{
@@ -93,7 +104,16 @@ export default function PlaylistsList({
 					uNm: userNameResolved,
 					//url: `/player/tracks/${userIdResolved}/likes`,
 					plId: "",
-					nbTracks: 1, //zmienic zapytanie - wetdy bedzie rowniez to zwracac
+					nbTracks: noOfLikesResolved,
+				},
+				{
+					id: PlaylistsIDs.UserStream,
+					name: PlaylistsNames.UserStream,
+					uId: userIdResolved,
+					uNm: userNameResolved,
+					//url: `/player/tracks/${userIdResolved}/stream`,
+					plId: "",
+					nbTracks: -1,
 				},
 			];
 

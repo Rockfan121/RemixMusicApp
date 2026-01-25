@@ -1,9 +1,9 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
-import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
-import { apiPlaylist, userLikesPlaylist } from "@/services/openwhyd";
+import { apiUser, userLikesPlaylist } from "@/services/openwhyd";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 import { PlaylistsIDs, PlaylistsNames } from "@/types/playlists-types";
 
@@ -12,7 +12,7 @@ const PAGE_TITLE = PlaylistsNames.UserLikes;
 //Fetch all tracks by one of Openwhyd users
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	await new Promise(timeout300);
-	const api_res = await fetch(apiPlaylist(params.userId, ""));
+	const api_res = await fetch(apiUser(params.userId));
 
 	if (api_res.status === 200) {
 		await new Promise(timeout300);
@@ -20,18 +20,18 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 		if (user_res.status !== 200) {
 			return {
-				PLAYLIST_INFO: await api_res.json(),
+				USER_INFO: await api_res.json(),
 				TRACKS: {},
 			};
 		}
 
 		return {
-			PLAYLIST_INFO: await api_res.json(),
+			USER_INFO: await api_res.json(),
 			TRACKS: await user_res.json(),
 		};
 	}
 	return {
-		PLAYLIST_INFO: {},
+		USER_INFO: {},
 		TRACKS: {},
 	};
 };
@@ -40,7 +40,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	if (typeof data !== "undefined") {
 		return [
 			{
-				title: title(`${PAGE_TITLE} - ${data.PLAYLIST_INFO[0].uNm}`),
+				title: title(`${PAGE_TITLE} - ${data.USER_INFO.uNm}`),
 			},
 		];
 	}
@@ -48,15 +48,15 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function UserAllTracks() {
-	const { PLAYLIST_INFO, TRACKS } = useLoaderData<typeof loader>();
+	const { USER_INFO, TRACKS } = useLoaderData<typeof loader>();
 
 	const userLikesInfo: ApiPlaylist = {
 		id: PlaylistsIDs.UserLikes,
 		name: `${PAGE_TITLE}`,
-		uId: PLAYLIST_INFO[0].uId,
-		uNm: PLAYLIST_INFO[0].uNm,
+		uId: USER_INFO.id,
+		uNm: USER_INFO.name,
 		plId: "",
-		nbTracks: MAX_FETCHED_ITEMS,
+		nbTracks: USER_INFO.nbLikes,
 	};
 
 	return <TracksContainer playlistInfo={userLikesInfo} tracks={TRACKS} />;
