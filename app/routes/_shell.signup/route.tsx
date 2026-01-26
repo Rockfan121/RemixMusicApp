@@ -9,6 +9,7 @@ import type {
 import {
 	Form,
 	Link,
+	redirect,
 	useActionData,
 	useLocation,
 	useNavigation,
@@ -43,17 +44,19 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
-	const url = new URL(request.url);
-	const successRedirect = validateRedirect(
-		url.searchParams.get("redirectTo"),
-		DEFAULT_SUCCESS_REDIRECT,
-	);
+	throw redirect("/player/exploring");
 
-	const authenticator = getAuthenticator(context);
-	await authenticator.isAuthenticated(request, {
-		successRedirect,
-	});
-	return null;
+	// const url = new URL(request.url);
+	// const successRedirect = validateRedirect(
+	// 	url.searchParams.get("redirectTo"),
+	// 	DEFAULT_SUCCESS_REDIRECT,
+	// );
+
+	// const authenticator = getAuthenticator(context);
+	// await authenticator.isAuthenticated(request, {
+	// 	successRedirect,
+	// });
+	// return null;
 }
 
 export async function action({ context, request }: ActionFunctionArgs) {

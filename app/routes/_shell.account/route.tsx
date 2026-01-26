@@ -7,6 +7,7 @@ import type {
 } from "react-router";
 import {
 	Form,
+	redirect,
 	useActionData,
 	useLoaderData,
 	useNavigation,
@@ -37,11 +38,13 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
-	const user = await requireUser(context, request);
+	throw redirect("/player/exploring");
 
-	const account = await getUserById(context, user.id);
+	// const user = await requireUser(context, request);
 
-	return { account };
+	// const account = await getUserById(context, user.id);
+
+	// return { account };
 }
 
 export async function action({ context, request }: ActionFunctionArgs) {

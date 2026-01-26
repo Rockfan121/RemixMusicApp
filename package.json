@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "react-router build",
 		"dev": "dotenv -- node ./server.js",
-		"fix": "biome check . --write",
+		"fix": "biome check . --write --max-diagnostics 40",
 		"generate:migration": "pnpm drizzle-kit generate:sqlite",
 		"lint": "biome check .",
 		"start": "cross-env NODE_ENV=production node ./server.js",
