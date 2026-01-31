@@ -24,6 +24,10 @@ export function userPlaylist(
 			${playlistId}?format=json&limit=${MAX_FETCHED_ITEMS}`;
 }
 
+export function userImg(userId: string | undefined) {
+	return `https://openwhyd.org/img/user/${userId}`;
+}
+
 export function playlistImg(playlist_Id: string | undefined) {
 	return `https://openwhyd.org/img/playlist/${playlist_Id}`;
 }

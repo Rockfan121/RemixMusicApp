@@ -12,6 +12,7 @@ import {
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
+import UserLink from "../user-link";
 
 interface TracksTableProps {
 	children: Track[];
@@ -62,7 +63,30 @@ export default function TracksTable({
 									<PlayIcon className="mx-2 h-6 w-6 text-background group-hover:text-foreground text-right" />
 								</button>
 							</TableCell>
-							<TableCell className="px-1">{track.name}</TableCell>
+							<TableCell className="px-1">
+								{track.name}
+								<div className="flex space-x-1.5 mt-1">
+									<UserLink
+										id={track.uId}
+										name={track.uNm}
+										isLarge={false}
+										withImg={true}
+									/>
+									{track.repost && track.uId !== track.repost.uId ? (
+										<>
+											<div className="flex text-sm mr-2">via </div>
+											<UserLink
+												id={track.repost.uId}
+												name={track.repost.uNm}
+												isLarge={false}
+												withImg={false}
+											/>
+										</>
+									) : (
+										""
+									)}
+								</div>
+							</TableCell>
 							<TableCell className="text-center">
 								<a
 									href={getMusicServiceAndUrl(track.eId)}

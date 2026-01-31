@@ -22,14 +22,12 @@ export type ApiPlaylist = {
  * @param name - same as name in ApiPlaylist
  * @param url - partial Openwhyd url to the playlist
  * @param nbTracks - same as nbTracks in ApiPlaylist
- * @param img - partial url to Openwhyd playlist cover image
  */
 export type UserPlaylist = {
 	id: number;
 	name: string;
 	url: string;
 	nbTracks: number;
-	img: string;
 };
 
 type PlaylistInfo = {

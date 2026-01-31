@@ -7,14 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
-import { apiUser, userListOfPlaylists } from "@/services/openwhyd";
+import { apiUser } from "@/services/openwhyd";
 
 const PAGE_TITLE = "Explore playlists";
 
 /**
  * Loader of "exploring" route checks if there is the "q" param in URL. The param is supposed to be user id of some Openwhyd user.
  * If the param is actually given, the loader will fetch that user's playlists.
- * As the response doesn't include userName (which is necessary for displaying the playlists), the loader then fetches some playlist data.
  */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url);
@@ -22,22 +21,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 	if (USER_ID !== null && USER_ID !== "") {
 		await new Promise(timeout300);
-		const res = await fetch(userListOfPlaylists(USER_ID));
+		const res = await fetch(apiUser(USER_ID));
 
 		const resJson = await res.json();
 		if (typeof resJson !== "undefined" && !Object.hasOwn(resJson, "error")) {
-			await new Promise(timeout300);
-			const userNameRes = await fetch(apiUser(USER_ID));
-
 			return {
-				res: await resJson,
-				userRes: await userNameRes.json(),
+				//	res: await resJson,
+				userRes: await resJson,
 				query: USER_ID,
 			};
 		}
 	}
 	return {
-		res: {},
 		userRes: {},
 		query: USER_ID,
 	};
@@ -48,7 +43,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Exploring() {
-	const { res, userRes, query } = useLoaderData<typeof loader>();
+	const { userRes, query } = useLoaderData<typeof loader>();
 	let userNameRes = "";
 	let userIdRes = "";
 	let noOfPosts = -1;
@@ -94,7 +89,7 @@ export default function Exploring() {
 				noOfLikes={noOfLikes}
 				noOfPosts={noOfPosts}
 			>
-				{res}
+				{userRes.pl}
 			</PlaylistsList>
 		</>
 	);

@@ -137,7 +137,7 @@ export default function PlaylistsList({
 					<ItemCover
 						title={p.name}
 						subtitle={userNameResolved}
-						coverImg={`https://openwhyd.org${p.img}`}
+						coverImg={imgUrl(`${userIdResolved}_${p.id}`)}
 						altText="UserPlaylist cover"
 					/>
 				</Link>
