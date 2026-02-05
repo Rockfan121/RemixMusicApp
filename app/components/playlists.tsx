@@ -63,28 +63,8 @@ export default function PlaylistsList({
 		setLocalQuery(e.target.value);
 	}
 
-	if (typeof children !== "undefined" && children.length > 0) {
-		if (userIdResolved === "") {
-			const apiPlaylists = children as ApiPlaylist[];
-			const filteredApiPlaylist =
-				localQuery !== ""
-					? apiPlaylists.filter((p) =>
-							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
-						)
-					: apiPlaylists;
-			playlists = filteredApiPlaylist.map((p) => (
-				<Link to={myUrl(p)} key={p.id}>
-					<ItemCover
-						title={p.name}
-						subtitle={p.uNm}
-						coverImg={imgUrl(p.id)}
-						altText="ApiPlaylist cover"
-					/>
-				</Link>
-			));
-		} else {
-			const userPlaylists = children as UserPlaylist[];
-			const userSpecialPlaylists = [
+	if (userIdResolved !== ""){
+		const userSpecialPlaylists = [
 				{
 					id: PlaylistsIDs.UserAll,
 					name: PlaylistsNames.UserAll,
@@ -113,14 +93,6 @@ export default function PlaylistsList({
 					nbTracks: -1,
 				},
 			];
-
-			const filteredUserPlaylists =
-				localQuery !== ""
-					? userPlaylists.filter((p) =>
-							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
-						)
-					: userPlaylists;
-
 			specialPlaylists = userSpecialPlaylists.map((p) => (
 				<Link to={myUrl(p)} key={p.id}>
 					<ItemCover
@@ -131,6 +103,14 @@ export default function PlaylistsList({
 					/>
 				</Link>
 			));
+		if (typeof children !== "undefined" && children.length > 0) {	
+			const userPlaylists = children as UserPlaylist[];
+			const filteredUserPlaylists =
+				localQuery !== ""
+					? userPlaylists.filter((p) =>
+							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
+						)
+					: userPlaylists;
 
 			playlists = filteredUserPlaylists.map((p) => (
 				<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
@@ -143,7 +123,29 @@ export default function PlaylistsList({
 				</Link>
 			));
 		}
+	}
 
+	else if (typeof children !== "undefined" && children.length > 0) {
+			const apiPlaylists = children as ApiPlaylist[];
+			const filteredApiPlaylist =
+				localQuery !== ""
+					? apiPlaylists.filter((p) =>
+							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
+						)
+					: apiPlaylists;
+			playlists = filteredApiPlaylist.map((p) => (
+				<Link to={myUrl(p)} key={p.id}>
+					<ItemCover
+						title={p.name}
+						subtitle={p.uNm}
+						coverImg={imgUrl(p.id)}
+						altText="ApiPlaylist cover"
+					/>
+				</Link>
+			));
+	} 
+
+	if (specialPlaylists || playlists) {
 		contentGrid = (
 			<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16">
 				{specialPlaylists}

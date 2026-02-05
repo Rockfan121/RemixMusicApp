@@ -1,5 +1,6 @@
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import envOnly from "vite-env-only";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -13,6 +14,7 @@ export default defineConfig(({ isSsrBuild }) => ({
 		exclude: ["bcryptjs", "better-sqlite3", "drizzle-orm", "fsevents"],
 	},
 	plugins: [
+		tailwindcss(),
 		envOnly(),
 		tsconfigPaths(),
 		reactRouter(),
