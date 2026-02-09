@@ -63,47 +63,47 @@ export default function PlaylistsList({
 		setLocalQuery(e.target.value);
 	}
 
-	if (userIdResolved !== ""){
+	if (userIdResolved !== "") {
 		const userSpecialPlaylists = [
-				{
-					id: PlaylistsIDs.UserAll,
-					name: PlaylistsNames.UserAll,
-					uId: userIdResolved,
-					uNm: userNameResolved,
-					//url: `/player/tracks/${userIdResolved}/all`,
-					plId: "",
-					nbTracks: noOfPostsResolved,
-				},
-				{
-					id: PlaylistsIDs.UserLikes,
-					name: PlaylistsNames.UserLikes,
-					uId: userIdResolved,
-					uNm: userNameResolved,
-					//url: `/player/tracks/${userIdResolved}/likes`,
-					plId: "",
-					nbTracks: noOfLikesResolved,
-				},
-				{
-					id: PlaylistsIDs.UserStream,
-					name: PlaylistsNames.UserStream,
-					uId: userIdResolved,
-					uNm: userNameResolved,
-					//url: `/player/tracks/${userIdResolved}/stream`,
-					plId: "",
-					nbTracks: -1,
-				},
-			];
-			specialPlaylists = userSpecialPlaylists.map((p) => (
-				<Link to={myUrl(p)} key={p.id}>
-					<ItemCover
-						title={p.name}
-						subtitle={p.uNm}
-						coverImg={imgUrl(p.id)}
-						altText="UserPlaylist cover"
-					/>
-				</Link>
-			));
-		if (typeof children !== "undefined" && children.length > 0) {	
+			{
+				id: PlaylistsIDs.UserAll,
+				name: PlaylistsNames.UserAll,
+				uId: userIdResolved,
+				uNm: userNameResolved,
+				//url: `/player/tracks/${userIdResolved}/all`,
+				plId: "",
+				nbTracks: noOfPostsResolved,
+			},
+			{
+				id: PlaylistsIDs.UserLikes,
+				name: PlaylistsNames.UserLikes,
+				uId: userIdResolved,
+				uNm: userNameResolved,
+				//url: `/player/tracks/${userIdResolved}/likes`,
+				plId: "",
+				nbTracks: noOfLikesResolved,
+			},
+			{
+				id: PlaylistsIDs.UserStream,
+				name: PlaylistsNames.UserStream,
+				uId: userIdResolved,
+				uNm: userNameResolved,
+				//url: `/player/tracks/${userIdResolved}/stream`,
+				plId: "",
+				nbTracks: -1,
+			},
+		];
+		specialPlaylists = userSpecialPlaylists.map((p) => (
+			<Link to={myUrl(p)} key={p.id}>
+				<ItemCover
+					title={p.name}
+					subtitle={p.uNm}
+					coverImg={imgUrl(p.id)}
+					altText="UserPlaylist cover"
+				/>
+			</Link>
+		));
+		if (typeof children !== "undefined" && children.length > 0) {
 			const userPlaylists = children as UserPlaylist[];
 			const filteredUserPlaylists =
 				localQuery !== ""
@@ -123,27 +123,25 @@ export default function PlaylistsList({
 				</Link>
 			));
 		}
+	} else if (typeof children !== "undefined" && children.length > 0) {
+		const apiPlaylists = children as ApiPlaylist[];
+		const filteredApiPlaylist =
+			localQuery !== ""
+				? apiPlaylists.filter((p) =>
+						p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
+					)
+				: apiPlaylists;
+		playlists = filteredApiPlaylist.map((p) => (
+			<Link to={myUrl(p)} key={p.id}>
+				<ItemCover
+					title={p.name}
+					subtitle={p.uNm}
+					coverImg={imgUrl(p.id)}
+					altText="ApiPlaylist cover"
+				/>
+			</Link>
+		));
 	}
-
-	else if (typeof children !== "undefined" && children.length > 0) {
-			const apiPlaylists = children as ApiPlaylist[];
-			const filteredApiPlaylist =
-				localQuery !== ""
-					? apiPlaylists.filter((p) =>
-							p.name.toLowerCase().includes(localQuery?.toLowerCase() || ""),
-						)
-					: apiPlaylists;
-			playlists = filteredApiPlaylist.map((p) => (
-				<Link to={myUrl(p)} key={p.id}>
-					<ItemCover
-						title={p.name}
-						subtitle={p.uNm}
-						coverImg={imgUrl(p.id)}
-						altText="ApiPlaylist cover"
-					/>
-				</Link>
-			));
-	} 
 
 	if (specialPlaylists || playlists) {
 		contentGrid = (
