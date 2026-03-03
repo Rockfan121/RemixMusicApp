@@ -38,13 +38,13 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
-	throw redirect("/player/exploring");
+	//throw redirect("/player/exploring");
 
-	// const user = await requireUser(context, request);
+	const user = await requireUser(context, request);
 
-	// const account = await getUserById(context, user.id);
+	const account = await getUserById(context, user.id);
 
-	// return { account };
+	return { account };
 }
 
 export async function action({ context, request }: ActionFunctionArgs) {
