@@ -1,6 +1,6 @@
 export const APP_NAME = "RemixMusicApp";
-export const DEFAULT_FAILURE_REDIRECT = "/player/exploring"; // "/";
-export const DEFAULT_SUCCESS_REDIRECT = "/player/exploring"; // "/account";
+export const DEFAULT_FAILURE_REDIRECT = "/"; // "/player/exploring"
+export const DEFAULT_SUCCESS_REDIRECT = "/account"; // "/account";
 
 // Maximum number of recent playlists to store in localStorage
 export const MAX_PLAYLISTS = 200;

@@ -43,19 +43,19 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
-	throw redirect("/player/exploring");
+	//throw redirect("/player/exploring");
 
-	// const url = new URL(request.url);
-	// const successRedirect = validateRedirect(
-	// 	url.searchParams.get("redirectTo"),
-	// 	DEFAULT_SUCCESS_REDIRECT,
-	// );
+	const url = new URL(request.url);
+	const successRedirect = validateRedirect(
+		url.searchParams.get("redirectTo"),
+		DEFAULT_SUCCESS_REDIRECT,
+	);
 
-	// const authenticator = getAuthenticator(context);
-	// await authenticator.isAuthenticated(request, {
-	// 	successRedirect,
-	// });
-	// return null;
+	const authenticator = getAuthenticator(context);
+	await authenticator.isAuthenticated(request, {
+		successRedirect,
+	});
+	return null;
 }
 
 export async function action({ context, request }: ActionFunctionArgs) {
