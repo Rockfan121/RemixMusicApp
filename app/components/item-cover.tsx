@@ -20,13 +20,14 @@ export default function ItemCover({
 }: ItemCoverProps) {
 	return (
 		<figure>
-			<div className="w-28 h-28 overflow-hidden rounded-md album-cover">
+			<div className="w-28 h-28 overflow-hidden rounded-md album-cover relative">
 				<img
 					src={coverImg}
 					alt={altText}
 					aria-hidden
 					className="aspect-square h-fit w-fit object-cover"
 				/>
+				<span className="absolute bottom-0 left-0 text-sm font-bold italic text-muted-foreground">100 tracks</span>
 			</div>
 			<figcaption className="pt-1 font-semibold text-sm text-foreground">
 				{title} <br />
