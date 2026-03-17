@@ -26,7 +26,7 @@ export const allPlaylistInfo: ApiPlaylist = {
 	uId: "",
 	uNm: "",
 	plId: "",
-	nbTracks: MAX_FETCHED_ITEMS,
+	nbTracks: -1,
 };
 
 export const hotPlaylistInfo: ApiPlaylist = {
@@ -35,5 +35,5 @@ export const hotPlaylistInfo: ApiPlaylist = {
 	uId: "",
 	uNm: "",
 	plId: "",
-	nbTracks: MAX_FETCHED_ITEMS,
+	nbTracks: -1,
 };

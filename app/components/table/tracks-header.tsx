@@ -10,6 +10,7 @@ import { imgUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
 import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 import { PlaylistsIDs } from "@/types/playlists-types";
+import PlaylistImage from "../playlist-image";
 import UserLink from "../user-link";
 
 export default function TracksHeader({
@@ -37,15 +38,12 @@ export default function TracksHeader({
 
 	return (
 		<div className="mx-6 playlist-container p-6 mb-8 border-2 rounded-md min-h-52 flex bg-card">
-			<div className="playlist-background-image playlist-image rounded-xl relative">
-				<img
-					src={playlistCover}
-					alt="Playlist cover"
-					aria-hidden
-					className="playlist-image rounded-md"
-				/>
-				<span className="absolute bottom-0 left-0 font-bold italic text-muted-foreground">100 tracks</span>
-			</div>
+			<PlaylistImage
+				src={playlistCover}
+				alt="Playlist cover"
+				trackCount={apiplaylistInfo.nbTracks}
+				isLarge={true}
+			/>
 			<div className="flex flex-col">
 				<h1 className="ml-6 mb-1 text-2xl font-bold leading-none text-ring">
 					{`${apiplaylistInfo.name}`}

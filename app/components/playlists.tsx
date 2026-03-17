@@ -100,6 +100,7 @@ export default function PlaylistsList({
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
 					altText="UserPlaylist cover"
+					trackCount={p.nbTracks}
 				/>
 			</Link>
 		));
@@ -119,6 +120,7 @@ export default function PlaylistsList({
 						subtitle={userNameResolved}
 						coverImg={imgUrl(`${userIdResolved}_${p.id}`)}
 						altText="UserPlaylist cover"
+						trackCount={p.nbTracks}
 					/>
 				</Link>
 			));
@@ -138,6 +140,7 @@ export default function PlaylistsList({
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
 					altText="ApiPlaylist cover"
+					trackCount={p.nbTracks}
 				/>
 			</Link>
 		));
@@ -173,6 +176,7 @@ export default function PlaylistsList({
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
 					altText="UserPlaylist cover"
+					trackCount={p.nbTracks}
 				/>
 			</Link>
 		));

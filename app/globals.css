@@ -232,7 +232,7 @@
 }
 
 .playlist-image {
-	@apply aspect-square h-40 w-40 object-cover;
+	@apply aspect-square object-cover;
 }
 
 .search-input {

@@ -1,0 +1,45 @@
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/styles";
+
+interface PlaylistImageProps {
+	src: string;
+	alt: string;
+	trackCount?: number;
+	isLarge: boolean;
+}
+
+/**
+ * Displays a playlist (or user) cover image with a track count label overlaid at the bottom-left.
+ * @param src - URL of the cover image
+ * @param alt - alt text for the image
+ * @param trackCount - number of tracks to display in the label
+ * @param isLarge - what is the size of the component?
+ */
+export default function PlaylistImage({
+	src,
+	alt,
+	trackCount,
+	isLarge,
+}: PlaylistImageProps) {
+	const imgSize = isLarge ? "size-40" : "size-28";
+	return (
+		<div
+			className={cn(
+				"relative playlist-image playlist-background-image rounded-xl",
+				imgSize,
+			)}
+		>
+			<img
+				src={src}
+				alt={alt}
+				aria-hidden
+				className={cn("playlist-image rounded-md", imgSize)}
+			/>
+			{trackCount !== undefined && trackCount >= 0 && (
+				<span className="bg-secondary/90 rounded-xl px-1 text-sm absolute bottom-0 right-0 italic">
+					{trackCount} tracks
+				</span>
+			)}
+		</div>
+	);
+}
