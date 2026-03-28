@@ -83,11 +83,11 @@ export default function TracksContainer({
 			<TracksHeader apiplaylistInfo={playlistInfo} />
 			<TracksTable apiplaylistInfo={playlistInfo}>{allTracks}</TracksTable>
 			{canLoadMore && (
-				<div className="flex justify-center mb-12">
+				<div className="flex justify-center mb-10">
 					<Button
 						onClick={handleLoadMore}
 						disabled={fetcher.state !== "idle"}
-						variant="outline"
+						className="w-xs"
 					>
 						{fetcher.state !== "idle" ? "Loading…" : "Load More"}
 					</Button>

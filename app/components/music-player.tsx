@@ -285,7 +285,7 @@ export function MusicPlayer({
 						className="react-player"
 						height="74px"
 						width="74px"
-						controls={false}
+						controls={true}
 						playing={isPlaying}
 						onStart={handleStart}
 						onPlay={handlePlay}

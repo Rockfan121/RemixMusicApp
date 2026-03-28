@@ -110,7 +110,7 @@ export default function TracksTable({
 
 	return (
 		<>
-			<Table className="mx-6 mb-12 playlist-container">
+			<Table className="mx-6 mb-4 playlist-container">
 				<TableHeader>
 					<TableRow>
 						<TableHead>No</TableHead>
