@@ -58,7 +58,6 @@ export function MusicPlayer({
 		if (typeof document !== "undefined") {
 			setHasWindow(true);
 			setCurrentSongIndex(firstTrackNo);
-			//console.log("MusicPlayer timestamp:");
 			console.log(timestamp);
 			if (playlist.length > 0) startPlayingFromBeginning();
 		}
@@ -99,7 +98,8 @@ export function MusicPlayer({
 
 	const handleError = async () => {
 		console.log("onError");
-		toast.error(`Track "${playlist[currentSongIndex].name}" can't be played`, {
+		const currentTrack = playlist[currentSongIndex];
+		toast.error(`Track "${currentTrack?.name ?? "Unknown"}" can't be played`, {
 			duration: 4000,
 		});
 		await new Promise(timeout1000);

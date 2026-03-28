@@ -1,4 +1,3 @@
-import { MAX_FETCHED_ITEMS } from "@/config.shared";
 import type { ApiPlaylist } from "./openwhyd-types";
 
 export const PlaylistsIDs = {

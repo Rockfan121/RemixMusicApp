@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
-import { title } from "@/config.shared";
+import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { apiUser, userStreamPlaylist } from "@/services/openwhyd";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
@@ -10,29 +10,34 @@ import { PlaylistsIDs, PlaylistsNames } from "@/types/playlists-types";
 const PAGE_TITLE = PlaylistsNames.UserStream;
 
 //Fetch all tracks by one of Openwhyd users
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+	const afterId = new URL(request.url).searchParams.get("after") ?? undefined;
 	await new Promise(timeout300);
 	const api_res = await fetch(apiUser(params.userId));
 
 	if (api_res.status === 200) {
 		await new Promise(timeout300);
-		const user_res = await fetch(userStreamPlaylist(params.userId));
+		const user_res = await fetch(userStreamPlaylist(params.userId, afterId));
 
 		if (user_res.status !== 200) {
 			return {
 				USER_INFO: await api_res.json(),
 				TRACKS: {},
+				hasMore: false,
 			};
 		}
 
+		const tracks = await user_res.json();
 		return {
 			USER_INFO: await api_res.json(),
-			TRACKS: await user_res.json(),
+			TRACKS: tracks,
+			hasMore: Array.isArray(tracks) && tracks.length === MAX_FETCHED_ITEMS,
 		};
 	}
 	return {
 		USER_INFO: {},
 		TRACKS: {},
+		hasMore: false,
 	};
 };
 
@@ -48,7 +53,7 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 };
 
 export default function UserStreamTracks() {
-	const { USER_INFO, TRACKS } = useLoaderData<typeof loader>();
+	const { USER_INFO, TRACKS, hasMore } = useLoaderData<typeof loader>();
 
 	const userStreamInfo: ApiPlaylist = {
 		id: PlaylistsIDs.UserStream,
@@ -59,5 +64,11 @@ export default function UserStreamTracks() {
 		nbTracks: -1,
 	};
 
-	return <TracksContainer playlistInfo={userStreamInfo} tracks={TRACKS} />;
+	return (
+		<TracksContainer
+			playlistInfo={userStreamInfo}
+			tracks={TRACKS}
+			hasMore={hasMore}
+		/>
+	);
 }
