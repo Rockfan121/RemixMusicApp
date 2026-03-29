@@ -14,12 +14,15 @@ import ReactPlayer from "react-player";
 import { Link } from "react-router";
 import screenfull from "screenfull";
 import { toast } from "sonner";
+import { DailymotionPlayer } from "@/components/DailymotionPlayer";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { timeout200, timeout1000, timeout1500 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 import { Duration } from "./duration";
+
+ReactPlayer.addCustomPlayer(DailymotionPlayer);
 
 interface MusicPlayerProps {
 	playlist: Array<Track>;
