@@ -14,15 +14,17 @@ import ReactPlayer from "react-player";
 import { Link } from "react-router";
 import screenfull from "screenfull";
 import { toast } from "sonner";
-import { DailymotionPlayer } from "@/components/DailymotionPlayer";
+import type { DailymotionPlayerHandle } from "@/components/DailymotionPlayer";
+import {
+	DailymotionPlayer,
+	isDailymotionUrl,
+} from "@/components/DailymotionPlayer";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { timeout200, timeout1000, timeout1500 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 import { Duration } from "./duration";
-
-ReactPlayer.addCustomPlayer(DailymotionPlayer);
 
 interface MusicPlayerProps {
 	playlist: Array<Track>;
@@ -49,11 +51,15 @@ export function MusicPlayer({
 	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
 
 	const playerRef = useRef<ReactPlayer | null>(null);
+	const dmPlayerRef = useRef<DailymotionPlayerHandle | null>(null);
 	const startPlayingFromBeginning = useCallback(() => {
 		setPlayed(0);
 		setIsPlaying(true);
 		if (playerRef.current !== null) {
 			playerRef.current.seekTo(0);
+		}
+		if (dmPlayerRef.current !== null) {
+			dmPlayerRef.current.seekTo(0);
 		}
 	}, []);
 
@@ -149,8 +155,12 @@ export function MusicPlayer({
 
 	const handleSeekMouseUp = (e: any) => {
 		setSeeking(false);
+		const value = Number.parseFloat(e.target.value);
 		if (playerRef.current !== null) {
-			playerRef.current.seekTo(Number.parseFloat(e.target.value));
+			playerRef.current.seekTo(value);
+		}
+		if (dmPlayerRef.current !== null) {
+			dmPlayerRef.current.seekTo(value);
 		}
 	};
 
@@ -281,29 +291,50 @@ export function MusicPlayer({
 					</div>
 				</div>
 
-				{hasWindow && (
-					<ReactPlayer
-						ref={playerRef}
-						url={getCurrentUrl()}
-						className="react-player"
-						height="74px"
-						width="74px"
-						controls={true}
-						playing={isPlaying}
-						onStart={handleStart}
-						onPlay={handlePlay}
-						onPause={handlePause}
-						onEnded={handleEnded}
-						volume={1}
-						muted={isMuted}
-						loop={howLooped === 2}
-						onError={handleError}
-						onProgress={handleProgress}
-						onReady={() => console.log("onReady")}
-						onDuration={handleDuration}
-						style={{ marginTop: "5px" }}
-					/>
-				)}
+				{hasWindow &&
+					(isDailymotionUrl(getCurrentUrl()) ? (
+						<DailymotionPlayer
+							ref={dmPlayerRef}
+							url={getCurrentUrl()}
+							className="react-player"
+							height="74px"
+							width="74px"
+							playing={isPlaying}
+							onStart={handleStart}
+							onPlay={handlePlay}
+							onPause={handlePause}
+							onEnded={handleEnded}
+							volume={1}
+							muted={isMuted}
+							onError={handleError}
+							onProgress={handleProgress}
+							onReady={() => console.log("onReady")}
+							onDuration={handleDuration}
+							style={{ marginTop: "5px" }}
+						/>
+					) : (
+						<ReactPlayer
+							ref={playerRef}
+							url={getCurrentUrl()}
+							className="react-player"
+							height="74px"
+							width="74px"
+							controls={true}
+							playing={isPlaying}
+							onStart={handleStart}
+							onPlay={handlePlay}
+							onPause={handlePause}
+							onEnded={handleEnded}
+							volume={1}
+							muted={isMuted}
+							loop={howLooped === 2}
+							onError={handleError}
+							onProgress={handleProgress}
+							onReady={() => console.log("onReady")}
+							onDuration={handleDuration}
+							style={{ marginTop: "5px" }}
+						/>
+					))}
 			</div>
 		</div>
 	);
