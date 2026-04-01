@@ -94,6 +94,17 @@ export const DailymotionPlayer = forwardRef<
 		volumeRef.current = volume;
 	}, [volume]);
 
+	// Reset player state when the URL changes (new video loaded into the iframe).
+	// url is the trigger; the body only resets refs which Biome doesn't track.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: url is the intentional trigger
+	useEffect(() => {
+		readyRef.current = false;
+		startedRef.current = false;
+		durationRef.current = 0;
+		currentTimeRef.current = 0;
+		secondsLoadedRef.current = 0;
+	}, [url]);
+
 	const sendCommand = useCallback((command: Record<string, unknown>) => {
 		const iframe = iframeRef.current;
 		if (iframe?.contentWindow) {
@@ -135,12 +146,39 @@ export const DailymotionPlayer = forwardRef<
 	// postMessage listener
 	useEffect(() => {
 		function handleMessage(event: MessageEvent) {
-			if (event.origin !== "https://geo.dailymotion.com") return;
-			const iframe = iframeRef.current;
-			if (!iframe || event.source !== iframe.contentWindow) return;
+			// Accept messages from either Dailymotion origin. Nested player frames
+			// (player engine, ads, etc.) may use www.dailymotion.com as their origin.
+			if (
+				event.origin !== "https://geo.dailymotion.com" &&
+				event.origin !== "https://www.dailymotion.com"
+			) {
+				return;
+			}
 
-			const data = event.data as Record<string, unknown>;
-			if (!data || typeof data.event !== "string") return;
+			// Do NOT check event.source here. Dailymotion's player internally uses
+			// nested iframes and postMessages events from those child frames. Their
+			// contentWindow differs from iframeRef.current.contentWindow, so a strict
+			// source check would filter out apiready, timeupdate, and every other
+			// event, causing all commands to be silently dropped.
+
+			// Parse event data — some implementations send a JSON string rather than
+			// a plain object.
+			let data: Record<string, unknown>;
+			if (event.data !== null && typeof event.data === "object") {
+				data = event.data as Record<string, unknown>;
+			} else if (typeof event.data === "string") {
+				try {
+					const parsed: unknown = JSON.parse(event.data);
+					if (parsed === null || typeof parsed !== "object") return;
+					data = parsed as Record<string, unknown>;
+				} catch {
+					return; // ignore malformed JSON
+				}
+			} else {
+				return;
+			}
+
+			if (typeof data.event !== "string") return;
 
 			switch (data.event) {
 				case "apiready":
