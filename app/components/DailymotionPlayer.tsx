@@ -108,7 +108,11 @@ export const DailymotionPlayer = forwardRef<
 	const sendCommand = useCallback((command: Record<string, unknown>) => {
 		const iframe = iframeRef.current;
 		if (iframe?.contentWindow) {
-			iframe.contentWindow.postMessage(command, "https://geo.dailymotion.com");
+			// Commands must be sent as JSON strings; plain objects are silently
+			// ignored by the Dailymotion player.  Origin "*" is used because the
+			// player's receiver lives at https://www.dailymotion.com, not
+			// https://geo.dailymotion.com.
+			iframe.contentWindow.postMessage(JSON.stringify(command), "*");
 		}
 	}, []);
 
@@ -119,7 +123,8 @@ export const DailymotionPlayer = forwardRef<
 				const dur = durationRef.current;
 				// Callers pass a fraction (0–1); convert to seconds.
 				const time = amount * dur;
-				sendCommand({ command: "seek", time });
+				// Seek command uses a parameters array per the postMessage API spec.
+				sendCommand({ command: "seek", parameters: [time] });
 			},
 		}),
 		[sendCommand],
@@ -131,16 +136,16 @@ export const DailymotionPlayer = forwardRef<
 		sendCommand({ command: playing ? "play" : "pause" });
 	}, [playing, sendCommand]);
 
-	// Sync muted prop
+	// Sync muted prop — use the "muted" command with a parameters array.
 	useEffect(() => {
 		if (!readyRef.current) return;
-		sendCommand({ command: "setMuted", muted });
+		sendCommand({ command: "muted", parameters: [muted] });
 	}, [muted, sendCommand]);
 
-	// Sync volume prop
+	// Sync volume prop — use the "volume" command with a parameters array.
 	useEffect(() => {
 		if (!readyRef.current) return;
-		sendCommand({ command: "setVolume", volume });
+		sendCommand({ command: "volume", parameters: [volume] });
 	}, [volume, sendCommand]);
 
 	// postMessage listener
@@ -183,8 +188,8 @@ export const DailymotionPlayer = forwardRef<
 			switch (data.event) {
 				case "apiready":
 					readyRef.current = true;
-					sendCommand({ command: "setMuted", muted: mutedRef.current });
-					sendCommand({ command: "setVolume", volume: volumeRef.current });
+					sendCommand({ command: "muted", parameters: [mutedRef.current] });
+					sendCommand({ command: "volume", parameters: [volumeRef.current] });
 					if (playingRef.current) {
 						sendCommand({ command: "play" });
 					}
@@ -205,8 +210,9 @@ export const DailymotionPlayer = forwardRef<
 					onEnded?.();
 					break;
 				case "timeupdate":
-					if (typeof data.videoCurrentTime === "number") {
-						currentTimeRef.current = data.videoCurrentTime;
+					// The postMessage API uses `time` for current time (seconds).
+					if (typeof data.time === "number") {
+						currentTimeRef.current = data.time;
 						const dur = durationRef.current;
 						if (dur > 0) {
 							onProgress?.({
@@ -219,14 +225,16 @@ export const DailymotionPlayer = forwardRef<
 					}
 					break;
 				case "durationchange":
-					if (typeof data.videoDuration === "number") {
-						durationRef.current = data.videoDuration;
+					// The postMessage API uses `duration` for the video duration (seconds).
+					if (typeof data.duration === "number") {
+						durationRef.current = data.duration;
 						onDuration?.(durationRef.current);
 					}
 					break;
 				case "progress":
-					if (typeof data.videoBufferedTime === "number") {
-						secondsLoadedRef.current = data.videoBufferedTime;
+					// The postMessage API uses `buffered` for buffered seconds.
+					if (typeof data.buffered === "number") {
+						secondsLoadedRef.current = data.buffered;
 					}
 					break;
 				case "error":
@@ -252,7 +260,7 @@ export const DailymotionPlayer = forwardRef<
 	const videoId = getVideoId(url);
 	if (!videoId) return null;
 
-	const src = `https://geo.dailymotion.com/player.html?video=${videoId}`;
+	const src = `https://geo.dailymotion.com/player.html?video=${videoId}&api=postMessage`;
 
 	return (
 		<iframe
