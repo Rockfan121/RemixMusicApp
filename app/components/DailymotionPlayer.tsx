@@ -232,9 +232,9 @@ export const DailymotionPlayer = forwardRef<
 					}
 					break;
 				case "progress":
-					// The postMessage API uses `buffered` for buffered seconds.
-					if (typeof data.buffered === "number") {
-						secondsLoadedRef.current = data.buffered;
+					// The postMessage API uses `time` for buffered time (same field as timeupdate).
+					if (typeof data.time === "number") {
+						secondsLoadedRef.current = data.time;
 					}
 					break;
 				case "error":
@@ -260,7 +260,7 @@ export const DailymotionPlayer = forwardRef<
 	const videoId = getVideoId(url);
 	if (!videoId) return null;
 
-	const src = `https://geo.dailymotion.com/player.html?video=${videoId}&api=postMessage`;
+	const src = `https://www.dailymotion.com/embed/video/${videoId}?api=postMessage`;
 
 	return (
 		<iframe
