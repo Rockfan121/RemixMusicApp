@@ -10,6 +10,14 @@ import type { ProgressState } from "@/types/progress-state-type";
 const DAILYMOTION_REGEX =
 	/^(?:(?:https?):)?(?:\/\/)?(?:www\.)?(?:(?:dailymotion\.com(?:\/embed)?\/video)|dai\.ly)\/([a-zA-Z0-9]+)(?:_[\w_-]+)?(?:[\w.#_-]+)?/;
 
+/** How often (ms) the simulated playback clock ticks. */
+const PROGRESS_INTERVAL_MS = 500;
+/** Seconds added to the elapsed counter on each tick (must equal PROGRESS_INTERVAL_MS / 1000). */
+const PROGRESS_INCREMENT_SEC = 0.5;
+
+/** Show the Dailymotion limitation warning at most once per browser session. */
+let hasShownDailymotionWarning = false;
+
 /** Returns true when the URL points to a Dailymotion video. */
 export function isDailymotionUrl(url: string): boolean {
 	return DAILYMOTION_REGEX.test(url);
@@ -98,11 +106,14 @@ export const DailymotionPlayer = forwardRef<
 			intervalRef.current = null;
 		}
 
-		toast.warning("Dailymotion playback controls are limited", {
-			description:
-				"Pause, seek, mute and volume controls have no effect on Dailymotion videos. The next track will start automatically when the estimated duration elapses.",
-			duration: 8000,
-		});
+		if (!hasShownDailymotionWarning) {
+			hasShownDailymotionWarning = true;
+			toast.warning("Dailymotion playback controls are limited", {
+				description:
+					"Pause, seek, mute and volume controls have no effect on Dailymotion videos. The next track will start automatically when the estimated duration elapses.",
+				duration: 8000,
+			});
+		}
 
 		let cancelled = false;
 		fetch(
@@ -114,6 +125,10 @@ export const DailymotionPlayer = forwardRef<
 			})
 			.then((data) => {
 				if (cancelled) return;
+				if (typeof data.duration !== "number" || !Number.isFinite(data.duration)) {
+					onError?.(new Error("Dailymotion API returned invalid duration"));
+					return;
+				}
 				durationRef.current = data.duration;
 				onDuration?.(data.duration);
 				onReady?.();
@@ -153,11 +168,17 @@ export const DailymotionPlayer = forwardRef<
 			return;
 		}
 
+		// Clear any existing interval before starting a new one.
+		if (intervalRef.current !== null) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+
 		intervalRef.current = setInterval(() => {
 			const dur = durationRef.current;
 			if (dur <= 0) return;
 
-			currentTimeRef.current += 0.5;
+			currentTimeRef.current += PROGRESS_INCREMENT_SEC;
 
 			if (currentTimeRef.current >= dur) {
 				currentTimeRef.current = 0;
@@ -176,7 +197,7 @@ export const DailymotionPlayer = forwardRef<
 				loaded: 1,
 				loadedSeconds: dur,
 			});
-		}, 500);
+		}, PROGRESS_INTERVAL_MS);
 
 		return () => {
 			if (intervalRef.current !== null) {
