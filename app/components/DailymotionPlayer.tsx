@@ -1,10 +1,10 @@
 import {
 	forwardRef,
-	useCallback,
 	useEffect,
 	useImperativeHandle,
 	useRef,
 } from "react";
+import { toast } from "sonner";
 import type { ProgressState } from "@/types/progress-state-type";
 
 const DAILYMOTION_REGEX =
@@ -44,11 +44,15 @@ export interface DailymotionPlayerHandle {
 }
 
 /**
- * Standalone Dailymotion player using the geo.dailymotion.com iframe embed
- * and its postMessage API (replaces the deprecated DM.player SDK).
+ * Standalone Dailymotion player using the geo.dailymotion.com iframe embed.
  *
- * Exposes a `seekTo` method via ref, matching the interface MusicPlayer
- * expects from ReactPlayer.
+ * Because the Dailymotion postMessage API is deprecated and the new SDK
+ * requires a partner account Player ID, this component simulates playback
+ * state using the public REST API for duration and a client-side timer for
+ * elapsed time.  All commands (play, pause, seek, mute, volume) are no-ops.
+ *
+ * Exposes a `seekTo` method via ref (no-op) matching the interface
+ * MusicPlayer expects from ReactPlayer.
  */
 export const DailymotionPlayer = forwardRef<
 	DailymotionPlayerHandle,
@@ -57,8 +61,6 @@ export const DailymotionPlayer = forwardRef<
 	const {
 		url,
 		playing,
-		muted,
-		volume,
 		width,
 		height,
 		className,
@@ -73,198 +75,124 @@ export const DailymotionPlayer = forwardRef<
 		onProgress,
 	} = props;
 
-	const iframeRef = useRef<HTMLIFrameElement>(null);
 	const durationRef = useRef(0);
 	const currentTimeRef = useRef(0);
-	const secondsLoadedRef = useRef(0);
-	const readyRef = useRef(false);
 	const startedRef = useRef(false);
-	const playingRef = useRef(playing);
-	const mutedRef = useRef(muted);
-	const volumeRef = useRef(volume);
+	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-	// Keep refs in sync with props
-	useEffect(() => {
-		playingRef.current = playing;
-	}, [playing]);
-	useEffect(() => {
-		mutedRef.current = muted;
-	}, [muted]);
-	useEffect(() => {
-		volumeRef.current = volume;
-	}, [volume]);
+	// seekTo is intentionally a no-op — seeking requires the partner SDK.
+	useImperativeHandle(ref, () => ({ seekTo: () => {} }), []);
 
-	// Reset player state when the URL changes (new video loaded into the iframe).
-	// url is the trigger; the body only resets refs which Biome doesn't track.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: url is the intentional trigger
+	// On url change: reset state, fetch duration, show warning toast.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: callbacks are stable handler refs; url is the intentional trigger
 	useEffect(() => {
-		readyRef.current = false;
-		startedRef.current = false;
+		const videoId = getVideoId(url);
+		if (!videoId) return;
+
+		// Reset per-video state.
 		durationRef.current = 0;
 		currentTimeRef.current = 0;
-		secondsLoadedRef.current = 0;
+		startedRef.current = false;
+		if (intervalRef.current !== null) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+
+		toast.warning("Dailymotion playback controls are limited", {
+			description:
+				"Pause, seek, mute and volume controls have no effect on Dailymotion videos. The next track will start automatically when the estimated duration elapses.",
+			duration: 8000,
+		});
+
+		let cancelled = false;
+		fetch(
+			`https://api.dailymotion.com/video/${videoId}?fields=id,duration`,
+		)
+			.then((res) => {
+				if (!res.ok) throw new Error(`Dailymotion API error: ${res.status}`);
+				return res.json() as Promise<{ id: string; duration: number }>;
+			})
+			.then((data) => {
+				if (cancelled) return;
+				durationRef.current = data.duration;
+				onDuration?.(data.duration);
+				onReady?.();
+			})
+			.catch((err: unknown) => {
+				if (cancelled) return;
+				onError?.(err);
+			});
+
+		return () => {
+			cancelled = true;
+		};
 	}, [url]);
 
-	const sendCommand = useCallback((command: Record<string, unknown>) => {
-		const iframe = iframeRef.current;
-		if (iframe?.contentWindow) {
-			// Commands must be sent as JSON strings; plain objects are silently
-			// ignored by the Dailymotion player.  Origin "*" is used because the
-			// player's receiver lives at https://www.dailymotion.com, not
-			// https://geo.dailymotion.com.
-			iframe.contentWindow.postMessage(JSON.stringify(command), "*");
-		}
-	}, []);
-
-	useImperativeHandle(
-		ref,
-		() => ({
-			seekTo(amount: number) {
-				const dur = durationRef.current;
-				// Callers pass a fraction (0–1); convert to seconds.
-				const time = amount * dur;
-				// Seek command uses a parameters array per the postMessage API spec.
-				sendCommand({ command: "seek", parameters: [time] });
-			},
-		}),
-		[sendCommand],
-	);
-
-	// Sync playing prop
+	// Fire onStart/onPlay/onPause when the playing prop changes.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: callbacks are stable handler refs; playing is the intentional trigger
 	useEffect(() => {
-		if (!readyRef.current) return;
-		sendCommand({ command: playing ? "play" : "pause" });
-	}, [playing, sendCommand]);
-
-	// Sync muted prop — use the "muted" command with a parameters array.
-	useEffect(() => {
-		if (!readyRef.current) return;
-		sendCommand({ command: "muted", parameters: [muted] });
-	}, [muted, sendCommand]);
-
-	// Sync volume prop — use the "volume" command with a parameters array.
-	useEffect(() => {
-		if (!readyRef.current) return;
-		sendCommand({ command: "volume", parameters: [volume] });
-	}, [volume, sendCommand]);
-
-	// postMessage listener
-	useEffect(() => {
-		function handleMessage(event: MessageEvent) {
-			// Accept messages from either Dailymotion origin. Nested player frames
-			// (player engine, ads, etc.) may use www.dailymotion.com as their origin.
-			if (
-				event.origin !== "https://geo.dailymotion.com" &&
-				event.origin !== "https://www.dailymotion.com"
-			) {
-				return;
+		if (playing) {
+			if (!startedRef.current) {
+				startedRef.current = true;
+				onStart?.();
 			}
+			onPlay?.();
+		} else {
+			onPause?.();
+		}
+	}, [playing]);
 
-			// Do NOT check event.source here. Dailymotion's player internally uses
-			// nested iframes and postMessages events from those child frames. Their
-			// contentWindow differs from iframeRef.current.contentWindow, so a strict
-			// source check would filter out apiready, timeupdate, and every other
-			// event, causing all commands to be silently dropped.
+	// Advance the simulated clock while playing; fire onEnded when done.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: callbacks are stable handler refs; playing is the intentional trigger
+	useEffect(() => {
+		if (!playing) {
+			if (intervalRef.current !== null) {
+				clearInterval(intervalRef.current);
+				intervalRef.current = null;
+			}
+			return;
+		}
 
-			// Parse event data — some implementations send a JSON string rather than
-			// a plain object.
-			let data: Record<string, unknown>;
-			if (event.data !== null && typeof event.data === "object") {
-				data = event.data as Record<string, unknown>;
-			} else if (typeof event.data === "string") {
-				try {
-					const parsed: unknown = JSON.parse(event.data);
-					if (parsed === null || typeof parsed !== "object") return;
-					data = parsed as Record<string, unknown>;
-				} catch {
-					return; // ignore malformed JSON
+		intervalRef.current = setInterval(() => {
+			const dur = durationRef.current;
+			if (dur <= 0) return;
+
+			currentTimeRef.current += 0.5;
+
+			if (currentTimeRef.current >= dur) {
+				currentTimeRef.current = 0;
+				startedRef.current = false;
+				if (intervalRef.current !== null) {
+					clearInterval(intervalRef.current);
+					intervalRef.current = null;
 				}
-			} else {
+				onEnded?.();
 				return;
 			}
 
-			if (typeof data.event !== "string") return;
+			onProgress?.({
+				played: currentTimeRef.current / dur,
+				playedSeconds: currentTimeRef.current,
+				loaded: 1,
+				loadedSeconds: dur,
+			});
+		}, 500);
 
-			switch (data.event) {
-				case "apiready":
-					readyRef.current = true;
-					sendCommand({ command: "muted", parameters: [mutedRef.current] });
-					sendCommand({ command: "volume", parameters: [volumeRef.current] });
-					if (playingRef.current) {
-						sendCommand({ command: "play" });
-					}
-					onReady?.();
-					break;
-				case "play":
-					if (!startedRef.current) {
-						startedRef.current = true;
-						onStart?.();
-					}
-					onPlay?.();
-					break;
-				case "pause":
-					onPause?.();
-					break;
-				case "end":
-					startedRef.current = false;
-					onEnded?.();
-					break;
-				case "timeupdate":
-					// The postMessage API uses `time` for current time (seconds).
-					if (typeof data.time === "number") {
-						currentTimeRef.current = data.time;
-						const dur = durationRef.current;
-						if (dur > 0) {
-							onProgress?.({
-								played: currentTimeRef.current / dur,
-								playedSeconds: currentTimeRef.current,
-								loaded: secondsLoadedRef.current / dur,
-								loadedSeconds: secondsLoadedRef.current,
-							});
-						}
-					}
-					break;
-				case "durationchange":
-					// The postMessage API uses `duration` for the video duration (seconds).
-					if (typeof data.duration === "number") {
-						durationRef.current = data.duration;
-						onDuration?.(durationRef.current);
-					}
-					break;
-				case "progress":
-					// The postMessage API uses `time` for buffered time (same field as timeupdate).
-					if (typeof data.time === "number") {
-						secondsLoadedRef.current = data.time;
-					}
-					break;
-				case "error":
-					onError?.(data);
-					break;
+		return () => {
+			if (intervalRef.current !== null) {
+				clearInterval(intervalRef.current);
+				intervalRef.current = null;
 			}
-		}
-
-		window.addEventListener("message", handleMessage);
-		return () => window.removeEventListener("message", handleMessage);
-	}, [
-		sendCommand,
-		onReady,
-		onStart,
-		onPlay,
-		onPause,
-		onEnded,
-		onError,
-		onDuration,
-		onProgress,
-	]);
+		};
+	}, [playing]);
 
 	const videoId = getVideoId(url);
 	if (!videoId) return null;
 
-	const src = `https://www.dailymotion.com/embed/video/${videoId}?api=postMessage`;
+	const src = `https://geo.dailymotion.com/player.html?video=${videoId}`;
 
 	return (
 		<iframe
-			ref={iframeRef}
 			src={src}
 			width={width}
 			height={height}
