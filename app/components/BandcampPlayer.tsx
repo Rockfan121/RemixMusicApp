@@ -138,7 +138,10 @@ export const BandcampPlayer = forwardRef<
 			const audio = audioRef.current;
 			if (!audio || !trackData) return;
 			if (playing) {
-				audio.play().catch(() => {});
+				audio.play().catch((err: unknown) => {
+					// Autoplay may be blocked by browser policy; not a fatal error
+					console.warn("BandcampPlayer: audio.play() was prevented:", err);
+				});
 			} else {
 				audio.pause();
 			}

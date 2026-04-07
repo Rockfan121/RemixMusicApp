@@ -160,7 +160,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 				coverArt: targetTrack.art ?? coverArt,
 				embedUrl,
 			},
-			{ headers: { "Cache-Control": "no-store" } },
+			{ headers: { "Cache-Control": "public, max-age=3600" } },
 		);
 	} catch (err) {
 		const message = err instanceof Error ? err.message : "Unknown error";
