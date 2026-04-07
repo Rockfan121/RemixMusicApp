@@ -6,5 +6,6 @@ declare module "@remix-run/node" {
 	export interface AppLoadContext {
 		DB: DB;
 		SESSION_SECRET: string;
+		BANDCAMP_API_KEY?: string;
 	}
 }
