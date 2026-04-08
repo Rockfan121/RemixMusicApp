@@ -79,6 +79,24 @@ export const BandcampPlayer = forwardRef<
 		const [useFallback, setUseFallback] = useState(false);
 		const [isLoading, setIsLoading] = useState(true);
 
+		// Store callbacks in refs so effects that read them don't need them as
+		// dependencies. This prevents a re-fetch every time the parent re-renders
+		// and passes new (non-memoised) function references.
+		const onReadyRef = useRef(onReady);
+		const onPlayRef = useRef(onPlay);
+		const onPauseRef = useRef(onPause);
+		const onEndedRef = useRef(onEnded);
+		const onProgressRef = useRef(onProgress);
+		const onDurationRef = useRef(onDuration);
+		const onErrorRef = useRef(onError);
+		onReadyRef.current = onReady;
+		onPlayRef.current = onPlay;
+		onPauseRef.current = onPause;
+		onEndedRef.current = onEnded;
+		onProgressRef.current = onProgress;
+		onDurationRef.current = onDuration;
+		onErrorRef.current = onError;
+
 		useImperativeHandle(ref, () => ({
 			seekTo: (fraction: number) => {
 				const audio = audioRef.current;
@@ -88,11 +106,13 @@ export const BandcampPlayer = forwardRef<
 			},
 		}));
 
-		// Fetch stream data from proxy whenever the Bandcamp URL changes
+		// Fetch stream data from proxy whenever the Bandcamp URL changes.
+		// Callbacks intentionally omitted from deps — they are read via refs so
+		// that non-memoised parent functions don't trigger an unnecessary re-fetch.
 		useEffect(() => {
 			const parsed = parseBandcampUrl(url);
 			if (!parsed) {
-				onError?.(new Error(`Invalid Bandcamp URL: ${url}`));
+				onErrorRef.current?.(new Error(`Invalid Bandcamp URL: ${url}`));
 				return;
 			}
 
@@ -114,7 +134,7 @@ export const BandcampPlayer = forwardRef<
 					if (data.error) {
 						console.error("BandcampPlayer: proxy error:", data.error);
 						setUseFallback(true);
-						onError?.(new Error(data.error));
+						onErrorRef.current?.(new Error(data.error));
 					} else {
 						setTrackData(data as BandcampTrackData);
 					}
@@ -125,13 +145,13 @@ export const BandcampPlayer = forwardRef<
 					console.error("BandcampPlayer: fetch failed:", err);
 					setUseFallback(true);
 					setIsLoading(false);
-					onError?.(err);
+					onErrorRef.current?.(err);
 				});
 
 			return () => {
 				cancelled = true;
 			};
-		}, [url, onError]);
+		}, [url]); // only url — callbacks are stable via refs
 
 		// Play / pause control
 		useEffect(() => {
@@ -202,18 +222,18 @@ export const BandcampPlayer = forwardRef<
 				<audio
 					ref={audioRef}
 					src={trackData.streamUrl}
-					onCanPlay={onReady}
-					onPlay={onPlay}
-					onPause={onPause}
-					onEnded={onEnded}
+					onCanPlay={() => onReadyRef.current?.()}
+					onPlay={() => onPlayRef.current?.()}
+					onPause={() => onPauseRef.current?.()}
+					onEnded={() => onEndedRef.current?.()}
 					onDurationChange={() => {
 						const audio = audioRef.current;
-						if (audio) onDuration?.(audio.duration);
+						if (audio) onDurationRef.current?.(audio.duration);
 					}}
 					onTimeUpdate={() => {
 						const audio = audioRef.current;
 						if (!audio || !audio.duration) return;
-						onProgress?.({
+						onProgressRef.current?.({
 							played: audio.currentTime / audio.duration,
 							loaded:
 								audio.buffered.length > 0
@@ -229,7 +249,7 @@ export const BandcampPlayer = forwardRef<
 					}}
 					onError={(e) => {
 						setUseFallback(true);
-						onError?.(e);
+						onErrorRef.current?.(e);
 					}}
 					style={{ display: "none" }}
 				/>
