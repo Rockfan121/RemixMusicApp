@@ -132,9 +132,14 @@ export const BandcampPlayer = forwardRef<
 				.then((data: { error?: string } & Partial<BandcampTrackData>) => {
 					if (cancelled) return;
 					if (data.error) {
-						console.error("BandcampPlayer: proxy error:", data.error);
+						// Proxy unavailable or API key missing — fall back to the embed
+						// iframe without surfacing an error to the parent. The iframe is
+						// a valid playback path, not a fatal failure.
+						console.warn(
+							"BandcampPlayer: proxy error, falling back to embed:",
+							data.error,
+						);
 						setUseFallback(true);
-						onErrorRef.current?.(new Error(data.error));
 					} else {
 						setTrackData(data as BandcampTrackData);
 					}
@@ -142,10 +147,15 @@ export const BandcampPlayer = forwardRef<
 				})
 				.catch((err: unknown) => {
 					if (cancelled) return;
-					console.error("BandcampPlayer: fetch failed:", err);
+					// Network failure — fall back to embed iframe without propagating
+					// an error to the parent (the iframe is a valid fallback, not a
+					// fatal failure).
+					console.warn(
+						"BandcampPlayer: fetch failed, falling back to embed:",
+						err,
+					);
 					setUseFallback(true);
 					setIsLoading(false);
-					onErrorRef.current?.(err);
 				});
 
 			return () => {
@@ -248,8 +258,13 @@ export const BandcampPlayer = forwardRef<
 						});
 					}}
 					onError={(e) => {
+						// Audio element failed to load the stream — fall back to the
+						// embed iframe without propagating an error to the parent.
+						console.warn(
+							"BandcampPlayer: audio error, falling back to embed:",
+							e,
+						);
 						setUseFallback(true);
-						onErrorRef.current?.(e);
 					}}
 					style={{ display: "none" }}
 				/>
