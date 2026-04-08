@@ -55,7 +55,6 @@ const remixHandler = createRequestHandler({
 		return {
 			DB,
 			SESSION_SECRET,
-			BANDCAMP_API_KEY: process.env.BANDCAMP_API_KEY,
 		};
 	},
 });
