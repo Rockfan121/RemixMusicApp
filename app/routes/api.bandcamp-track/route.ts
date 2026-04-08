@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "react-router";
+import { timeout1000 } from "@/helpers/timeouts";
 
 const BC_API_ROOT = "https://bc.wemakesites.net/api";
 
@@ -85,6 +86,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
 	try {
 		// Step 1: get track info (includes album slug, cover art, embed URL)
+		await new Promise(timeout1000);
 		const trackData = (await bcPost("track", BANDCAMP_API_KEY, {
 			artist,
 			track,
@@ -103,6 +105,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 		}
 
 		// Step 2: get album info (includes numeric album ID in embedParams)
+		await new Promise(timeout1000);
 		const albumData = (await bcPost("album", BANDCAMP_API_KEY, {
 			artist,
 			album: albumSlug,
@@ -122,6 +125,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 		}
 
 		// Step 3: get player data (streaming URLs for all tracks in the album)
+		await new Promise(timeout1000);
 		const playerData = (await bcPost("player", BANDCAMP_API_KEY, {
 			album: albumId,
 		})) as PlayerData;
