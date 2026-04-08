@@ -16,7 +16,6 @@ interface BandcampTrackData {
 	trackTitle: string;
 	albumTitle: string;
 	coverArt: string;
-	embedUrl: string;
 }
 
 interface ProgressState {
@@ -51,8 +50,8 @@ function parseBandcampUrl(url: string) {
 /**
  * Plays a single Bandcamp track via the /api/bandcamp-track proxy route,
  * which chains calls to the bc.wemakesites.net RESTful Bandcamp API to obtain
- * a signed mp3-128 stream URL. Falls back to a Bandcamp embed iframe when the
- * proxy is unavailable or the stream URL cannot be fetched.
+ * a signed mp3-128 stream URL. Calls onError if the proxy is unavailable or
+ * the stream cannot be fetched, allowing the parent to skip to the next track.
  */
 export const BandcampPlayer = forwardRef<
 	BandcampPlayerHandle,
@@ -76,7 +75,6 @@ export const BandcampPlayer = forwardRef<
 	) => {
 		const audioRef = useRef<HTMLAudioElement>(null);
 		const [trackData, setTrackData] = useState<BandcampTrackData | null>(null);
-		const [useFallback, setUseFallback] = useState(false);
 		const [isLoading, setIsLoading] = useState(true);
 
 		// Store callbacks in refs so effects that read them don't need them as
@@ -117,7 +115,6 @@ export const BandcampPlayer = forwardRef<
 			}
 
 			setTrackData(null);
-			setUseFallback(false);
 			setIsLoading(true);
 
 			const params = new URLSearchParams({
@@ -133,7 +130,6 @@ export const BandcampPlayer = forwardRef<
 					if (cancelled) return;
 					if (data.error) {
 						console.error("BandcampPlayer: proxy error:", data.error);
-						setUseFallback(true);
 						onErrorRef.current?.(new Error(data.error));
 					} else {
 						setTrackData(data as BandcampTrackData);
@@ -143,7 +139,6 @@ export const BandcampPlayer = forwardRef<
 				.catch((err: unknown) => {
 					if (cancelled) return;
 					console.error("BandcampPlayer: fetch failed:", err);
-					setUseFallback(true);
 					setIsLoading(false);
 					onErrorRef.current?.(err);
 				});
@@ -180,27 +175,6 @@ export const BandcampPlayer = forwardRef<
 			if (!audio) return;
 			audio.muted = muted;
 		}, [muted]);
-
-		// Fallback: render the Bandcamp embed iframe
-		if (useFallback) {
-			const parsed = parseBandcampUrl(url);
-			const embedSrc =
-				trackData?.embedUrl ??
-				(parsed
-					? `https://${parsed.artist}.bandcamp.com/track/${parsed.track}`
-					: null);
-
-			if (!embedSrc) return null;
-
-			return (
-				<iframe
-					src={embedSrc}
-					title="Bandcamp Player"
-					style={{ border: 0, width: 74, height: 74 }}
-					seamless
-				/>
-			);
-		}
 
 		if (isLoading) {
 			return (
@@ -248,7 +222,6 @@ export const BandcampPlayer = forwardRef<
 						});
 					}}
 					onError={(e) => {
-						setUseFallback(true);
 						onErrorRef.current?.(e);
 					}}
 					style={{ display: "none" }}
