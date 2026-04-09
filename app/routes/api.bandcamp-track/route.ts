@@ -1,4 +1,5 @@
 import bcFetch from "bandcamp-fetch";
+import { timeout500 } from "@/helpers/timeouts";
 import type { LoaderFunctionArgs } from "react-router";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -16,6 +17,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const trackUrl = `https://${artist}.bandcamp.com/track/${track}`;
 
 	try {
+		await new Promise(timeout500);
 		const trackInfo = await bcFetch.track.getInfo({ trackUrl });
 
 		if (!trackInfo.streamUrl) {
