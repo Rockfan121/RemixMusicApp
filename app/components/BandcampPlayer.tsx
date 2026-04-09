@@ -28,6 +28,7 @@ interface ProgressState {
 interface BandcampPlayerProps {
 	url: string;
 	playing: boolean;
+	loop?: boolean;
 	volume: number;
 	muted: boolean;
 	onReady?: () => void;
@@ -61,6 +62,7 @@ export const BandcampPlayer = forwardRef<
 		{
 			url,
 			playing,
+			loop = false,
 			volume,
 			muted,
 			onReady,
@@ -196,6 +198,7 @@ export const BandcampPlayer = forwardRef<
 				<audio
 					ref={audioRef}
 					src={trackData.streamUrl}
+					loop={loop}
 					onCanPlay={() => onReadyRef.current?.()}
 					onPlay={() => onPlayRef.current?.()}
 					onPause={() => onPauseRef.current?.()}
