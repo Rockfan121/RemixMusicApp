@@ -1,6 +1,6 @@
 import bcFetch from "bandcamp-fetch";
-import { timeout500 } from "@/helpers/timeouts";
 import type { LoaderFunctionArgs } from "react-router";
+import { timeout500 } from "@/helpers/timeouts";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
