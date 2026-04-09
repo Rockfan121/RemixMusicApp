@@ -22,7 +22,7 @@ export function userPlaylist(
 	afterId?: string,
 ) {
 	const base = `https://openwhyd.org/u/${userId}/playlist/
-			${playlistId}?format=json&limit=${MAX_FETCHED_ITEMS}`;
+			${playlistId}?format=json&limit=${MAX_FETCHED_ITEMS - 1}`;
 	return afterId ? `${base}&after=${afterId}` : base;
 }
 
@@ -48,12 +48,12 @@ export function userLikesPlaylist(
 	userId: string | undefined,
 	afterId?: string,
 ) {
-	const base = `https://openwhyd.org/u/${userId}/likes?format=json&limit=${MAX_FETCHED_ITEMS}`;
+	const base = `https://openwhyd.org/u/${userId}/likes?format=json`;
 	return afterId ? `${base}&after=${afterId}` : base;
 }
 
 export function userAllPlaylist(userId: string | undefined, afterId?: string) {
-	const base = `https://openwhyd.org/u/${userId}?format=json&limit=${MAX_FETCHED_ITEMS}`;
+	const base = `https://openwhyd.org/u/${userId}?format=json&limit=${MAX_FETCHED_ITEMS - 1}`;
 	return afterId ? `${base}&after=${afterId}` : base;
 }
 

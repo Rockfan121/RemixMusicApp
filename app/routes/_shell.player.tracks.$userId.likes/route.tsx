@@ -31,7 +31,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 		return {
 			USER_INFO: await api_res.json(),
 			TRACKS: tracks,
-			hasMore: Array.isArray(tracks) && tracks.length === MAX_FETCHED_ITEMS,
+			hasMore: Array.isArray(tracks) && tracks.length === 21,
 		};
 	}
 	return {
