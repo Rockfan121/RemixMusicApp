@@ -296,6 +296,7 @@ export function MusicPlayer({
 							playing={isPlaying}
 							volume={1}
 							muted={isMuted}
+							loop={howLooped === 2}
 							onReady={() => console.log("onReady")}
 							onPlay={handlePlay}
 							onPause={handlePause}
