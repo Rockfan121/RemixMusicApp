@@ -14,6 +14,8 @@ import ReactPlayer from "react-player";
 import { Link } from "react-router";
 import screenfull from "screenfull";
 import { toast } from "sonner";
+import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
+import { BandcampPlayer } from "@/components/BandcampPlayer";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { timeout200, timeout1000, timeout1500 } from "@/helpers/timeouts";
@@ -46,13 +48,23 @@ export function MusicPlayer({
 	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
 
 	const playerRef = useRef<ReactPlayer | null>(null);
+	const bandcampPlayerRef = useRef<BandcampPlayerHandle | null>(null);
+
+	const isBandcampUrl = (url: string) => url.includes(".bandcamp.com/track/");
+
+	const seekPlayer = useCallback((fraction: number) => {
+		if (bandcampPlayerRef.current) {
+			bandcampPlayerRef.current.seekTo(fraction);
+		} else if (playerRef.current !== null) {
+			playerRef.current.seekTo(fraction);
+		}
+	}, []);
+
 	const startPlayingFromBeginning = useCallback(() => {
 		setPlayed(0);
 		setIsPlaying(true);
-		if (playerRef.current !== null) {
-			playerRef.current.seekTo(0);
-		}
-	}, []);
+		seekPlayer(0);
+	}, [seekPlayer]);
 
 	useEffect(() => {
 		if (typeof document !== "undefined") {
@@ -146,9 +158,7 @@ export function MusicPlayer({
 
 	const handleSeekMouseUp = (e: any) => {
 		setSeeking(false);
-		if (playerRef.current !== null) {
-			playerRef.current.seekTo(Number.parseFloat(e.target.value));
-		}
+		seekPlayer(Number.parseFloat(e.target.value));
 	};
 
 	const handleProgress = (progress: ProgressState) => {
@@ -278,29 +288,46 @@ export function MusicPlayer({
 					</div>
 				</div>
 
-				{hasWindow && (
-					<ReactPlayer
-						ref={playerRef}
-						url={getCurrentUrl()}
-						className="react-player"
-						height="74px"
-						width="74px"
-						controls={true}
-						playing={isPlaying}
-						onStart={handleStart}
-						onPlay={handlePlay}
-						onPause={handlePause}
-						onEnded={handleEnded}
-						volume={1}
-						muted={isMuted}
-						loop={howLooped === 2}
-						onError={handleError}
-						onProgress={handleProgress}
-						onReady={() => console.log("onReady")}
-						onDuration={handleDuration}
-						style={{ marginTop: "5px" }}
-					/>
-				)}
+				{hasWindow &&
+					(isBandcampUrl(getCurrentUrl()) ? (
+						<BandcampPlayer
+							ref={bandcampPlayerRef}
+							url={getCurrentUrl()}
+							playing={isPlaying}
+							volume={1}
+							muted={isMuted}
+							loop={howLooped === 2}
+							onReady={() => console.log("onReady")}
+							onPlay={handlePlay}
+							onPause={handlePause}
+							onEnded={handleEnded}
+							onProgress={handleProgress}
+							onDuration={handleDuration}
+							onError={handleError}
+						/>
+					) : (
+						<ReactPlayer
+							ref={playerRef}
+							url={getCurrentUrl()}
+							className="react-player"
+							height="74px"
+							width="74px"
+							controls={true}
+							playing={isPlaying}
+							onStart={handleStart}
+							onPlay={handlePlay}
+							onPause={handlePause}
+							onEnded={handleEnded}
+							volume={1}
+							muted={isMuted}
+							loop={howLooped === 2}
+							onError={handleError}
+							onProgress={handleProgress}
+							onReady={() => console.log("onReady")}
+							onDuration={handleDuration}
+							style={{ marginTop: "5px" }}
+						/>
+					))}
 			</div>
 		</div>
 	);
