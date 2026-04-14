@@ -33,7 +33,7 @@ const TrackRow = memo(function TrackRow({
 				<img
 					alt="Track cover"
 					aria-hidden
-					className="aspect-square h-12 w-12 rounded-md object-cover"
+					className="aspect-square size-12 rounded-md object-cover"
 					src={track.img}
 					loading="lazy"
 					decoding="async"
@@ -45,7 +45,7 @@ const TrackRow = memo(function TrackRow({
 					type="button"
 					onClick={() => onPlay(index)}
 				>
-					<PlayIcon className="mx-2 h-6 w-6 text-background group-hover:text-foreground text-right" />
+					<PlayIcon className="mx-2 h-6 w-6 text-primary/80 group-hover:text-foreground text-right" />
 				</button>
 			</TableCell>
 			<TableCell className="px-1">

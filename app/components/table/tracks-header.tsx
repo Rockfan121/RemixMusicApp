@@ -37,7 +37,7 @@ export default function TracksHeader({
 	const playlistCover = imgUrl(apiplaylistInfo.id);
 
 	return (
-		<div className="mx-6 playlist-container p-6 mb-8 border-2 rounded-md min-h-52 flex bg-card">
+		<div className="mx-6 playlist-container p-4 sm:p-6 mb-8 border-2 rounded-md flex bg-card">
 			<PlaylistImage
 				src={playlistCover}
 				alt="Playlist cover"
@@ -45,11 +45,11 @@ export default function TracksHeader({
 				isLarge={true}
 			/>
 			<div className="flex flex-col">
-				<h1 className="ml-6 mb-1 text-2xl font-bold leading-none text-ring">
+				<h1 className="ml-4 mb-1 text-xl lg:text-2xl font-bold leading-none text-ring">
 					{`${apiplaylistInfo.name}`}
 				</h1>
 
-				<h2 className="mx-6 mt-4 mb-8 flex">
+				<h2 className="mx-5 my-3 flex">
 					{apiplaylistInfo.uId !== "" ? (
 						<UserLink
 							id={apiplaylistInfo.uId}
@@ -62,7 +62,7 @@ export default function TracksHeader({
 					)}
 				</h2>
 				<div className="grow" />
-				<div className="flex space-x-1 mb-4">
+				<div className="flex space-x-1 mb-2">
 					<button
 						type="button"
 						onClick={() => fireFavesCallback(apiplaylistInfo)}

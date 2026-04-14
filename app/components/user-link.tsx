@@ -22,9 +22,9 @@ export default function UserLink({
 	isLarge,
 }: UserLinkProps) {
 	const fontSize = isLarge
-		? "text-lg text-muted-foreground"
+		? "text-md lg:text-lg text-muted-foreground"
 		: "text-sm text-muted-foreground";
-	const imgSize = isLarge ? "size-8" : "size-5";
+	const imgSize = isLarge ? "size-7 lg:size-8" : "size-5";
 
 	return (
 		<Link to={`/player/exploring?q=${id}`} className="flex space-x-1.5">

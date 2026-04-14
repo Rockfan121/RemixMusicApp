@@ -31,7 +31,7 @@ export default function ItemCover({
 				trackCount={trackCount}
 				isLarge={false}
 			/>
-			<figcaption className="pt-1 font-semibold text-sm text-foreground">
+			<figcaption className="pt-1 font-semibold text-xs sm:text-sm text-foreground">
 				{title} <br />
 				<span className="text-muted-foreground">{subtitle}</span>
 			</figcaption>

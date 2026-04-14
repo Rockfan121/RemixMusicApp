@@ -21,7 +21,7 @@ export default function PlaylistImage({
 	trackCount,
 	isLarge,
 }: PlaylistImageProps) {
-	const imgSize = isLarge ? "size-40" : "size-28";
+	const imgSize = isLarge ? "size-26 sm:size-32 lg:size-40" : "size-22 sm:size-26 lg:size-28";
 	return (
 		<div
 			className={cn(
@@ -36,7 +36,7 @@ export default function PlaylistImage({
 				className={cn("playlist-image rounded-md", imgSize)}
 			/>
 			{trackCount !== undefined && trackCount >= 0 && (
-				<span className="bg-secondary/90 rounded-xl px-1 text-sm absolute bottom-0 right-0 italic">
+				<span className="bg-secondary/90 rounded-xl px-1 text-sm absolute bottom-0 right-0 italic hidden sm:block">
 					{trackCount} tracks
 				</span>
 			)}
