@@ -25,7 +25,7 @@ Besides, this interface tries to expand Openwhyd's features a bit. Thus, Remix M
 
 <img src="/screenshots/thLight.jpg" alt="Light theme" style="float: left; width: 31%;"/> <img src="/screenshots/thBlue.jpg" alt="Blue theme" style="float: left; width: 31%;"/> <img src="/screenshots/thPurple.jpg" alt="Purple theme" style="width: 31%;"/>
 
-**This is work in progress** - the app still lacks some important Openwhyd features (e.g. pagination and playing music from Bandcamp).
+**This is work in progress** - the app still lacks some important Openwhyd features.
 
 ## Development
 
