@@ -61,9 +61,13 @@ export default function TracksContainer({
 
 	const handleLoadMore = () => {
 		const isHot = location.pathname === HOT_TRACKS_LINK;
+		const lastTrackNo = allTracks.length - 1;
+		const order = allTracks[lastTrackNo].order;
 		const params = isHot
 			? `?skip=${allTracks.length}`
-			: `?after=${allTracks[allTracks.length - 1]._id}`;
+			: order
+				? `?after=${order}`
+				: `?after=${allTracks[lastTrackNo]._id}`;
 		fetcher.load(`${location.pathname}${params}`);
 	};
 
