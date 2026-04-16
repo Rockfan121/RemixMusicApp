@@ -49,6 +49,8 @@ export function MusicPlayer({
 
 	const playerRef = useRef<ReactPlayer | null>(null);
 	const bandcampPlayerRef = useRef<BandcampPlayerHandle | null>(null);
+	const isMutedRef = useRef(isMuted);
+	isMutedRef.current = isMuted;
 
 	const isBandcampUrl = (url: string) => url.includes(".bandcamp.com/track/");
 
@@ -132,9 +134,41 @@ export function MusicPlayer({
 		startPlayingFromBeginning();
 	};
 
-	const handlePlay = () => {
+	const handlePlay = async () => {
 		console.log("onPlay");
 		setIsPlaying(true);
+
+		const shouldBeMuted = isMutedRef.current;
+
+		if (bandcampPlayerRef.current) {
+			// Bandcamp player — backed by HTMLAudioElement, synchronous mute control
+			bandcampPlayerRef.current.setMuted(shouldBeMuted);
+			return;
+		}
+
+		const internalPlayer = playerRef.current?.getInternalPlayer();
+		if (internalPlayer) {
+			if (typeof internalPlayer.isMuted === "function") {
+				// YouTube player
+				if (shouldBeMuted) {
+					internalPlayer.mute();
+				} else {
+					internalPlayer.unMute();
+				}
+			} else if (typeof internalPlayer.getMuted === "function") {
+				// Vimeo player
+				if (typeof internalPlayer.setMuted === "function") {
+					await (internalPlayer.setMuted(shouldBeMuted) as Promise<void>);
+				}
+			} else if (typeof internalPlayer.setVolume === "function") {
+				// SoundCloud player — no native mute API, use volume instead
+				if (shouldBeMuted) {
+					internalPlayer.setVolume(0);
+				} else {
+					internalPlayer.setVolume(100);
+				}
+			}
+		}
 	};
 
 	const handlePause = () => {

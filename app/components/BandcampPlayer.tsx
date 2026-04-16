@@ -8,6 +8,8 @@ import {
 
 export interface BandcampPlayerHandle {
 	seekTo: (fraction: number) => void;
+	setMuted: (muted: boolean) => void;
+	getMuted: () => boolean;
 }
 
 interface BandcampTrackData {
@@ -104,6 +106,11 @@ export const BandcampPlayer = forwardRef<
 					audio.currentTime = fraction * audio.duration;
 				}
 			},
+			setMuted: (muted: boolean) => {
+				const audio = audioRef.current;
+				if (audio) audio.muted = muted;
+			},
+			getMuted: () => audioRef.current?.muted ?? false,
 		}));
 
 		// Fetch stream data from proxy whenever the Bandcamp URL changes.
