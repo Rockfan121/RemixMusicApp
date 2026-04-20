@@ -22,11 +22,7 @@ export default function ItemCover({
 }: ItemCoverProps) {
 	return (
 		<figure>
-			<PlaylistImage
-				src={coverImg}
-				trackCount={trackCount}
-				isLarge={false}
-			/>
+			<PlaylistImage src={coverImg} trackCount={trackCount} isLarge={false} />
 			<figcaption className="pt-1 font-semibold text-xs sm:text-sm text-foreground">
 				{title} <br />
 				<span className="text-muted-foreground">{subtitle}</span>

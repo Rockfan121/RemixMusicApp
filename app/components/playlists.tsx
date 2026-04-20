@@ -201,7 +201,9 @@ export default function PlaylistsList({
 	return (
 		<>
 			<div className="flex space-x-5 mx-6 mb-4">
-				<h4 className="mx-4 text-lg sm:text-xl font-bold text-ring">{listIntro}</h4>
+				<h4 className="mx-4 text-lg sm:text-xl font-bold text-ring">
+					{listIntro}
+				</h4>
 				{searchInput}
 			</div>
 			{contentGrid}

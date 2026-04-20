@@ -239,7 +239,12 @@ export const BandcampPlayer = forwardRef<
 				<img
 					src={trackData.coverArt}
 					alt={trackData.trackTitle}
-					style={{ width: 72, height: 72, marginTop: "1px", objectFit: "cover" }}
+					style={{
+						width: 72,
+						height: 72,
+						marginTop: "1px",
+						objectFit: "cover",
+					}}
 				/>
 			</>
 		);

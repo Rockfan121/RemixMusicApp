@@ -21,6 +21,7 @@ import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { timeout200, timeout1000, timeout1500 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
+import DailymotionSkipper from "./DailymotionSkipper";
 import { Duration } from "./duration";
 
 interface MusicPlayerProps {
@@ -54,6 +55,14 @@ export function MusicPlayer({
 
 	const isBandcampUrl = (url: string) => url.includes(".bandcamp.com/track/");
 
+	const MATCH_URL_DAILYMOTION =
+		/(?:dailymotion\.com(?:\/embed)?\/video|dai\.ly)\/([a-zA-Z0-9]+)/;
+
+	function isDailymotionUrl(url: string) {
+		const match = url.match(MATCH_URL_DAILYMOTION);
+		return !(match === null);
+	}
+
 	const seekPlayer = useCallback((fraction: number) => {
 		if (bandcampPlayerRef.current) {
 			bandcampPlayerRef.current.seekTo(fraction);
@@ -61,6 +70,40 @@ export function MusicPlayer({
 			playerRef.current.seekTo(fraction);
 		}
 	}, []);
+
+	async function syncIsMuted() {
+		const shouldBeMuted = isMutedRef.current;
+
+		if (bandcampPlayerRef.current) {
+			// Bandcamp player — backed by HTMLAudioElement, synchronous mute control
+			bandcampPlayerRef.current.setMuted(shouldBeMuted);
+			return;
+		}
+
+		const internalPlayer = playerRef.current?.getInternalPlayer();
+		if (internalPlayer) {
+			if (typeof internalPlayer.isMuted === "function") {
+				// YouTube player
+				if (shouldBeMuted) {
+					internalPlayer.mute();
+				} else {
+					internalPlayer.unMute();
+				}
+			} else if (typeof internalPlayer.getMuted === "function") {
+				// Vimeo player
+				if (typeof internalPlayer.setMuted === "function") {
+					await (internalPlayer.setMuted(shouldBeMuted) as Promise<void>);
+				}
+			} else if (typeof internalPlayer.setVolume === "function") {
+				// SoundCloud player — no native mute API, use volume instead
+				if (shouldBeMuted) {
+					internalPlayer.setVolume(0);
+				} else {
+					internalPlayer.setVolume(100);
+				}
+			}
+		}
+	}
 
 	const startPlayingFromBeginning = useCallback(() => {
 		setPlayed(0);
@@ -119,7 +162,7 @@ export function MusicPlayer({
 		await new Promise(timeout1000);
 
 		const errantUrl = getCurrentUrl();
-		let newIndex = currentSongIndex;
+		let newIndex = currentSongIndex + 1;
 		let newUrl = getUrl(newIndex);
 
 		while (errantUrl === newUrl) {
@@ -137,38 +180,7 @@ export function MusicPlayer({
 	const handlePlay = async () => {
 		console.log("onPlay");
 		setIsPlaying(true);
-
-		const shouldBeMuted = isMutedRef.current;
-
-		if (bandcampPlayerRef.current) {
-			// Bandcamp player — backed by HTMLAudioElement, synchronous mute control
-			bandcampPlayerRef.current.setMuted(shouldBeMuted);
-			return;
-		}
-
-		const internalPlayer = playerRef.current?.getInternalPlayer();
-		if (internalPlayer) {
-			if (typeof internalPlayer.isMuted === "function") {
-				// YouTube player
-				if (shouldBeMuted) {
-					internalPlayer.mute();
-				} else {
-					internalPlayer.unMute();
-				}
-			} else if (typeof internalPlayer.getMuted === "function") {
-				// Vimeo player
-				if (typeof internalPlayer.setMuted === "function") {
-					await (internalPlayer.setMuted(shouldBeMuted) as Promise<void>);
-				}
-			} else if (typeof internalPlayer.setVolume === "function") {
-				// SoundCloud player — no native mute API, use volume instead
-				if (shouldBeMuted) {
-					internalPlayer.setVolume(0);
-				} else {
-					internalPlayer.setVolume(100);
-				}
-			}
-		}
+		syncIsMuted();
 	};
 
 	const handlePause = () => {
@@ -250,8 +262,8 @@ export function MusicPlayer({
 				onChange={handleSeekChange}
 				onMouseUp={handleSeekMouseUp}
 			/>
-			<div className="flex w-full items-center space-x-3 sm:space-x-5 px-1 sm:px-3 py-1">
-				<div className="flex items-center space-x-0 sm:space-x-0.5">
+			<div className="flex w-full items-center space-x-2 sm:space-x-6 px-1 sm:px-3 py-1">
+				<div className="flex items-center space-x-0.5">
 					<Button onClick={prevSong} className="player-button" size="icon">
 						<TrackPreviousIcon className="size-5" />
 					</Button>
@@ -274,7 +286,11 @@ export function MusicPlayer({
 				<div className="flex items-center space-x-0.5">
 					<Button
 						onClick={toggleLooped}
-						className={howLooped === 0 ? "untoggled-button" : "toggled-button"}
+						className={
+							howLooped === 0
+								? "untoggled-button hidden sm:flex"
+								: "toggled-button hidden sm:flex"
+						}
 						size="icon"
 					>
 						{howLooped === 1 ? (
@@ -300,21 +316,21 @@ export function MusicPlayer({
 
 					<Button
 						onClick={handleClickFullscreen}
-						className="toggled-button"
+						className="toggled-button hidden sm:flex"
 						size="icon"
 					>
 						<EnterFullScreenIcon className="size-5" />
 					</Button>
 				</div>
 
-				<div className="truncate flex grow flex-col">
-					<h4 className="flex font-bold">
+				<div className="text-balance flex grow flex-col">
+					<div className="flex font-bold text-sm lg:text-base">
 						{hasWindow && playlist.length > currentSongIndex ? (
 							<Link to={playlistUrl}>{playlist[currentSongIndex].name}</Link>
 						) : (
 							"No song"
 						)}
-					</h4>
+					</div>
 					<div className="flex text-xs">
 						<Duration seconds={duration * played} />
 						<span className="mx-0.5">/</span>
@@ -339,13 +355,15 @@ export function MusicPlayer({
 							onDuration={handleDuration}
 							onError={handleError}
 						/>
+					) : isDailymotionUrl(getCurrentUrl()) ? (
+						<DailymotionSkipper onSkip={handleError} />
 					) : (
 						<ReactPlayer
 							ref={playerRef}
 							url={getCurrentUrl()}
 							className="react-player"
-							height="74px"
-							width="74px"
+							height="72px"
+							width="72px"
 							controls={true}
 							playing={isPlaying}
 							onStart={handleStart}
@@ -359,7 +377,7 @@ export function MusicPlayer({
 							onProgress={handleProgress}
 							onReady={() => console.log("onReady")}
 							onDuration={handleDuration}
-							style={{ marginTop: "5px" }}
+							style={{ marginTop: "1px" }}
 						/>
 					))}
 			</div>

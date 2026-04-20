@@ -35,18 +35,21 @@ const TrackRow = memo(function TrackRow({
 					type="button"
 					onClick={() => onPlay(index)}
 				>
-
-				<img
-					aria-hidden
-					className="aspect-square size-13 rounded-md object-cover bg-white"
-					src={track.img}
-					loading="lazy"
-					decoding="async"
-				/>
-				<svg viewBox="-60 0 512 512" xmlns="http://www.w3.org/2000/svg" className="size-7 py-0.5 pl-1 pr-0 fill-white bg-black/40 block absolute top-3 left-3 rounded-full">
-					<title>play</title>
-					<path d="M64 96L328 256 64 416 64 96Z" />
-				</svg>
+					<img
+						aria-hidden
+						className="aspect-square size-13 rounded-md object-cover bg-white"
+						src={track.img}
+						loading="lazy"
+						decoding="async"
+					/>
+					<svg
+						viewBox="-60 0 512 512"
+						xmlns="http://www.w3.org/2000/svg"
+						className="size-7 py-0.5 pl-1 pr-0 fill-white bg-black/40 block absolute top-3 left-3 rounded-full"
+					>
+						<title>play</title>
+						<path d="M64 96L328 256 64 416 64 96Z" />
+					</svg>
 				</button>
 			</TableCell>
 			<TableCell className="px-1">
