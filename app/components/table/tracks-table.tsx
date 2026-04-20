@@ -27,29 +27,30 @@ const TrackRow = memo(function TrackRow({
 	onPlay,
 }: TrackRowProps) {
 	return (
-		<TableRow className="group text-base">
+		<TableRow>
 			<TableCell>{index + 1}</TableCell>
-			<TableCell className="hidden sm:table-cell w-16 pl-0 pr-4">
+			<TableCell className="w-16 pl-1 pr-4">
+				<button
+					className="size-13 mt-1 text-left relative"
+					type="button"
+					onClick={() => onPlay(index)}
+				>
+
 				<img
-					alt="Track cover"
 					aria-hidden
-					className="aspect-square size-12 rounded-md object-cover"
+					className="aspect-square size-13 rounded-md object-cover bg-white"
 					src={track.img}
 					loading="lazy"
 					decoding="async"
 				/>
-			</TableCell>
-			<TableCell className="px-0">
-				<button
-					className="h-fit w-fit mt-2 text-left"
-					type="button"
-					onClick={() => onPlay(index)}
-				>
-					<PlayIcon className="mx-2 h-6 w-6 text-primary/80 group-hover:text-foreground text-right" />
+				<svg viewBox="-60 0 512 512" xmlns="http://www.w3.org/2000/svg" className="size-7 py-0.5 pl-1 pr-0 fill-white bg-black/40 block absolute top-3 left-3 rounded-full">
+					<title>play</title>
+					<path d="M64 96L328 256 64 416 64 96Z" />
+				</svg>
 				</button>
 			</TableCell>
 			<TableCell className="px-1">
-				{track.name}
+				<div className="text-sm lg:text-base">{track.name}</div>
 				<div className="flex space-x-1.5 mt-1">
 					<UserLink
 						id={track.uId}
@@ -110,11 +111,10 @@ export default function TracksTable({
 
 	return (
 		<>
-			<Table className="mx-6 mb-4 playlist-container">
+			<Table className="mx-4 mb-4 playlist-container">
 				<TableHeader>
 					<TableRow>
 						<TableHead>No</TableHead>
-						<TableHead className="hidden sm:table-cell"> </TableHead>
 						<TableHead> </TableHead>
 						<TableHead>Title</TableHead>
 						<TableHead className="text-center">Link</TableHead>

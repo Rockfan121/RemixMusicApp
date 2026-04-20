@@ -182,7 +182,7 @@
 }
 
 .main-content {
-	@apply md:ml-80 px-2 pt-14 pb-28;
+	@apply md:ml-80 px-2 pt-14 pb-24;
 }
 
 .content-loading {
@@ -197,7 +197,7 @@
 	height: calc(100% - (--spacing(11)));
 }
 .playlist-container {
-	width: calc(100% - (--spacing(12)));
+	width: calc(100% - (--spacing(9)));
 }
 .navbar-button {
 	@apply text-lg font-semibold text-white py-4 border-2;

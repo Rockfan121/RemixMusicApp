@@ -65,7 +65,7 @@ export default function Player() {
 
 	return (
 		<>
-			<aside className="h-full w-80 fixed top-0 left-0 pt-12 pb-32 px-3 overflow-hidden hidden md:block border-r-2 border-secondary">
+			<aside className="h-full w-80 fixed top-0 left-0 pt-12 pb-28 px-3 overflow-hidden hidden md:block border-r-2 border-secondary">
 				<h4 className="m-3 mb-1 text-[17px] font-semibold leading-none text-ring">
 					<Link to={RECENT_TRACKS_LINK}>{PlaylistsNames.All}</Link>
 				</h4>
@@ -94,7 +94,7 @@ export default function Player() {
 				<Outlet context={contextValue} />
 			</div>
 
-			<footer className="w-full h-24 left-0 bottom-0 fixed bg-card shadow-3xl shadow-primary">
+			<footer className="w-full h-20 left-0 bottom-0 fixed bg-card shadow-3xl shadow-primary">
 				<MusicPlayer
 					playlist={playlist}
 					firstTrackNo={firstTrackNo}

@@ -1,9 +1,7 @@
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/styles";
 
 interface PlaylistImageProps {
 	src: string;
-	alt: string;
 	trackCount?: number;
 	isLarge: boolean;
 }
@@ -11,13 +9,11 @@ interface PlaylistImageProps {
 /**
  * Displays a playlist (or user) cover image with a track count label overlaid at the bottom-left.
  * @param src - URL of the cover image
- * @param alt - alt text for the image
  * @param trackCount - number of tracks to display in the label
  * @param isLarge - what is the size of the component?
  */
 export default function PlaylistImage({
 	src,
-	alt,
 	trackCount,
 	isLarge,
 }: PlaylistImageProps) {
@@ -33,8 +29,8 @@ export default function PlaylistImage({
 		>
 			<img
 				src={src}
-				alt={alt}
 				aria-hidden
+				alt=" "
 				className={cn("playlist-image rounded-md", imgSize)}
 			/>
 			{trackCount !== undefined && trackCount >= 0 && (

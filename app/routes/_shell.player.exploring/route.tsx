@@ -26,7 +26,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		const resJson = await res.json();
 		if (typeof resJson !== "undefined" && !Object.hasOwn(resJson, "error")) {
 			return {
-				//	res: await resJson,
 				userRes: await resJson,
 				query: USER_ID,
 			};

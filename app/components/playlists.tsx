@@ -99,7 +99,6 @@ export default function PlaylistsList({
 					title={p.name}
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
-					altText="UserPlaylist cover"
 					trackCount={p.nbTracks}
 				/>
 			</Link>
@@ -119,7 +118,6 @@ export default function PlaylistsList({
 						title={p.name}
 						subtitle={userNameResolved}
 						coverImg={imgUrl(`${userIdResolved}_${p.id}`)}
-						altText="UserPlaylist cover"
 						trackCount={p.nbTracks}
 					/>
 				</Link>
@@ -139,7 +137,6 @@ export default function PlaylistsList({
 					title={p.name}
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
-					altText="ApiPlaylist cover"
 					trackCount={p.nbTracks}
 				/>
 			</Link>
@@ -175,7 +172,6 @@ export default function PlaylistsList({
 					title={p.name}
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
-					altText="UserPlaylist cover"
 					trackCount={p.nbTracks}
 				/>
 			</Link>
@@ -205,7 +201,7 @@ export default function PlaylistsList({
 	return (
 		<>
 			<div className="flex space-x-5 mx-6 mb-4">
-				<h4 className="mx-4 text-xl font-bold text-ring">{listIntro}</h4>
+				<h4 className="mx-4 text-lg sm:text-xl font-bold text-ring">{listIntro}</h4>
 				{searchInput}
 			</div>
 			{contentGrid}

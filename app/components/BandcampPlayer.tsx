@@ -52,7 +52,7 @@ function parseBandcampUrl(url: string) {
 
 /**
  * Plays a single Bandcamp track via the /api/bandcamp-track proxy route,
- * which chains calls to the bc.wemakesites.net RESTful Bandcamp API to obtain
+ * which calls bcFetch from bandcamp-fetch to obtain
  * a signed mp3-128 stream URL. Calls onError if the proxy is unavailable or
  * the stream cannot be fetched, allowing the parent to skip to the next track.
  */
@@ -189,7 +189,7 @@ export const BandcampPlayer = forwardRef<
 			return (
 				<div
 					className="flex items-center justify-center bg-muted rounded"
-					style={{ width: 74, height: 74 }}
+					style={{ width: 72, height: 72, marginTop: "1px" }}
 				>
 					<span className="text-xs text-muted-foreground">...</span>
 				</div>
@@ -239,7 +239,7 @@ export const BandcampPlayer = forwardRef<
 				<img
 					src={trackData.coverArt}
 					alt={trackData.trackTitle}
-					style={{ width: 74, height: 74, objectFit: "cover" }}
+					style={{ width: 72, height: 72, marginTop: "1px", objectFit: "cover" }}
 				/>
 			</>
 		);
