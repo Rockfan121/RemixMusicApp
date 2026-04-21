@@ -4,40 +4,16 @@ import { defineConfig } from "vite";
 import { envOnlyMacros } from "vite-env-only";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(({ isSsrBuild }) => ({
+export default defineConfig(() => ({
 	ssr: {
 		resolve: {
 			externalConditions: ["node"],
 		},
-	},
-	optimizeDeps: {
-		exclude: ["bcryptjs", "better-sqlite3", "drizzle-orm", "fsevents"],
 	},
 	plugins: [
 		tailwindcss(),
 		envOnlyMacros(),
 		tsconfigPaths(),
 		reactRouter(),
-		{
-			name: "ssr-entries",
-			config(userConfig, { isSsrBuild }) {
-				if (isSsrBuild) {
-					const userInput = userConfig.build?.rollupOptions?.input;
-					if (typeof userInput !== "string")
-						throw new Error("Invalid base input");
-
-					return {
-						...userConfig,
-						build: {
-							...userConfig.build,
-							rollupOptions: {
-								...userConfig.build?.rollupOptions,
-								input: [userInput, "./app/db.server/schema.ts"],
-							},
-						},
-					};
-				}
-			},
-		},
 	],
 }));

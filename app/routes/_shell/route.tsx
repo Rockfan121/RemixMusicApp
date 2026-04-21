@@ -1,13 +1,10 @@
-import type { LoaderFunctionArgs } from "react-router";
 import {
 	isRouteErrorResponse,
 	Outlet,
 	useRouteError,
-	useRouteLoaderData,
 } from "react-router";
 
 import { Header } from "@/components/header";
-import { getUser } from "@/lib/auth.server";
 /* export const links: LinksFunction = () => {
 	return [
 		{
@@ -18,18 +15,10 @@ import { getUser } from "@/lib/auth.server";
 	];
 }; */
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
-	const user = await getUser(context, request);
-	return { isAuthenticated: !!user };
-}
-
 function Layout({ children }: { children: React.ReactNode }) {
-	const { isAuthenticated } =
-		useRouteLoaderData<typeof loader>("routes/_shell") ?? {};
-
 	return (
 		<>
-			<Header isAuthenticated={isAuthenticated} />
+			<Header />
 			<main>{children}</main>
 		</>
 	);

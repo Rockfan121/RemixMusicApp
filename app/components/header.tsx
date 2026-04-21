@@ -1,7 +1,6 @@
 import {
 	CounterClockwiseClockIcon,
 	Crosshair2Icon,
-	ExitIcon,
 	LaptopIcon,
 	MoonIcon,
 	RocketIcon,
@@ -9,7 +8,7 @@ import {
 	SunIcon,
 } from "@radix-ui/react-icons";
 import * as React from "react";
-import { Form, Link } from "react-router";
+import { Link } from "react-router";
 import { useHydrated } from "remix-utils/use-hydrated";
 
 import {
@@ -27,11 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { NavbarButton } from "./navbar-button";
 
-export function Header({
-	isAuthenticated,
-}: {
-	isAuthenticated: boolean | undefined;
-}) {
+export function Header() {
 	const hydrated = useHydrated();
 	const [, rerender] = React.useState({});
 	const setTheme = React.useCallback((theme: string) => {
@@ -42,7 +37,6 @@ export function Header({
 
 	return (
 		<>
-			<Form id="logout-form" method="POST" action="/logout" />
 			<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 bg-primary h-11">
 				<div className="flex items-center space-x-3">
 					<Link
@@ -143,19 +137,7 @@ export function Header({
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
-					{isAuthenticated && (
-						<Button
-							form="logout-form"
-							type="submit"
-							className="w-10 h-10 rounded-full border  text-white"
-							size="icon"
-							variant="ghost"
-							title="Logout"
-						>
-							<span className="sr-only">Logout</span>
-							<ExitIcon />
-						</Button>
-					)}
+
 				</div>
 			</header>
 		</>
