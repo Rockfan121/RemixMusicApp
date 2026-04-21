@@ -38,6 +38,7 @@ const TrackRow = memo(function TrackRow({
 					<img
 						aria-hidden
 						className="aspect-square size-13 rounded-md object-cover bg-white"
+						alt=" "
 						src={track.img}
 						loading="lazy"
 						decoding="async"

@@ -19,6 +19,7 @@ import { BandcampPlayer } from "@/components/BandcampPlayer";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { timeout200, timeout1000, timeout1500 } from "@/helpers/timeouts";
+import { cn } from "@/lib/styles";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 import DailymotionSkipper from "./DailymotionSkipper";
@@ -43,6 +44,7 @@ export function MusicPlayer({
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [howLooped, setHowLooped] = useState(1);
 	const [isMuted, setIsMuted] = useState(false);
+	const [isFullscreenable, setIsFullscreenable] = useState(true);
 	const [played, setPlayed] = useState(0);
 	const [duration, setDuration] = useState(0);
 	const [seeking, setSeeking] = useState(false);
@@ -162,7 +164,7 @@ export function MusicPlayer({
 		await new Promise(timeout1000);
 
 		const errantUrl = getCurrentUrl();
-		let newIndex = currentSongIndex + 1;
+		let newIndex = currentSongIndex;
 		let newUrl = getUrl(newIndex);
 
 		while (errantUrl === newUrl) {
@@ -173,14 +175,22 @@ export function MusicPlayer({
 	};
 
 	const handleStart = () => {
+		//just for react-player
 		console.log("onStart");
 		startPlayingFromBeginning();
+		setIsFullscreenable(true);
+		syncIsMuted();
+	};
+
+	const handleBandcampReady = () => {
+		setIsFullscreenable(false);
+		console.log("onReady");
+		syncIsMuted();
 	};
 
 	const handlePlay = async () => {
 		console.log("onPlay");
 		setIsPlaying(true);
-		syncIsMuted();
 	};
 
 	const handlePause = () => {
@@ -286,11 +296,10 @@ export function MusicPlayer({
 				<div className="flex items-center space-x-0.5">
 					<Button
 						onClick={toggleLooped}
-						className={
-							howLooped === 0
-								? "untoggled-button hidden sm:flex"
-								: "toggled-button hidden sm:flex"
-						}
+						className={cn(
+							"hidden sm:flex",
+							howLooped === 0 ? "untoggled-button" : "toggled-button",
+						)}
 						size="icon"
 					>
 						{howLooped === 1 ? (
@@ -316,8 +325,12 @@ export function MusicPlayer({
 
 					<Button
 						onClick={handleClickFullscreen}
-						className="toggled-button hidden sm:flex"
+						className={cn(
+							"hidden sm:flex",
+							isFullscreenable ? "toggled-button" : "untoggled-button",
+						)}
 						size="icon"
+						disabled={!isFullscreenable}
 					>
 						<EnterFullScreenIcon className="size-5" />
 					</Button>
@@ -347,7 +360,7 @@ export function MusicPlayer({
 							volume={1}
 							muted={isMuted}
 							loop={howLooped === 2}
-							onReady={() => console.log("onReady")}
+							onReady={handleBandcampReady}
 							onPlay={handlePlay}
 							onPause={handlePause}
 							onEnded={handleEnded}
