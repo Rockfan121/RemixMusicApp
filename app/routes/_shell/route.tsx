@@ -1,10 +1,7 @@
-import {
-	isRouteErrorResponse,
-	Outlet,
-	useRouteError,
-} from "react-router";
+import { isRouteErrorResponse, Outlet, useRouteError } from "react-router";
 
 import { Header } from "@/components/header";
+
 /* export const links: LinksFunction = () => {
 	return [
 		{

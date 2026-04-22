@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, PlayIcon } from "@radix-ui/react-icons";
+import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { memo, useCallback } from "react";
 import { useOutletContext } from "react-router";
 import ScrollToTop from "react-scroll-to-top";

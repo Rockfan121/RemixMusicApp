@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
-import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { apiUser, userLikesPlaylist } from "@/services/openwhyd";
 import type { ApiPlaylist } from "@/types/openwhyd-types";

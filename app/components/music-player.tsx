@@ -208,11 +208,11 @@ export function MusicPlayer({
 		setSeeking(true);
 	};
 
-	const handleSeekChange = (e: any) => {
+	const handleSeekChange = (e: React.BaseSyntheticEvent) => {
 		setPlayed(Number.parseFloat(e.target.value));
 	};
 
-	const handleSeekMouseUp = (e: any) => {
+	const handleSeekMouseUp = (e: React.BaseSyntheticEvent) => {
 		setSeeking(false);
 		seekPlayer(Number.parseFloat(e.target.value));
 	};

@@ -40,7 +40,6 @@ export default function TracksHeader({
 		<div className="mx-6 playlist-container p-4 sm:p-6 mb-8 border-2 rounded-md flex bg-card">
 			<PlaylistImage
 				src={playlistCover}
-				alt="Playlist cover"
 				trackCount={apiplaylistInfo.nbTracks}
 				isLarge={true}
 			/>

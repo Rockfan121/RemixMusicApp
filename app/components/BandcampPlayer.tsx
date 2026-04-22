@@ -216,7 +216,7 @@ export const BandcampPlayer = forwardRef<
 					}}
 					onTimeUpdate={() => {
 						const audio = audioRef.current;
-						if (!audio || !audio.duration) return;
+						if (!audio?.duration) return;
 						onProgressRef.current?.({
 							played: audio.currentTime / audio.duration,
 							loaded:

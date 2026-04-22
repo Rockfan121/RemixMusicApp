@@ -10,10 +10,5 @@ export default defineConfig(() => ({
 			externalConditions: ["node"],
 		},
 	},
-	plugins: [
-		tailwindcss(),
-		envOnlyMacros(),
-		tsconfigPaths(),
-		reactRouter(),
-	],
+	plugins: [tailwindcss(), envOnlyMacros(), tsconfigPaths(), reactRouter()],
 }));
