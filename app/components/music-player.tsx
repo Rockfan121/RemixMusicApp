@@ -341,7 +341,7 @@ export function MusicPlayer({
 						{hasWindow && playlist.length > currentSongIndex ? (
 							<Link to={playlistUrl}>{playlist[currentSongIndex].name}</Link>
 						) : (
-							"No song"
+							"..."
 						)}
 					</div>
 					<div className="flex text-xs">

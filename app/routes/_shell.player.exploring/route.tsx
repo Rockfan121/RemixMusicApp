@@ -81,7 +81,7 @@ export default function Exploring() {
 				</Form>
 			</search>
 			<PlaylistsList
-				listIntro={PAGE_TITLE}
+				listIntro={userNameRes ? `Playlists by ${userNameRes}` : PAGE_TITLE}
 				listEmptyText="Enter correct userId of one of Openwhyd users and click the button to view all their playlists"
 				userName={userNameRes}
 				userId={userIdRes}
