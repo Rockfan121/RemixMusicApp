@@ -228,7 +228,7 @@
 }
 
 .playlist-background-image {
-	background-image: url("https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=300&dpr=2&q=80");
+	background-image: url("/app/assets/cover.jpg");
 }
 
 .playlist-image {
@@ -236,7 +236,7 @@
 }
 
 .search-input {
-	background-image: url("https://cdn.pixabay.com/photo/2013/03/29/13/40/magnifying-glass-97635_640.png");
+	background-image: url("/app/assets/magnifying_glass.png");
 	background-position: 5px 5px;
 	background-size: 2em;
 	background-repeat: no-repeat;

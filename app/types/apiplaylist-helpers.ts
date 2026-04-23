@@ -1,3 +1,8 @@
+import headphones from "@/assets/headphones.jpg";
+import music_heart from "@/assets/music_heart.jpg";
+import musical_note from "@/assets/musical_note.jpg";
+import plate from "@/assets/plate.jpg";
+import sheet_music from "@/assets/sheet_music.jpg";
 import { playlistImg } from "@/services/openwhyd";
 import type { ApiPlaylist } from "./openwhyd-types";
 import {
@@ -41,15 +46,15 @@ export function openwhydUrl(pl: ApiPlaylist) {
 export function imgUrl(id: string) {
 	switch (id) {
 		case PlaylistsIDs.All:
-			return "https://cdn.pixabay.com/photo/2019/12/28/18/08/plate-4725349_640.jpg";
+			return plate;
 		case PlaylistsIDs.Hot:
-			return "https://cdn.pixabay.com/photo/2020/04/04/15/04/audio-5002628_640.jpg";
+			return headphones;
 		case PlaylistsIDs.UserAll:
-			return "https://cdn.pixabay.com/photo/2015/03/11/17/36/sheet-music-668974_640.jpg";
+			return sheet_music;
 		case PlaylistsIDs.UserLikes:
-			return "https://cdn.pixabay.com/photo/2022/06/25/21/12/music-heart-7284225_640.jpg";
+			return music_heart;
 		case PlaylistsIDs.UserStream:
-			return "https://cdn.pixabay.com/photo/2015/03/11/16/36/musical-note-668879_640.jpg";
+			return musical_note;
 		default:
 			return playlistImg(id);
 	}

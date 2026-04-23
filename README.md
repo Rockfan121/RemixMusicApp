@@ -11,6 +11,7 @@ Remix Music App is an alternative interface (built with React Router v7) that le
 ## Implemented features
 
 Many features (concerning browsing music) are similar to Openwhyd, e.g.:
+
 - listing recently added tracks by all users,
 - listing those of them which are popular among the Openwhyd community (_Hot tracks_),
 - browsing music added by a particular user,
@@ -33,4 +34,5 @@ Besides, this interface tries to expand Openwhyd's features a bit. Thus, Remix M
 - UI: [tailwindcss](https://tailwindcss.com/) and [shadcn/ui](https://ui.shadcn.com/)
 - custom themes for shadcn/ui: generated with [ZippyStarter](https://zippystarter.com/tools/shadcn-ui-theme-generator)
 - music API: [Openwhyd](https://github.com/openwhyd/openwhyd)
-- music player: [React Player](https://github.com/CookPete/react-player)
+- music player: [ReactPlayer](https://github.com/CookPete/react-player)
+- music from Bandcamp: [bandcamp-fetch](https://github.com/patrickkfkan/bandcamp-fetch)
