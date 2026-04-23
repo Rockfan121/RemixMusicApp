@@ -2,7 +2,7 @@
 
 ## Stack
 
-React Router v7 (SSR) + Express + SQLite/Drizzle ORM + Tailwind CSS + shadcn/ui + Biome. No test framework. Deployed to Fly.io. Music data comes from the read-only Openwhyd public API; only user/auth data lives in the local SQLite database.
+React Router v7 (SSR) + Express + Tailwind CSS v4 + shadcn/ui + Biome. No test framework. All music data comes from the read-only Openwhyd public API. There is no database, authentication, or server-side session management.
 
 ## Commands
 
@@ -13,7 +13,6 @@ npm run start               # Run production build
 npm run lint                # Biome check (no auto-fix)
 npm run fix                 # Biome check with auto-fix
 npm run typecheck           # react-router typegen + tsc
-npm run generate:migration  # Generate Drizzle migration from schema changes
 ```
 
 There is no test runner.
@@ -25,44 +24,43 @@ There is no test runner.
 ```
 Browser -> Express (server.js)
   -> React Router SSR handler
-    -> Route loader  -> Openwhyd API (music data)
-                     -> SQLite via Drizzle (user/auth data)
-    -> Route action  -> SQLite via Drizzle (signup, account update)
+    -> Route loader  -> Openwhyd API (music data, read-only)
+                     -> Bandcamp API via bandcamp-fetch (track metadata)
   -> Streamed HTML -> hydrates in browser
 ```
 
-### Load context
+`server.js` creates a bare `createRequestHandler({ build })` — no `getLoadContext`, no context injection, no database.
 
-`server.js` injects `DB` (Drizzle instance) and `SESSION_SECRET` into every loader/action via `getLoadContext()`. Always type-check against `AppLoadContext` in `app/context.d.ts`.
+### APIs
 
-```typescript
-export async function loader({ context }: LoaderFunctionArgs) {
-  const { DB, SESSION_SECRET } = context; // always available
-}
-```
-
-### Authentication
-
-`remix-auth` v3 with `FormStrategy`. Cookie session stored as `_session`. Helper functions in `app/lib/auth.server.ts` and `app/lib/user.server.ts`:
-
-- `getUser(context, request)` — returns user or null
-- `requireUser(context, request)` — throws redirect to `/` if unauthenticated
-
-Passwords hashed with bcryptjs (11 rounds) in a separate `password` table.
-
-### Database
-
-Schema: `app/db.server/schema.ts` — two tables: `user` and `password`.
-Migrations live in `migrations/` and run automatically on server startup.
-To add a column: edit schema → `npm run generate:migration` → commit the generated SQL file.
-
-### Openwhyd API
-
+#### Openwhyd API
 All Openwhyd URL builders live in `app/services/openwhyd.ts`. Loaders call `fetch()` directly — no abstraction layer. All Openwhyd data is read-only; never write to it.
 
-### Client-side state
+#### Bandcamp API
+Track metadata is fetched server-side via the `bandcamp-fetch` package in the `api.bandcamp-track` resource route. This route is called client-side by the `BandcampPlayer` component when needed.
 
-No global state store. Playback state lives in `_shell.player/route.tsx` and is passed down via props. Favorites and recently-played playlists are persisted to `localStorage` via helpers in `app/helpers/`.
+### Music player architecture
+
+`_shell.player/route.tsx` is the layout route for all player views. It owns all playback state in React component state (`useState`):
+
+- `playlist` — current track list (`Track[]`)
+- `firstTrackNo` — index of the track to start from
+- `timestamp` — forces `MusicPlayer` to restart on re-selection of the same playlist
+- `playlistUrl` — URL of the currently active playlist
+
+It exposes two callbacks to child routes via `<Outlet context={contextValue} />` typed as `ContextType` (`app/types/context-type.ts`):
+
+- `callback(tracks, startIndex, playlist)` — starts playback and records the playlist to recently-played
+- `favesCallback(playlist)` — toggles a playlist in/out of favorites
+
+Child routes receive context with `useOutletContext<ContextType>()`.
+
+### Client-side persistence
+
+No global state store. Favorites and recently-played playlists are persisted to `localStorage` via helpers in `app/helpers/`:
+
+- `app/helpers/favorite-playlists.ts`
+- `app/helpers/recent-playlists.ts`
 
 ## Routing Conventions
 
@@ -71,7 +69,7 @@ Flat-file routes under `app/routes/`, using React Router v7 conventions:
 - `_shell/route.tsx` — layout route (no URL segment)
 - `_shell._index/route.tsx` — matches `/`
 - `_shell.player.tracks.$userId.$playlistId/route.tsx` — dynamic segments use `$`
-- Each route folder has a `route.tsx` entry point; co-located form schemas/components go in the same folder
+- Each route folder has a `route.tsx` entry point; co-located components go in the same folder
 
 ## Code Conventions
 
@@ -80,28 +78,18 @@ Flat-file routes under `app/routes/`, using React Router v7 conventions:
 Always use `@/` to import from `app/`:
 
 ```typescript
-import { requireUser } from "@/lib/auth.server";
-```
-
-### Forms
-
-Forms use [Conform](https://conform.guide/) + Zod. Schemas defined in a `form.ts` file co-located with the route. For routes with multiple actions, use the intent pattern from `app/lib/forms.server.ts`:
-
-```typescript
-const intent = await formIntent(formData)
-  .define("update", { schema: updateSchema, action: handleUpdate })
-  .parse();
+import { getRecentPlaylists } from "@/helpers/recent-playlists";
 ```
 
 ### Components
 
 - shadcn/ui primitives go in `app/components/ui/` — do not modify these manually; use the shadcn CLI
 - Feature components go in `app/components/`
-- Use Tabler icons via `@radix-ui/react-icons`
+- Use `@radix-ui/react-icons` for icons
 
 ### Theming
 
-Three themes (light, blue, purple) driven by CSS variables in `app/globals.css`. Use `var(--...)` tokens instead of hard-coded colours. The `ThemeSwitcher` component at `app/components/theme-switcher.tsx` manages the active theme.
+Multiple themes driven by CSS variables in `app/globals.css`. Use `var(--...)` tokens instead of hard-coded colours. The `ThemeSwitcher` component at `app/components/theme-switcher.tsx` manages the active theme.
 
 ### Linting
 
@@ -111,10 +99,34 @@ Biome enforces: no parameter reassignment, `as const` assertions, self-closing J
 
 Strict mode is on. Route loader/action types are generated via `react-router typegen` — always run `npm run typecheck` after adding or renaming routes. Use `useLoaderData<typeof loader>()` for type-safe loader data.
 
+## Code Quality
+
+### Up-to-date technology
+
+Always use the current stable APIs of the installed package versions listed in `package.json`. Prefer React Router v7 idioms over legacy Remix v2 patterns. Do not suggest deprecated APIs, polyfills for features natively available in Node ≥ 22, or packages that duplicate built-in browser/Node capabilities.
+
+### Efficiency
+
+Write reasonably efficient code:
+
+- Avoid unnecessary re-renders — use `useMemo` / `useCallback` only when the benefit is clear and measurable
+- Avoid redundant network requests; prefer streaming SSR loader patterns for large data sets
+- Keep bundle size in mind: do not add heavy dependencies for trivial tasks
+
+### Security
+
+Follow OWASP Top 10 guidelines. In particular:
+
+- Validate and sanitize all user-supplied input at every system boundary (loader, action, API route)
+- Never expose internal error details or stack traces to the client — log server-side, return a generic message to the browser
+- Use `fetch()` with an explicit `AbortSignal` and timeout for all outbound API calls to prevent hanging requests
+- Do not construct URLs or query strings by concatenating unsanitized user input — use `URL` / `URLSearchParams`
+- Avoid `dangerouslySetInnerHTML`; if unavoidable, sanitize with DOMPurify first
+- Set appropriate HTTP response headers (no-store for sensitive responses, correct Content-Type)
+
 ## Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
-| `SESSION_SECRET` | Yes | Cookie session signing key — server refuses to start without it |
-| `DB_PATH` | No | Directory for `database.db` (defaults to `./.database`) |
 | `PORT` | No | HTTP port (defaults to 3000) |
+

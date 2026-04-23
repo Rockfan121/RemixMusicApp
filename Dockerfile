@@ -1,5 +1,5 @@
 # base node image
-FROM node:20-bullseye-slim as base
+FROM node:22-bullseye-slim as base
 
 # set for base and all layer that inherit from it
 ENV NODE_ENV production
@@ -27,7 +27,7 @@ FROM base as build
 WORKDIR /remixapp
 
 COPY --from=deps /remixapp/node_modules /remixapp/node_modules
-ADD package.json package-lock.json postcss.config.js tailwind.config.cjs tsconfig.json vite.config.ts ./
+ADD package.json package-lock.json tailwind.config.cjs tsconfig.json vite.config.ts ./
 ADD app/ app/
 ADD public/ public/
 
@@ -43,6 +43,5 @@ COPY --from=build /remixapp/build /remixapp/build
 COPY --from=build /remixapp/package.json /remixapp/package.json
 
 ADD server.js ./
-ADD migrations/ migrations/
 
 CMD ["npm", "start"]
