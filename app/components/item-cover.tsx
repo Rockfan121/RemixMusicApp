@@ -1,32 +1,51 @@
-import PlaylistImage from "./playlist-image";
+import { cn } from "@/lib/styles";
 
 interface ItemCoverProps {
-	title: string;
-	subtitle: string;
-	coverImg: string;
+	src: string;
 	trackCount?: number;
+	isLarge?: boolean;
+	isAvatar?: boolean;
 }
 
 /**
- * Component displaying some image and basic information about a given playlist, user, etc.
- * @param title - the playlist name (or the name of the user)
- * @param subtitle - the author of the playlist (or an empty string)
- * @param coverImg - the URL to the cover image (or user avatar)
- * @param trackCount - number of tracks to display on the cover image
+ * Displays a playlist (or user) cover image with a track count label overlaid at the bottom-right.
+ * @param src - URL of the cover image
+ * @param trackCount - number of tracks to display in the label
+ * @param isLarge - what is the size of the component?
+ * @param isAvatar - is it a user cover image? (If not, it's a playlist cover)
  */
 export default function ItemCover({
-	title,
-	subtitle,
-	coverImg,
+	src,
 	trackCount,
+	isLarge = false,
+	isAvatar = false,
 }: ItemCoverProps) {
+	const imgSize = isLarge
+		? "size-26 sm:size-32 lg:size-40"
+		: "size-22 sm:size-26 lg:size-28";
 	return (
-		<figure>
-			<PlaylistImage src={coverImg} trackCount={trackCount} isLarge={false} />
-			<figcaption className="pt-1 font-semibold text-xs sm:text-sm text-foreground">
-				{title} <br />
-				<span className="text-muted-foreground">{subtitle}</span>
-			</figcaption>
-		</figure>
+		<div
+			className={cn(
+				"relative cover-image cover-background-image",
+				isAvatar ? "rounded-full" : "rounded-xl",
+				imgSize,
+			)}
+		>
+			<img
+				src={src}
+				aria-hidden
+				alt=" "
+				className={cn(
+					"cover-image",
+					isAvatar ? "rounded-full" : "rounded-md",
+					imgSize,
+				)}
+			/>
+			{trackCount !== undefined && trackCount >= 0 && (
+				<span className="bg-secondary/90 rounded-xl px-1 text-sm absolute bottom-0 right-0 italic hidden sm:block">
+					{trackCount} tracks
+				</span>
+			)}
+		</div>
 	);
 }

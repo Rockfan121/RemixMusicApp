@@ -34,7 +34,7 @@ export default function UserLink({
 				>
 					<img
 						src={userImg(id)}
-						alt={`${name} avatar`}
+						alt=" "
 						aria-hidden
 						className="aspect-square h-fit w-fit object-cover rounded-full"
 					/>

@@ -13,7 +13,7 @@ import {
 	PlaylistsIDs,
 	PlaylistsNames,
 } from "@/types/playlists-types";
-import ItemCover from "./item-cover";
+import CaptionedImage from "./captioned-image";
 
 /**
  * Component for browsing playlists
@@ -95,7 +95,7 @@ export default function PlaylistsList({
 		];
 		specialPlaylists = userSpecialPlaylists.map((p) => (
 			<Link to={myUrl(p)} key={p.id}>
-				<ItemCover
+				<CaptionedImage
 					title={p.name}
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
@@ -114,7 +114,7 @@ export default function PlaylistsList({
 
 			playlists = filteredUserPlaylists.map((p) => (
 				<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
-					<ItemCover
+					<CaptionedImage
 						title={p.name}
 						subtitle={userNameResolved}
 						coverImg={imgUrl(`${userIdResolved}_${p.id}`)}
@@ -133,7 +133,7 @@ export default function PlaylistsList({
 				: apiPlaylists;
 		playlists = filteredApiPlaylist.map((p) => (
 			<Link to={myUrl(p)} key={p.id}>
-				<ItemCover
+				<CaptionedImage
 					title={p.name}
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}
@@ -168,7 +168,7 @@ export default function PlaylistsList({
 
 		specialPlaylists = globalSpecialPlaylists.map((p) => (
 			<Link to={myUrl(p)} key={p.id}>
-				<ItemCover
+				<CaptionedImage
 					title={p.name}
 					subtitle={p.uNm}
 					coverImg={imgUrl(p.id)}

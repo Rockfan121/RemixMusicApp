@@ -10,7 +10,7 @@ import { imgUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
 import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 import { PlaylistsIDs } from "@/types/playlists-types";
-import PlaylistImage from "../playlist-image";
+import ItemCover from "../item-cover";
 import UserLink from "../user-link";
 
 export default function TracksHeader({
@@ -38,7 +38,7 @@ export default function TracksHeader({
 
 	return (
 		<div className="mx-6 playlist-container p-4 sm:p-6 mb-8 border-2 rounded-md flex bg-card">
-			<PlaylistImage
+			<ItemCover
 				src={playlistCover}
 				trackCount={apiplaylistInfo.nbTracks}
 				isLarge={true}

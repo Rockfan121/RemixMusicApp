@@ -227,11 +227,11 @@
 		-7px 0px 15px 0 dimgrey !important;
 }
 
-.playlist-background-image {
+.cover-background-image {
 	background-image: url("/app/assets/cover.jpg");
 }
 
-.playlist-image {
+.cover-image {
 	@apply aspect-square object-cover;
 }
 
