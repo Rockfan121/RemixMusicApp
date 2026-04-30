@@ -46,15 +46,15 @@ export function Header() {
 				</Link>
 			</div>
 			<div className="flex items-center space-x-0.5">
-				<NavbarButton link="/player/exploring" label="Explore">
+				<NavbarButton link="/exploring" label="Explore">
 					<Crosshair2Icon className="navbar-icon" />
 				</NavbarButton>
 
-				<NavbarButton link="/player/recent" label="Recently played">
+				<NavbarButton link="/recent" label="Recently played">
 					<CounterClockwiseClockIcon className="navbar-icon" />
 				</NavbarButton>
 
-				<NavbarButton link="/player/faves" label="Favorites">
+				<NavbarButton link="/faves" label="Favorites">
 					<StarFilledIcon className="navbar-icon" />
 				</NavbarButton>
 			</div>

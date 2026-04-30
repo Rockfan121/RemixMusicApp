@@ -113,7 +113,7 @@ export default function PlaylistsList({
 					: userPlaylists;
 
 			playlists = filteredUserPlaylists.map((p) => (
-				<Link to={`/player/tracks/${userIdResolved}/${p.id}`} key={p.url}>
+				<Link to={`/tracks/${userIdResolved}/${p.id}`} key={p.url}>
 					<CaptionedImage
 						title={p.name}
 						subtitle={userNameResolved}

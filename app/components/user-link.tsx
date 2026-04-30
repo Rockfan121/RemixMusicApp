@@ -27,7 +27,7 @@ export default function UserLink({
 	const imgSize = isLarge ? "size-7 lg:size-8" : "size-5";
 
 	return (
-		<Link to={`/player/exploring?q=${id}`} className="flex space-x-1.5">
+		<Link to={`/exploring?q=${id}`} className="flex space-x-1.5">
 			{withImg ? (
 				<div
 					className={`flex ${imgSize} overflow-hidden rounded-md album-cover`}

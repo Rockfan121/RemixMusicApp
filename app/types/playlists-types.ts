@@ -16,8 +16,8 @@ export const PlaylistsNames = {
 	UserStream: "Stream",
 } as const;
 
-export const HOT_TRACKS_LINK = "/player/tracks/hot";
-export const RECENT_TRACKS_LINK = "/player/tracks/all";
+export const HOT_TRACKS_LINK = "/tracks/hot";
+export const RECENT_TRACKS_LINK = "/tracks/all";
 
 export const allPlaylistInfo: ApiPlaylist = {
 	id: PlaylistsIDs.All,

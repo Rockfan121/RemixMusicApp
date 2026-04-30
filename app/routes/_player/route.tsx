@@ -74,12 +74,12 @@ export default function Player() {
 					<Link to={HOT_TRACKS_LINK}>{PlaylistsNames.Hot}</Link>
 				</h4>
 				<Separator className="my-2.5" />
-				<PlaylistScrollArea title="Recently played" link="/player/recent">
+				<PlaylistScrollArea title="Recently played" link="/recent">
 					{recentPl}
 				</PlaylistScrollArea>
 				<Separator className="my-1.5" />
 
-				<PlaylistScrollArea title="Favorites" link="/player/faves">
+				<PlaylistScrollArea title="Favorites" link="/faves">
 					{favesPl}
 				</PlaylistScrollArea>
 			</aside>

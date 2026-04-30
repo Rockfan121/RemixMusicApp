@@ -7,17 +7,16 @@ import {
 	ScrollRestoration,
 	useRouteError,
 } from "react-router";
-
+import { Header } from "@/components/header";
 import {
 	ThemeSwitcherSafeHTML,
 	ThemeSwitcherScript,
 } from "@/components/theme-switcher";
-
 import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 
-function App({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<ThemeSwitcherSafeHTML lang="en">
 			<head>
@@ -43,9 +42,10 @@ function App({ children }: { children: React.ReactNode }) {
 
 export default function Root() {
 	return (
-		<App>
+		<>
+			<Header />
 			<Outlet />
-		</App>
+		</>
 	);
 }
 
@@ -65,23 +65,9 @@ export function ErrorBoundary() {
 	}
 
 	return (
-		<ThemeSwitcherSafeHTML lang="en">
-			<head>
-				<meta charSet="utf-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<title>{message}</title>
-				<Links />
-				<ThemeSwitcherScript />
-			</head>
-			<body>
-				<div className="container prose py-8">
-					<h1>{status}</h1>
-					<p>{message}</p>
-					<ScrollRestoration />
-					<Scripts />
-					<Toaster />
-				</div>
-			</body>
-		</ThemeSwitcherSafeHTML>
+		<div className="container prose py-8">
+			<h1>{status}</h1>
+			<p>{message}</p>
+		</div>
 	);
 }

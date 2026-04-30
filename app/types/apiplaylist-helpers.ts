@@ -18,13 +18,13 @@ export function myUrl(pl: ApiPlaylist) {
 		case PlaylistsIDs.Hot:
 			return HOT_TRACKS_LINK;
 		case PlaylistsIDs.UserAll:
-			return `/player/tracks/${pl.uId}/all`;
+			return `/tracks/${pl.uId}/all`;
 		case PlaylistsIDs.UserLikes:
-			return `/player/tracks/${pl.uId}/likes`;
+			return `/tracks/${pl.uId}/likes`;
 		case PlaylistsIDs.UserStream:
-			return `/player/tracks/${pl.uId}/stream`;
+			return `/tracks/${pl.uId}/stream`;
 		default:
-			return `/player/tracks/${pl.uId}/${pl.plId}`;
+			return `/tracks/${pl.uId}/${pl.plId}`;
 	}
 }
 export function openwhydUrl(pl: ApiPlaylist) {
