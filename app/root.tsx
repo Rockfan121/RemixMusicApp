@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -8,13 +9,25 @@ import {
 	useRouteError,
 } from "react-router";
 import { Header } from "@/components/header";
+import { MusicPlayer } from "@/components/music-player";
 import {
 	ThemeSwitcherSafeHTML,
 	ThemeSwitcherScript,
 } from "@/components/theme-switcher";
 import { Toaster } from "@/components/ui/sonner";
+import {
+	getFavoritePlaylists,
+	toggleFavorite,
+} from "@/helpers/favorite-playlists";
+import {
+	addToRecentPlaylists,
+	getRecentPlaylists,
+} from "@/helpers/recent-playlists";
+import { myUrl } from "@/types/apiplaylist-helpers";
+import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
 
 import "./globals.css";
+import { PlayerContext } from "./types/player-context";
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
@@ -41,11 +54,51 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function Root() {
+	const [playlist, setPlaylist] = useState<Array<Track>>([]);
+	const [firstTrackNo, setFirstTrackNo] = useState<number>(0);
+	const [timestamp, setTimestamp] = useState<number>(0);
+	const [playlistUrl, setPlaylistUrl] = useState<string>("");
+	const [recentPl, setRecentPl] = useState<ApiPlaylist[]>([]);
+	const [favesPl, setFavesPl] = useState<ApiPlaylist[]>([]);
+
+	const handleCallback = (a: Array<Track>, b: number, c: ApiPlaylist) => {
+		setPlaylist(a);
+		setFirstTrackNo(b);
+		setTimestamp(Date.now());
+		setPlaylistUrl(myUrl(c));
+
+		addToRecentPlaylists(c);
+		setRecentPl(getRecentPlaylists());
+	};
+
+	const handleFavesCallback = (a: ApiPlaylist) => {
+		toggleFavorite(a);
+		setFavesPl(getFavoritePlaylists());
+	};
+
+	useEffect(() => {
+		setRecentPl(getRecentPlaylists());
+		setFavesPl(getFavoritePlaylists());
+	}, []);
+
+	const contextValue = {
+		callback: handleCallback,
+		favesCallback: handleFavesCallback,
+		recentPl,
+		favesPl,
+	};
+
 	return (
-		<>
+		<PlayerContext.Provider value={contextValue}>
 			<Header />
 			<Outlet />
-		</>
+			<MusicPlayer
+				playlist={playlist}
+				firstTrackNo={firstTrackNo}
+				timestamp={timestamp}
+				playlistUrl={playlistUrl}
+			/>
+		</PlayerContext.Provider>
 	);
 }
 

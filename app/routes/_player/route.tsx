@@ -1,19 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigation } from "react-router";
-import { MusicPlayer } from "@/components/music-player";
 import { PlaylistScrollArea } from "@/components/playlist-scroll-area";
 import { Separator } from "@/components/ui/separator";
-import {
-	getFavoritePlaylists,
-	toggleFavorite,
-} from "@/helpers/favorite-playlists";
-import {
-	addToRecentPlaylists,
-	getRecentPlaylists,
-} from "@/helpers/recent-playlists";
-import { myUrl } from "@/types/apiplaylist-helpers";
-import type { ContextType } from "@/types/context-type";
-import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
+import { usePlayerContext } from "@/types/player-context";
 import {
 	HOT_TRACKS_LINK,
 	PlaylistsNames,
@@ -21,47 +9,11 @@ import {
 } from "@/types/playlists-types";
 
 /**
- * This route displays MusicPlayer (and passes data to it), sets the callback function (used e.g. in "tracks" route)
- * and dims the main content if it isn't loaded yet.
+ * This layout route displays side menu and dims the main content if it isn't loaded yet.
  */
 export default function Player() {
 	const navigation = useNavigation();
-
-	const [playlist, setPlaylist] = useState<Array<Track>>([]);
-	const [firstTrackNo, setFirstTrackNo] = useState<number>(0);
-	const [timestamp, setTimestamp] = useState<number>(0);
-	const [playlistUrl, setPlaylistUrl] = useState<string>("");
-
-	const [recentPl, setRecentPl] = useState<ApiPlaylist[]>([]);
-	const [favesPl, setFavesPl] = useState<ApiPlaylist[]>([]);
-
-	useEffect(() => {
-		const recentPl = getRecentPlaylists();
-		setRecentPl(recentPl);
-
-		const favesPl = getFavoritePlaylists();
-		setFavesPl(favesPl);
-	}, []);
-
-	const handleCallback = (a: Array<Track>, b: number, c: ApiPlaylist) => {
-		setPlaylist(a);
-		setFirstTrackNo(b);
-		setTimestamp(Date.now());
-		setPlaylistUrl(myUrl(c));
-
-		addToRecentPlaylists(c);
-		setRecentPl(getRecentPlaylists());
-	};
-
-	const handleFavesCallback = (a: ApiPlaylist) => {
-		toggleFavorite(a);
-		setFavesPl(getFavoritePlaylists());
-	};
-
-	const contextValue: ContextType = {
-		callback: handleCallback,
-		favesCallback: handleFavesCallback,
-	};
+	const { recentPl, favesPl } = usePlayerContext();
 
 	return (
 		<>
@@ -91,17 +43,8 @@ export default function Player() {
 						: "main-content"
 				}
 			>
-				<Outlet context={contextValue} />
+				<Outlet />
 			</div>
-
-			<footer className="w-full h-21 left-0 bottom-0 fixed bg-card shadow-3xl shadow-primary">
-				<MusicPlayer
-					playlist={playlist}
-					firstTrackNo={firstTrackNo}
-					timestamp={timestamp}
-					playlistUrl={playlistUrl}
-				/>
-			</footer>
 		</>
 	);
 }

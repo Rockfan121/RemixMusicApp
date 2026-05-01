@@ -13,6 +13,7 @@ import {
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
+import { usePlayerContext } from "@/types/player-context";
 import UserLink from "../user-link";
 
 interface TrackRowProps {
@@ -104,7 +105,7 @@ export default function TracksTable({
 	children,
 	apiplaylistInfo,
 }: TracksTableProps) {
-	const { callback } = useOutletContext<ContextType>();
+	const { callback } = usePlayerContext();
 
 	const handlePlay = useCallback(
 		(index: number) => {

@@ -4,11 +4,10 @@ import {
 	StarIcon,
 } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router";
 import { isPlaylistFavorite } from "@/helpers/favorite-playlists";
 import { imgUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
-import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
+import { usePlayerContext } from "@/types/player-context";
 import { PlaylistsIDs } from "@/types/playlists-types";
 import ItemCover from "../item-cover";
 import UserLink from "../user-link";
@@ -18,7 +17,7 @@ export default function TracksHeader({
 }: {
 	apiplaylistInfo: ApiPlaylist;
 }) {
-	const { favesCallback } = useOutletContext<ContextType>();
+	const { favesCallback } = usePlayerContext();
 	const [favorite, setFavorite] = useState(false);
 
 	useEffect(() => {
