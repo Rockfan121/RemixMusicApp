@@ -18,7 +18,7 @@ import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
 import { BandcampPlayer } from "@/components/BandcampPlayer";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { timeout200, timeout1000, timeout1500 } from "@/helpers/timeouts";
+import { sleep, timeout1000, timeout1500 } from "@/helpers/timeouts";
 import { cn } from "@/lib/styles";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
@@ -34,6 +34,12 @@ interface MusicPlayerProps {
 /**
  * Component wrapping ReactPlayer, playing music from some playlist
  */
+
+const isBandcampUrl = (url: string) => url.includes(".bandcamp.com/track/");
+
+const MATCH_URL_DAILYMOTION =
+	/(?:dailymotion\.com(?:\/embed)?\/video|dai\.ly)\/([a-zA-Z0-9]+)/;
+
 export function MusicPlayer({
 	playlist,
 	firstTrackNo,
@@ -52,13 +58,22 @@ export function MusicPlayer({
 
 	const playerRef = useRef<ReactPlayer | null>(null);
 	const bandcampPlayerRef = useRef<BandcampPlayerHandle | null>(null);
+
+	// --- Refs for values needed in async callbacks (avoids stale closures) ---
+
+	// isMuted: read by syncIsMuted() which is async (Vimeo path has an await)
 	const isMutedRef = useRef(isMuted);
 	isMutedRef.current = isMuted;
 
-	const isBandcampUrl = (url: string) => url.includes(".bandcamp.com/track/");
+	// currentSongIndex: read by handleError() after await new Promise(timeout1000)
+	const currentSongIndexRef = useRef(currentSongIndex);
+	currentSongIndexRef.current = currentSongIndex;
 
-	const MATCH_URL_DAILYMOTION =
-		/(?:dailymotion\.com(?:\/embed)?\/video|dai\.ly)\/([a-zA-Z0-9]+)/;
+	// playlist: read by handleError() via getUrl() after await new Promise(timeout1000)
+	const playlistRef = useRef(playlist);
+	playlistRef.current = playlist;
+
+	// -------------------------------------------------------------------------
 
 	function isDailymotionUrl(url: string) {
 		const match = url.match(MATCH_URL_DAILYMOTION);
@@ -122,21 +137,38 @@ export function MusicPlayer({
 		}
 	}, [firstTrackNo, timestamp, startPlayingFromBeginning, playlist]);
 
-	const togglePlayPause = () => {
-		setIsPlaying(!isPlaying);
-	};
+	const togglePlayPause = () => setIsPlaying((prev) => !prev);
+	const toggleLooped = () => setHowLooped((prev) => (prev + 1) % 3);
+	const toggleMuted = () => setIsMuted((prev) => !prev);
 
-	const toggleLooped = () => {
-		setHowLooped((howLooped + 1) % 3);
-	};
-	const toggleMuted = () => {
-		setIsMuted(!isMuted);
-	};
+	// Mount guard:
+	const abortRef = useRef<AbortController | null>(null);
+	useEffect(() => {
+		return () => abortRef.current?.abort(); // cancel on unmount
+	}, []);
 
+	// Cycle isPlaying false → true so ReactPlayer always sees a prop
+	// transition on the new URL. Without this, isPlaying stays true throughout,
+	// React diffs detect no change, and some providers (especially YouTube) silently
+	// skip calling .play() after onEnded puts the internal player in ENDED state.
 	const changeSong = async (getNextIndex: (prevIndex: number) => number) => {
-		await new Promise(timeout200);
-		setCurrentSongIndex((prevIndex) => getNextIndex(prevIndex));
-		startPlayingFromBeginning();
+		abortRef.current?.abort(); // cancel any previous in-flight change
+		const ctrl = new AbortController();
+		abortRef.current = ctrl;
+
+		try {
+			await sleep(200, ctrl.signal);
+			if (ctrl.signal.aborted) return; // double-check before state updates
+			setIsPlaying(false);
+			setCurrentSongIndex((prevIndex) => getNextIndex(prevIndex));
+			setPlayed(0);
+			// Let React flush the new url + playing=false before flipping to true
+			await sleep(200, ctrl.signal);
+			if (ctrl.signal.aborted) return; // double-check before state updates
+			setIsPlaying(true);
+		} catch {
+			/*aborted */
+		}
 	};
 
 	const nextSong = async () => {
@@ -155,21 +187,33 @@ export function MusicPlayer({
 		);
 	};
 
+	// Use refs for all values read after the await — the 1 second delay
+	// makes stale closures on currentSongIndex and playlist a real risk.
 	const handleError = async () => {
 		console.log("onError");
-		const currentTrack = playlist[currentSongIndex];
+		// Snapshot synchronously before the await — safe to use closure values here
+		const indexAtError = currentSongIndexRef.current;
+		const currentTrack = playlistRef.current[indexAtError];
 		toast.error(`Track "${currentTrack?.name ?? "Unknown"}" can't be played`, {
 			duration: 4000,
 		});
 		await new Promise(timeout1000);
 
-		const errantUrl = getCurrentUrl();
-		let newIndex = currentSongIndex;
-		let newUrl = getUrl(newIndex);
+		// Re-read from refs after the await to get the freshest values
+		const freshIndex = currentSongIndexRef.current;
+		const freshPlaylist = playlistRef.current;
+		const errantUrl = getMusicServiceAndUrl(
+			freshPlaylist[freshIndex]?.eId ?? "",
+		);
+
+		let newIndex = freshIndex;
+		const startIndex = newIndex;
+		let newUrl = getMusicServiceAndUrl(freshPlaylist[newIndex]?.eId ?? "");
 
 		while (errantUrl === newUrl) {
-			newIndex = newIndex + 1 < playlist.length ? newIndex + 1 : 0;
-			newUrl = getUrl(newIndex);
+			newIndex = newIndex + 1 < freshPlaylist.length ? newIndex + 1 : 0;
+			newUrl = getMusicServiceAndUrl(freshPlaylist[newIndex]?.eId ?? "");
+			if (newIndex === startIndex) break; // full-loop guard — avoid infinite loop
 		}
 		someOtherSong(newIndex);
 	};
@@ -177,7 +221,6 @@ export function MusicPlayer({
 	const handleStart = () => {
 		//just for react-player
 		console.log("onStart");
-		startPlayingFromBeginning();
 		setIsFullscreenable(true);
 		syncIsMuted();
 	};
@@ -188,7 +231,7 @@ export function MusicPlayer({
 		syncIsMuted();
 	};
 
-	const handlePlay = async () => {
+	const handlePlay = () => {
 		console.log("onPlay");
 		setIsPlaying(true);
 	};
@@ -198,15 +241,13 @@ export function MusicPlayer({
 		setIsPlaying(false);
 	};
 
-	const handleEnded = async () => {
+	const handleEnded = () => {
 		console.log("onEnded");
 		if (currentSongIndex + 1 < playlist.length || howLooped > 0) nextSong();
 		else handlePause();
 	};
 
-	const handleSeekMouseDown = () => {
-		setSeeking(true);
-	};
+	const handleSeekMouseDown = () => setSeeking(true);
 
 	const handleSeekChange = (e: React.BaseSyntheticEvent) => {
 		setPlayed(Number.parseFloat(e.target.value));
@@ -223,9 +264,7 @@ export function MusicPlayer({
 		}
 	};
 
-	const handleDuration = (duration: number) => {
-		setDuration(duration);
-	};
+	const handleDuration = (duration: number) => setDuration(duration);
 
 	const handleClickFullscreen = async () => {
 		const playerElement = hasWindow
@@ -339,7 +378,7 @@ export function MusicPlayer({
 
 					<div className="text-balance flex grow flex-col">
 						<div className="flex font-bold text-sm lg:text-base">
-							{hasWindow && playlist.length > currentSongIndex ? (
+							{playlist.length > currentSongIndex ? (
 								<Link to={playlistUrl}>{playlist[currentSongIndex].name}</Link>
 							) : (
 								"..."
