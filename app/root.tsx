@@ -56,7 +56,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function Root() {
 	const [playlist, setPlaylist] = useState<Array<Track>>([]);
 	const [firstTrackNo, setFirstTrackNo] = useState<number>(0);
-	const [timestamp, setTimestamp] = useState<number>(0);
+	const [playRequestId, setPlayRequestId] = useState<number>(0);
 	const [playlistUrl, setPlaylistUrl] = useState<string>("");
 	const [recentPl, setRecentPl] = useState<ApiPlaylist[]>([]);
 	const [favesPl, setFavesPl] = useState<ApiPlaylist[]>([]);
@@ -64,7 +64,7 @@ export default function Root() {
 	const handleCallback = (a: Array<Track>, b: number, c: ApiPlaylist) => {
 		setPlaylist(a);
 		setFirstTrackNo(b);
-		setTimestamp(Date.now());
+		setPlayRequestId((id) => id + 1);
 		setPlaylistUrl(myUrl(c));
 
 		addToRecentPlaylists(c);
@@ -95,7 +95,7 @@ export default function Root() {
 			<MusicPlayer
 				playlist={playlist}
 				firstTrackNo={firstTrackNo}
-				timestamp={timestamp}
+				playRequestId={playRequestId}
 				playlistUrl={playlistUrl}
 			/>
 		</PlayerContext.Provider>

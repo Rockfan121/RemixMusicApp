@@ -28,7 +28,7 @@ import { Duration } from "./duration";
 interface MusicPlayerProps {
 	playlist: Array<Track>;
 	firstTrackNo: number;
-	timestamp: number;
+	playRequestId: number;
 	playlistUrl: string;
 }
 /**
@@ -43,7 +43,7 @@ const MATCH_URL_DAILYMOTION =
 export function MusicPlayer({
 	playlist,
 	firstTrackNo,
-	timestamp,
+	playRequestId,
 	playlistUrl,
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
@@ -128,14 +128,14 @@ export function MusicPlayer({
 		seekPlayer(0);
 	}, [seekPlayer]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: playRequestId is needed for refreshment every time a user clicks a track (even if it's the same track again)
 	useEffect(() => {
 		if (typeof document !== "undefined") {
 			setHasWindow(true);
 			setCurrentSongIndex(firstTrackNo);
-			console.log(timestamp);
 			if (playlist.length > 0) startPlayingFromBeginning();
 		}
-	}, [firstTrackNo, timestamp, startPlayingFromBeginning, playlist]);
+	}, [firstTrackNo, playRequestId, startPlayingFromBeginning, playlist]);
 
 	const togglePlayPause = () => setIsPlaying((prev) => !prev);
 	const toggleLooped = () => setHowLooped((prev) => (prev + 1) % 3);
@@ -155,16 +155,14 @@ export function MusicPlayer({
 		abortRef.current?.abort(); // cancel any previous in-flight change
 		const ctrl = new AbortController();
 		abortRef.current = ctrl;
+		setIsPlaying(false);
+		setPlayed(0);
 
 		try {
 			await sleep(200, ctrl.signal);
-			if (ctrl.signal.aborted) return; // double-check before state updates
-			setIsPlaying(false);
 			setCurrentSongIndex((prevIndex) => getNextIndex(prevIndex));
-			setPlayed(0);
 			// Let React flush the new url + playing=false before flipping to true
-			await sleep(200, ctrl.signal);
-			if (ctrl.signal.aborted) return; // double-check before state updates
+			await sleep(50, ctrl.signal);
 			setIsPlaying(true);
 		} catch {
 			/*aborted */
@@ -220,29 +218,24 @@ export function MusicPlayer({
 
 	const handleStart = () => {
 		//just for react-player
-		console.log("onStart");
 		setIsFullscreenable(true);
 		syncIsMuted();
 	};
 
 	const handleBandcampReady = () => {
 		setIsFullscreenable(false);
-		console.log("onReady");
 		syncIsMuted();
 	};
 
 	const handlePlay = () => {
-		console.log("onPlay");
 		setIsPlaying(true);
 	};
 
 	const handlePause = () => {
-		console.log("onPause");
 		setIsPlaying(false);
 	};
 
 	const handleEnded = () => {
-		console.log("onEnded");
 		if (currentSongIndex + 1 < playlist.length || howLooped > 0) nextSong();
 		else handlePause();
 	};
@@ -428,7 +421,6 @@ export function MusicPlayer({
 								loop={howLooped === 2}
 								onError={handleError}
 								onProgress={handleProgress}
-								onReady={() => console.log("onReady")}
 								onDuration={handleDuration}
 								style={{ marginTop: "1px" }}
 							/>
