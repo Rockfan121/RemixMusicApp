@@ -1,6 +1,5 @@
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { memo, useCallback } from "react";
-import { useOutletContext } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
 import {
 	Table,
@@ -11,7 +10,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import type { ContextType } from "@/types/context-type";
 import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
 import { usePlayerContext } from "@/types/player-context";
 import UserLink from "../user-link";

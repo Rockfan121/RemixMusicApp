@@ -18,7 +18,7 @@ import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
 import { BandcampPlayer } from "@/components/BandcampPlayer";
 import { Button } from "@/components/ui/button";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { sleep, timeout1000, timeout1500 } from "@/helpers/timeouts";
+import { sleep, timeout1500 } from "@/helpers/timeouts";
 import { cn } from "@/lib/styles";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
@@ -73,6 +73,10 @@ export function MusicPlayer({
 	const playlistRef = useRef(playlist);
 	playlistRef.current = playlist;
 
+	// playRequestId: used to avoid applying delayed error handling to a newer play request
+	const playRequestIdRef = useRef(playRequestId);
+	playRequestIdRef.current = playRequestId;
+
 	// -------------------------------------------------------------------------
 
 	function isDailymotionUrl(url: string) {
@@ -88,7 +92,9 @@ export function MusicPlayer({
 		}
 	}, []);
 
-	async function syncIsMuted() {
+	const muteSyncSeqRef = useRef(0);
+
+	const syncIsMuted = useCallback(async () => {
 		const shouldBeMuted = isMutedRef.current;
 
 		if (bandcampPlayerRef.current) {
@@ -109,7 +115,13 @@ export function MusicPlayer({
 			} else if (typeof internalPlayer.getMuted === "function") {
 				// Vimeo player
 				if (typeof internalPlayer.setMuted === "function") {
+					const syncSeq = ++muteSyncSeqRef.current;
 					await (internalPlayer.setMuted(shouldBeMuted) as Promise<void>);
+					if (syncSeq !== muteSyncSeqRef.current) {
+						await (internalPlayer.setMuted(
+							isMutedRef.current,
+						) as Promise<void>);
+					}
 				}
 			} else if (typeof internalPlayer.setVolume === "function") {
 				// SoundCloud player — no native mute API, use volume instead
@@ -120,7 +132,7 @@ export function MusicPlayer({
 				}
 			}
 		}
-	}
+	}, []);
 
 	const startPlayingFromBeginning = useCallback(() => {
 		setPlayed(0);
@@ -131,6 +143,8 @@ export function MusicPlayer({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: playRequestId is needed for refreshment every time a user clicks a track (even if it's the same track again)
 	useEffect(() => {
 		if (typeof document !== "undefined") {
+			abortRef.current?.abort();
+			errorAbortRef.current?.abort();
 			setHasWindow(true);
 			setCurrentSongIndex(firstTrackNo);
 			if (playlist.length > 0) startPlayingFromBeginning();
@@ -143,63 +157,105 @@ export function MusicPlayer({
 
 	// Mount guard:
 	const abortRef = useRef<AbortController | null>(null);
+	const errorAbortRef = useRef<AbortController | null>(null);
 	useEffect(() => {
-		return () => abortRef.current?.abort(); // cancel on unmount
+		return () => {
+			abortRef.current?.abort();
+			errorAbortRef.current?.abort();
+		};
 	}, []);
 
 	// Cycle isPlaying false → true so ReactPlayer always sees a prop
 	// transition on the new URL. Without this, isPlaying stays true throughout,
 	// React diffs detect no change, and some providers (especially YouTube) silently
 	// skip calling .play() after onEnded puts the internal player in ENDED state.
-	const changeSong = async (getNextIndex: (prevIndex: number) => number) => {
-		abortRef.current?.abort(); // cancel any previous in-flight change
-		const ctrl = new AbortController();
-		abortRef.current = ctrl;
-		setIsPlaying(false);
-		setPlayed(0);
+	const changeSong = useCallback(
+		async (
+			getNextIndex: (prevIndex: number, playlistLength: number) => number,
+		) => {
+			abortRef.current?.abort(); // cancel any previous in-flight change
+			const ctrl = new AbortController();
+			abortRef.current = ctrl;
+			setIsPlaying(false);
+			setPlayed(0);
 
-		try {
-			await sleep(200, ctrl.signal);
-			setCurrentSongIndex((prevIndex) => getNextIndex(prevIndex));
-			// Let React flush the new url + playing=false before flipping to true
-			await sleep(50, ctrl.signal);
-			setIsPlaying(true);
-		} catch {
-			/*aborted */
-		}
-	};
+			try {
+				await sleep(200, ctrl.signal);
+				setCurrentSongIndex((prevIndex) =>
+					getNextIndex(prevIndex, playlistRef.current.length),
+				);
+				// Let React flush the new url + playing=false before flipping to true
+				await sleep(200, ctrl.signal);
+				setIsPlaying(true);
+			} catch {
+				/*aborted */
+			}
+		},
+		[],
+	);
 
 	const nextSong = async () => {
-		await changeSong((prevIndex) =>
-			prevIndex + 1 < playlist.length ? prevIndex + 1 : 0,
-		);
+		await changeSong((prevIndex, playlistLength) => {
+			if (playlistLength === 0) return 0;
+			return prevIndex + 1 < playlistLength ? prevIndex + 1 : 0;
+		});
 	};
 
-	const someOtherSong = async (index: number) => {
-		await changeSong(() => index);
-	};
+	const someOtherSong = useCallback(
+		async (index: number) => {
+			await changeSong((_prevIndex, playlistLength) => {
+				if (playlistLength === 0) return 0;
+				if (index < 0) return 0;
+				if (index >= playlistLength) return playlistLength - 1;
+				return index;
+			});
+		},
+		[changeSong],
+	);
 
 	const prevSong = async () => {
-		await changeSong((prevIndex) =>
-			prevIndex - 1 >= 0 ? prevIndex - 1 : playlist.length - 1,
-		);
+		await changeSong((prevIndex, playlistLength) => {
+			if (playlistLength === 0) return 0;
+			return prevIndex - 1 >= 0 ? prevIndex - 1 : playlistLength - 1;
+		});
 	};
 
 	// Use refs for all values read after the await — the 1 second delay
 	// makes stale closures on currentSongIndex and playlist a real risk.
-	const handleError = async () => {
+	const handleError = useCallback(async () => {
 		console.log("onError");
 		// Snapshot synchronously before the await — safe to use closure values here
 		const indexAtError = currentSongIndexRef.current;
 		const currentTrack = playlistRef.current[indexAtError];
+		const playRequestAtError = playRequestIdRef.current;
 		toast.error(`Track "${currentTrack?.name ?? "Unknown"}" can't be played`, {
 			duration: 4000,
 		});
-		await new Promise(timeout1000);
+
+		errorAbortRef.current?.abort();
+		const ctrl = new AbortController();
+		errorAbortRef.current = ctrl;
+
+		try {
+			await sleep(1000, ctrl.signal);
+		} catch {
+			return;
+		}
+
+		if (
+			ctrl.signal.aborted ||
+			playRequestAtError !== playRequestIdRef.current
+		) {
+			return;
+		}
 
 		// Re-read from refs after the await to get the freshest values
 		const freshIndex = currentSongIndexRef.current;
 		const freshPlaylist = playlistRef.current;
+		if (freshPlaylist.length === 0) {
+			return;
+		}
+
 		const errantUrl = getMusicServiceAndUrl(
 			freshPlaylist[freshIndex]?.eId ?? "",
 		);
@@ -214,18 +270,25 @@ export function MusicPlayer({
 			if (newIndex === startIndex) break; // full-loop guard — avoid infinite loop
 		}
 		someOtherSong(newIndex);
-	};
+	}, [someOtherSong]);
 
 	const handleStart = () => {
 		//just for react-player
 		setIsFullscreenable(true);
-		syncIsMuted();
+		void syncIsMuted();
 	};
 
 	const handleBandcampReady = () => {
 		setIsFullscreenable(false);
-		syncIsMuted();
+		void syncIsMuted();
 	};
+
+	// useEffect(() => {
+	// 	if (!hasWindow) return;
+	// 	const mutedForSync = isMuted;
+	// 	if (mutedForSync !== isMutedRef.current) return;
+	// 	void syncIsMuted();
+	// }, [hasWindow, isMuted, syncIsMuted]);
 
 	const handlePlay = () => {
 		setIsPlaying(true);
@@ -402,7 +465,10 @@ export function MusicPlayer({
 								onError={handleError}
 							/>
 						) : isDailymotionUrl(getCurrentUrl()) ? (
-							<DailymotionSkipper onSkip={handleError} />
+							<DailymotionSkipper
+								onSkip={handleError}
+								trackToken={currentSongIndex}
+							/>
 						) : (
 							<ReactPlayer
 								ref={playerRef}
