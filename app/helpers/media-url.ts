@@ -21,6 +21,15 @@ export const getMusicServiceAndUrl = (eId: string) => {
 	return eId;
 };
 
+export const isBandcampUrl = (url: string) =>
+	url.includes(".bandcamp.com/track/");
+
+export const MATCH_URL_DAILYMOTION =
+	/(?:dailymotion\.com(?:\/embed)?\/video|dai\.ly)\/([a-zA-Z0-9]+)/;
+
+export const isDailymotionUrl = (url: string) =>
+	MATCH_URL_DAILYMOTION.test(url);
+
 const getYouTubeUrl = (id: string) => {
 	console.log("getYouTubeUrl");
 	return `https://www.youtube.com/watch?v=${id}`;
