@@ -9,36 +9,19 @@ import {
 	TrackNextIcon,
 	TrackPreviousIcon,
 } from "@radix-ui/react-icons";
-import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Link } from "react-router";
-import screenfull from "screenfull";
-import { toast } from "sonner";
-import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
 import { BandcampPlayer } from "@/components/BandcampPlayer";
 import { Button } from "@/components/ui/button";
-import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { sleep, timeout1000, timeout1500 } from "@/helpers/timeouts";
+import { isBandcampUrl, isDailymotionUrl } from "@/helpers/media-url";
 import { cn } from "@/lib/styles";
-import type { Track } from "@/types/openwhyd-types";
-import type { ProgressState } from "@/types/progress-state-type";
 import DailymotionSkipper from "./DailymotionSkipper";
 import { Duration } from "./duration";
-
-interface MusicPlayerProps {
-	playlist: Array<Track>;
-	firstTrackNo: number;
-	playRequestId: number;
-	playlistUrl: string;
-}
+import type { MusicPlayerProps } from "./use-music-player";
+import { useMusicPlayer } from "./use-music-player";
 /**
  * Component wrapping ReactPlayer, playing music from some playlist
  */
-
-const isBandcampUrl = (url: string) => url.includes(".bandcamp.com/track/");
-
-const MATCH_URL_DAILYMOTION =
-	/(?:dailymotion\.com(?:\/embed)?\/video|dai\.ly)\/([a-zA-Z0-9]+)/;
 
 export function MusicPlayer({
 	playlist,
@@ -46,250 +29,41 @@ export function MusicPlayer({
 	playRequestId,
 	playlistUrl,
 }: MusicPlayerProps) {
-	const [currentSongIndex, setCurrentSongIndex] = useState(0);
-	const [isPlaying, setIsPlaying] = useState(false);
-	const [howLooped, setHowLooped] = useState(1);
-	const [isMuted, setIsMuted] = useState(false);
-	const [isFullscreenable, setIsFullscreenable] = useState(true);
-	const [played, setPlayed] = useState(0);
-	const [duration, setDuration] = useState(0);
-	const [seeking, setSeeking] = useState(false);
-	const [hasWindow, setHasWindow] = useState(false); //to make sure it's the client side
-
-	const playerRef = useRef<ReactPlayer | null>(null);
-	const bandcampPlayerRef = useRef<BandcampPlayerHandle | null>(null);
-
-	// --- Refs for values needed in async callbacks (avoids stale closures) ---
-
-	// isMuted: read by syncIsMuted() which is async (Vimeo path has an await)
-	const isMutedRef = useRef(isMuted);
-	isMutedRef.current = isMuted;
-
-	// currentSongIndex: read by handleError() after await new Promise(timeout1000)
-	const currentSongIndexRef = useRef(currentSongIndex);
-	currentSongIndexRef.current = currentSongIndex;
-
-	// playlist: read by handleError() via getUrl() after await new Promise(timeout1000)
-	const playlistRef = useRef(playlist);
-	playlistRef.current = playlist;
-
-	// -------------------------------------------------------------------------
-
-	function isDailymotionUrl(url: string) {
-		const match = url.match(MATCH_URL_DAILYMOTION);
-		return !(match === null);
-	}
-
-	const seekPlayer = useCallback((fraction: number) => {
-		if (bandcampPlayerRef.current) {
-			bandcampPlayerRef.current.seekTo(fraction);
-		} else if (playerRef.current !== null) {
-			playerRef.current.seekTo(fraction);
-		}
-	}, []);
-
-	async function syncIsMuted() {
-		const shouldBeMuted = isMutedRef.current;
-
-		if (bandcampPlayerRef.current) {
-			// Bandcamp player — backed by HTMLAudioElement, synchronous mute control
-			bandcampPlayerRef.current.setMuted(shouldBeMuted);
-			return;
-		}
-
-		const internalPlayer = playerRef.current?.getInternalPlayer();
-		if (internalPlayer) {
-			if (typeof internalPlayer.isMuted === "function") {
-				// YouTube player
-				if (shouldBeMuted) {
-					internalPlayer.mute();
-				} else {
-					internalPlayer.unMute();
-				}
-			} else if (typeof internalPlayer.getMuted === "function") {
-				// Vimeo player
-				if (typeof internalPlayer.setMuted === "function") {
-					await (internalPlayer.setMuted(shouldBeMuted) as Promise<void>);
-				}
-			} else if (typeof internalPlayer.setVolume === "function") {
-				// SoundCloud player — no native mute API, use volume instead
-				if (shouldBeMuted) {
-					internalPlayer.setVolume(0);
-				} else {
-					internalPlayer.setVolume(100);
-				}
-			}
-		}
-	}
-
-	const startPlayingFromBeginning = useCallback(() => {
-		setPlayed(0);
-		setIsPlaying(true);
-		seekPlayer(0);
-	}, [seekPlayer]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: playRequestId is needed for refreshment every time a user clicks a track (even if it's the same track again)
-	useEffect(() => {
-		if (typeof document !== "undefined") {
-			setHasWindow(true);
-			setCurrentSongIndex(firstTrackNo);
-			if (playlist.length > 0) startPlayingFromBeginning();
-		}
-	}, [firstTrackNo, playRequestId, startPlayingFromBeginning, playlist]);
-
-	const togglePlayPause = () => setIsPlaying((prev) => !prev);
-	const toggleLooped = () => setHowLooped((prev) => (prev + 1) % 3);
-	const toggleMuted = () => setIsMuted((prev) => !prev);
-
-	// Mount guard:
-	const abortRef = useRef<AbortController | null>(null);
-	useEffect(() => {
-		return () => abortRef.current?.abort(); // cancel on unmount
-	}, []);
-
-	// Cycle isPlaying false → true so ReactPlayer always sees a prop
-	// transition on the new URL. Without this, isPlaying stays true throughout,
-	// React diffs detect no change, and some providers (especially YouTube) silently
-	// skip calling .play() after onEnded puts the internal player in ENDED state.
-	const changeSong = async (getNextIndex: (prevIndex: number) => number) => {
-		abortRef.current?.abort(); // cancel any previous in-flight change
-		const ctrl = new AbortController();
-		abortRef.current = ctrl;
-		setIsPlaying(false);
-		setPlayed(0);
-
-		try {
-			await sleep(200, ctrl.signal);
-			setCurrentSongIndex((prevIndex) => getNextIndex(prevIndex));
-			// Let React flush the new url + playing=false before flipping to true
-			await sleep(50, ctrl.signal);
-			setIsPlaying(true);
-		} catch {
-			/*aborted */
-		}
-	};
-
-	const nextSong = async () => {
-		await changeSong((prevIndex) =>
-			prevIndex + 1 < playlist.length ? prevIndex + 1 : 0,
-		);
-	};
-
-	const someOtherSong = async (index: number) => {
-		await changeSong(() => index);
-	};
-
-	const prevSong = async () => {
-		await changeSong((prevIndex) =>
-			prevIndex - 1 >= 0 ? prevIndex - 1 : playlist.length - 1,
-		);
-	};
-
-	// Use refs for all values read after the await — the 1 second delay
-	// makes stale closures on currentSongIndex and playlist a real risk.
-	const handleError = async () => {
-		console.log("onError");
-		// Snapshot synchronously before the await — safe to use closure values here
-		const indexAtError = currentSongIndexRef.current;
-		const currentTrack = playlistRef.current[indexAtError];
-		toast.error(`Track "${currentTrack?.name ?? "Unknown"}" can't be played`, {
-			duration: 4000,
-		});
-		await new Promise(timeout1000);
-
-		// Re-read from refs after the await to get the freshest values
-		const freshIndex = currentSongIndexRef.current;
-		const freshPlaylist = playlistRef.current;
-		const errantUrl = getMusicServiceAndUrl(
-			freshPlaylist[freshIndex]?.eId ?? "",
-		);
-
-		let newIndex = freshIndex;
-		const startIndex = newIndex;
-		let newUrl = getMusicServiceAndUrl(freshPlaylist[newIndex]?.eId ?? "");
-
-		while (errantUrl === newUrl) {
-			newIndex = newIndex + 1 < freshPlaylist.length ? newIndex + 1 : 0;
-			newUrl = getMusicServiceAndUrl(freshPlaylist[newIndex]?.eId ?? "");
-			if (newIndex === startIndex) break; // full-loop guard — avoid infinite loop
-		}
-		someOtherSong(newIndex);
-	};
-
-	const handleStart = () => {
-		//just for react-player
-		setIsFullscreenable(true);
-		syncIsMuted();
-	};
-
-	const handleBandcampReady = () => {
-		setIsFullscreenable(false);
-		syncIsMuted();
-	};
-
-	const handlePlay = () => {
-		setIsPlaying(true);
-	};
-
-	const handlePause = () => {
-		setIsPlaying(false);
-	};
-
-	const handleEnded = () => {
-		if (currentSongIndex + 1 < playlist.length || howLooped > 0) nextSong();
-		else handlePause();
-	};
-
-	const handleSeekMouseDown = () => setSeeking(true);
-
-	const handleSeekChange = (e: React.BaseSyntheticEvent) => {
-		setPlayed(Number.parseFloat(e.target.value));
-	};
-
-	const handleSeekMouseUp = (e: React.BaseSyntheticEvent) => {
-		setSeeking(false);
-		seekPlayer(Number.parseFloat(e.target.value));
-	};
-
-	const handleProgress = (progress: ProgressState) => {
-		if (!seeking) {
-			setPlayed(progress.played);
-		}
-	};
-
-	const handleDuration = (duration: number) => setDuration(duration);
-
-	const handleClickFullscreen = async () => {
-		const playerElement = hasWindow
-			? document.querySelector(".react-player")
-			: null;
-		if (playerElement) {
-			toast.message(
-				<div className="font-bold text-2xl text-ring">
-					To leave fullscreen, press <span className="italic">Esc</span> on
-					keyboard.
-				</div>,
-				{
-					duration: 1500,
-				},
-			);
-			await new Promise(timeout1500);
-			screenfull.request(playerElement);
-		}
-	};
-
-	//Returns correct URL of the track to be played now (according to currentSongIndex)
-	const getCurrentUrl = () => {
-		return getUrl(currentSongIndex);
-	};
-
-	const getUrl = (index: number) => {
-		let result = "";
-		if (playlist.length > index) {
-			result = getMusicServiceAndUrl(playlist[index].eId);
-		}
-		return result;
-	};
+	const {
+		bandcampPlayerRef,
+		currentSongIndex,
+		duration,
+		getCurrentUrl,
+		handleBandcampReady,
+		handleClickFullscreen,
+		handleDuration,
+		handleEnded,
+		handleError,
+		handlePause,
+		handlePlay,
+		handleProgress,
+		handleSeekChange,
+		handleSeekMouseDown,
+		handleSeekMouseUp,
+		handleStart,
+		hasWindow,
+		howLooped,
+		isFullscreenable,
+		isMuted,
+		isPlaying,
+		nextSong,
+		playerRef,
+		played,
+		prevSong,
+		toggleLooped,
+		toggleMuted,
+		togglePlayPause,
+	} = useMusicPlayer({
+		firstTrackNo,
+		playRequestId,
+		playlist,
+		playlistUrl,
+	});
 
 	return (
 		<footer className="w-full h-21 left-0 bottom-0 fixed bg-card shadow-3xl shadow-primary">
