@@ -1,5 +1,5 @@
 import type { BaseSyntheticEvent } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { createElement, useCallback, useEffect, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import screenfull from "screenfull";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ export function useMusicPlayer({
 	playlist,
 	firstTrackNo,
 	playRequestId,
+	playlistUrl: _playlistUrl,
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
@@ -212,9 +213,18 @@ export function useMusicPlayer({
 			? document.querySelector(".react-player")
 			: null;
 		if (playerElement) {
-			toast.message("To leave fullscreen, press Esc on keyboard.", {
-				duration: 1500,
-			});
+			toast.message(
+				createElement(
+					"div",
+					{ className: "font-bold text-2xl text-ring" },
+					"To leave fullscreen, press ",
+					createElement("span", { className: "italic" }, "Esc"),
+					" on keyboard.",
+				),
+				{
+					duration: 1500,
+				},
+			);
 			await new Promise(timeout1500);
 			screenfull.request(playerElement);
 		}
