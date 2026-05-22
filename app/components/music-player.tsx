@@ -45,7 +45,7 @@ export function MusicPlayer({
 		handleSeekChange,
 		handleSeekMouseDown,
 		handleSeekMouseUp,
-		handleStart,
+		handleReactPlayerStart,
 		hasWindow,
 		howLooped,
 		isFullscreenable,
@@ -189,7 +189,7 @@ export function MusicPlayer({
 								width="72px"
 								controls={true}
 								playing={isPlaying}
-								onStart={handleStart}
+								onStart={handleReactPlayerStart}
 								onPlay={handlePlay}
 								onPause={handlePause}
 								onEnded={handleEnded}
