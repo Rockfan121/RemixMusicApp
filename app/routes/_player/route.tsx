@@ -13,7 +13,7 @@ import {
  */
 export default function Player() {
 	const navigation = useNavigation();
-	const { recentPl, favesPl } = usePlayerContext();
+	const { recentPl } = usePlayerContext();
 
 	return (
 		<>
@@ -28,11 +28,6 @@ export default function Player() {
 				<Separator className="my-2.5" />
 				<PlaylistScrollArea title="Recently played" link="/recent">
 					{recentPl}
-				</PlaylistScrollArea>
-				<Separator className="my-1.5" />
-
-				<PlaylistScrollArea title="Favorites" link="/faves">
-					{favesPl}
 				</PlaylistScrollArea>
 			</aside>
 

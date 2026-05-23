@@ -4,7 +4,6 @@ import {
 	LaptopIcon,
 	MoonIcon,
 	RocketIcon,
-	StarFilledIcon,
 	SunIcon,
 } from "@radix-ui/react-icons";
 import * as React from "react";
@@ -52,10 +51,6 @@ export function Header() {
 
 				<NavbarButton link="/recent" label="Recently played">
 					<CounterClockwiseClockIcon className="navbar-icon" />
-				</NavbarButton>
-
-				<NavbarButton link="/faves" label="Favorites">
-					<StarFilledIcon className="navbar-icon" />
 				</NavbarButton>
 			</div>
 			<div className="flex items-center space-x-4">

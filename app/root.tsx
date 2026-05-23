@@ -16,10 +16,6 @@ import {
 } from "@/components/theme-switcher";
 import { Toaster } from "@/components/ui/sonner";
 import {
-	getFavoritePlaylists,
-	toggleFavorite,
-} from "@/helpers/favorite-playlists";
-import {
 	addToRecentPlaylists,
 	getRecentPlaylists,
 } from "@/helpers/recent-playlists";
@@ -59,7 +55,6 @@ export default function Root() {
 	const [playRequestId, setPlayRequestId] = useState<number>(0);
 	const [playlistUrl, setPlaylistUrl] = useState<string>("");
 	const [recentPl, setRecentPl] = useState<ApiPlaylist[]>([]);
-	const [favesPl, setFavesPl] = useState<ApiPlaylist[]>([]);
 
 	const handleCallback = (a: Array<Track>, b: number, c: ApiPlaylist) => {
 		setPlaylist(a);
@@ -71,21 +66,13 @@ export default function Root() {
 		setRecentPl(getRecentPlaylists());
 	};
 
-	const handleFavesCallback = (a: ApiPlaylist) => {
-		toggleFavorite(a);
-		setFavesPl(getFavoritePlaylists());
-	};
-
 	useEffect(() => {
 		setRecentPl(getRecentPlaylists());
-		setFavesPl(getFavoritePlaylists());
 	}, []);
 
 	const contextValue = {
 		callback: handleCallback,
-		favesCallback: handleFavesCallback,
 		recentPl,
-		favesPl,
 	};
 
 	return (

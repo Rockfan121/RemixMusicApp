@@ -1,13 +1,6 @@
-import {
-	ExternalLinkIcon,
-	StarFilledIcon,
-	StarIcon,
-} from "@radix-ui/react-icons";
-import { useEffect, useState } from "react";
-import { isPlaylistFavorite } from "@/helpers/favorite-playlists";
+import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { imgUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
-import { usePlayerContext } from "@/types/player-context";
 import { PlaylistsIDs } from "@/types/playlists-types";
 import ItemCover from "../item-cover";
 import UserLink from "../user-link";
@@ -17,22 +10,6 @@ export default function TracksHeader({
 }: {
 	apiplaylistInfo: ApiPlaylist;
 }) {
-	const { favesCallback } = usePlayerContext();
-	const [favorite, setFavorite] = useState(false);
-
-	useEffect(() => {
-		const isFavorite = isPlaylistFavorite(`${apiplaylistInfo.id}`);
-		setFavorite(isFavorite);
-	}, [apiplaylistInfo]);
-
-	/**
-	 * Function to both call favesCallback and update local state
-	 */
-	const fireFavesCallback = (playlist: ApiPlaylist) => {
-		favesCallback(playlist);
-		setFavorite(!favorite);
-	};
-
 	const playlistCover = imgUrl(apiplaylistInfo.id);
 
 	return (
@@ -61,20 +38,6 @@ export default function TracksHeader({
 				</h2>
 				<div className="grow" />
 				<div className="flex space-x-1 mb-2">
-					<button
-						type="button"
-						onClick={() => fireFavesCallback(apiplaylistInfo)}
-						aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
-						name="favorite"
-						value={favorite ? "false" : "true"}
-					>
-						{favorite ? (
-							<StarFilledIcon className="ml-6 h-6 w-6 inline" />
-						) : (
-							<StarIcon className="ml-6 h-6 w-6 inline" />
-						)}
-					</button>
-
 					{apiplaylistInfo.id !== PlaylistsIDs.UserStream ? (
 						<a
 							href={openwhydUrl(apiplaylistInfo)}
