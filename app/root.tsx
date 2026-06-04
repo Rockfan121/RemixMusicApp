@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { LinksFunction } from "react-router";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -14,6 +15,7 @@ import {
 	ThemeSwitcherSafeHTML,
 	ThemeSwitcherScript,
 } from "@/components/theme-switcher";
+import { ThemeSwitcherButton } from "@/components/theme-switcher-button";
 import { Toaster } from "@/components/ui/sonner";
 import {
 	addToRecentPlaylists,
@@ -21,9 +23,12 @@ import {
 } from "@/helpers/recent-playlists";
 import { myUrl } from "@/types/apiplaylist-helpers";
 import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
-
-import "./globals.css";
+import stylesheet from "./globals.css?url";
 import { PlayerContext } from "./types/player-context";
+
+export const links: LinksFunction = () => [
+	{ rel: "stylesheet", href: stylesheet },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
@@ -77,7 +82,7 @@ export default function Root() {
 
 	return (
 		<PlayerContext.Provider value={contextValue}>
-			<Header />
+			<Header rightSlot={<ThemeSwitcherButton />} />
 			<Outlet />
 			<MusicPlayer
 				playlist={playlist}
@@ -105,9 +110,16 @@ export function ErrorBoundary() {
 	}
 
 	return (
-		<div className="container prose py-8">
-			<h1>{status}</h1>
-			<p>{message}</p>
-		</div>
+		<>
+			<Header />
+			<div
+				className="container prose py-8 mt-11"
+				role="status"
+				aria-live="polite"
+			>
+				<h1>{status}</h1>
+				<p>{message}</p>
+			</div>
+		</>
 	);
 }

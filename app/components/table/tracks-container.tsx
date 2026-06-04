@@ -71,7 +71,17 @@ export default function TracksContainer({
 		fetcher.load(`${location.pathname}${params}`);
 	};
 
-	if (Object.keys(tracks).length === 0) {
+	if (!tracks) {
+		//dodac komunikat, ze playlista nie mogla zostac zaladowana - sprobuj pozniej
+		return (
+			// No tracks found - the playlist is empty
+			<>
+				<TracksHeader apiplaylistInfo={playlistInfo} />
+				<TracksReplacement doesExist={true} />
+			</>
+		);
+	}
+	if (tracks && Object.keys(tracks).length === 0) {
 		return (
 			// No tracks found - the playlist is empty
 			<>
