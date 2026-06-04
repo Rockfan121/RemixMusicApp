@@ -18,15 +18,14 @@ Many features (concerning browsing music) are similar to Openwhyd, e.g.:
 - playing tracks from the aforementioned sources.
 
 Besides, this interface tries to expand Openwhyd's features a bit. Thus, Remix Music App has also these features:
-<!-- - a user can add playlists to favorites (data is saved to browser's localStorage),
-- the app displays playlists that were recently played, -->
+<!-- - the app displays playlists that were recently played (data is saved to browser's localStorage), -->
 - the interface adapts to different screen sizes,
-- music can be played in background,
+- (on desktop) music can be played in background,
 - a user can choose from different color themes:
 
 <img src="/screenshots/thLight.jpg" alt="Light theme" style="float: left; width: 31%;"/> <img src="/screenshots/thBlue.jpg" alt="Blue theme" style="float: left; width: 31%;"/> <img src="/screenshots/thPurple.jpg" alt="Purple theme" style="width: 31%;"/>
 
-**This is work in progress** - the app still lacks some important Openwhyd features.
+**This is work in progress** - the app still lacks some important Openwhyd features (e.g. a view with user's followers).
 
 ## Development
 
