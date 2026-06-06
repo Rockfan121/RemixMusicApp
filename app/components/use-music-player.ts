@@ -5,9 +5,11 @@ import screenfull from "screenfull";
 import { toast } from "sonner";
 import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { sleep, timeout1000, timeout1500 } from "@/helpers/timeouts";
+import { sleep, timeout1500 } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
+
+type LoopMode = 0 | 1 | 2; //0=off, 1=playlist, 2=track
 
 export interface MusicPlayerProps {
 	playlist: Array<Track>;
@@ -24,7 +26,7 @@ export function useMusicPlayer({
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
-	const [howLooped, setHowLooped] = useState(1);
+	const [howLooped, setHowLooped] = useState<LoopMode>(1);
 	const [isMuted, setIsMuted] = useState(false);
 	const [isFullscreenable, setIsFullscreenable] = useState(true);
 	const [played, setPlayed] = useState(0);
@@ -105,11 +107,12 @@ export function useMusicPlayer({
 		seekPlayer(0);
 	}, [seekPlayer]);
 
+	// Mount guard:
+	const abortRef = useRef<AbortController | null>(null);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: playRequestId is needed for refreshment every time a user clicks a track (even if it's the same track again)
 	useEffect(() => {
 		if (typeof document !== "undefined") {
 			abortRef.current?.abort();
-			errorAbortRef.current?.abort();
 			setHasWindow(true);
 			setCurrentSongIndex(firstTrackNo);
 			if (playlist.length > 0) startPlayingFromBeginning();
@@ -117,23 +120,16 @@ export function useMusicPlayer({
 	}, [firstTrackNo, playRequestId, startPlayingFromBeginning, playlist]);
 
 	const togglePlayPause = () => setIsPlaying((prev) => !prev);
-	const toggleLooped = () => setHowLooped((prev) => (prev + 1) % 3);
+	const toggleLooped = () =>
+		setHowLooped((prev) => ((prev + 1) % 3) as LoopMode);
 	const toggleMuted = () => setIsMuted((prev) => !prev);
 
-	// Mount guard:
-	const abortRef = useRef<AbortController | null>(null);
-	const errorAbortRef = useRef<AbortController | null>(null);
 	useEffect(() => {
 		return () => {
 			abortRef.current?.abort();
-			errorAbortRef.current?.abort();
 		};
 	}, []);
 
-	// Cycle isPlaying false → true so ReactPlayer always sees a prop
-	// transition on the new URL. Without this, isPlaying stays true throughout,
-	// React diffs detect no change, and some providers (especially YouTube) silently
-	// skip calling .play() after onEnded puts the internal player in ENDED state.
 	const changeSong = useCallback(
 		async (
 			getNextIndex: (prevIndex: number, playlistLength: number) => number,
@@ -141,17 +137,13 @@ export function useMusicPlayer({
 			abortRef.current?.abort(); // cancel any previous in-flight change
 			const ctrl = new AbortController();
 			abortRef.current = ctrl;
-			setIsPlaying(false);
-			setPlayed(0);
+			//setPlayed(0);
 
 			try {
 				await sleep(200, ctrl.signal);
 				setCurrentSongIndex((prevIndex) =>
 					getNextIndex(prevIndex, playlistRef.current.length),
 				);
-				// Let React flush the new url + playing=false before flipping to true
-				await sleep(200, ctrl.signal);
-				setIsPlaying(true);
 			} catch {
 				/*aborted */
 			}
@@ -194,9 +186,9 @@ export function useMusicPlayer({
 		const currentTrack = playlistRef.current[indexAtError];
 		const playRequestAtError = playRequestIdRef.current;
 
-		errorAbortRef.current?.abort();
+		abortRef.current?.abort();
 		const ctrl = new AbortController();
-		errorAbortRef.current = ctrl;
+		abortRef.current = ctrl;
 
 		toast.error(`Track "${currentTrack?.name ?? "Unknown"}" can't be played`, {
 			duration: 4000,
@@ -235,6 +227,7 @@ export function useMusicPlayer({
 			newUrl = getMusicServiceAndUrl(freshPlaylist[newIndex]?.eId ?? "");
 			if (newIndex === startIndex) break; // full-loop guard — avoid infinite loop
 		}
+		if (newIndex === startIndex) return;
 		someOtherSong(newIndex);
 	}, [someOtherSong]);
 
@@ -250,10 +243,8 @@ export function useMusicPlayer({
 
 	useEffect(() => {
 		if (!hasWindow) return;
-		const mutedForSync = isMuted;
-		if (mutedForSync !== isMutedRef.current) return;
 		void syncIsMuted();
-	}, [hasWindow, isMuted, syncIsMuted]);
+	}, [hasWindow, syncIsMuted]);
 
 	const handlePlay = () => {
 		setIsPlaying(true);
@@ -279,32 +270,22 @@ export function useMusicPlayer({
 		seekPlayer(Number.parseFloat(e.target.value));
 	};
 
-	const handleProgress = (progress: ProgressState) => {
-		if (!seeking) {
-			setPlayed(progress.played);
-		}
-	};
+	const handleProgress = useCallback(
+		(progress: ProgressState) => {
+			if (!seeking) {
+				setPlayed(progress.played);
+			}
+		},
+		[seeking],
+	);
 
-	const handleDuration = (nextDuration: number) => setDuration(nextDuration);
+	const handleDuration = useCallback((d: number) => setDuration(d), []);
 
-	const handleClickFullscreen = async () => {
+	const handleClickFullscreen = () => {
 		const playerElement = hasWindow
 			? document.querySelector(".react-player")
 			: null;
-		if (playerElement) {
-			toast.message(
-				createElement(
-					"div",
-					{ className: "font-bold text-2xl text-ring" },
-					"To leave fullscreen, press ",
-					createElement("span", { className: "italic" }, "Esc"),
-					" on keyboard.",
-				),
-				{
-					duration: 1500,
-				},
-			);
-			await new Promise(timeout1500);
+		if (playerElement && screenfull.isEnabled) {
 			screenfull.request(playerElement);
 		}
 	};

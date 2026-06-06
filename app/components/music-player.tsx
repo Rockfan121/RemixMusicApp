@@ -75,9 +75,10 @@ export function MusicPlayer({
 					max={0.999999}
 					step="any"
 					value={played}
-					onMouseDown={handleSeekMouseDown}
+					onPointerDown={handleSeekMouseDown}
 					onChange={handleSeekChange}
-					onMouseUp={handleSeekMouseUp}
+					onPointerUp={handleSeekMouseUp}
+					disabled={!playlist || playlist.length === 0}
 				/>
 				<div className="flex w-full items-center space-x-2 sm:space-x-6 px-1 sm:px-3 py-1">
 					<div className="flex items-center space-x-0.5">
@@ -161,6 +162,7 @@ export function MusicPlayer({
 					{hasWindow &&
 						(isBandcampUrl(getCurrentUrl()) ? (
 							<BandcampPlayer
+								key={currentSongIndex} //`${currentSongIndex}-${playlistUrl.substring(22)}`
 								ref={bandcampPlayerRef}
 								url={getCurrentUrl()}
 								playing={isPlaying}
@@ -182,6 +184,7 @@ export function MusicPlayer({
 							/>
 						) : (
 							<ReactPlayer
+								key={currentSongIndex}
 								ref={playerRef}
 								url={getCurrentUrl()}
 								className="react-player"
