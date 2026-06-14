@@ -1,5 +1,6 @@
 import {
 	EnterFullScreenIcon,
+	ExitFullScreenIcon,
 	ListBulletIcon,
 	LoopIcon,
 	PauseIcon,
@@ -35,7 +36,6 @@ export function MusicPlayer({
 		duration,
 		getCurrentUrl,
 		handleBandcampReady,
-		handleClickFullscreen,
 		handleDuration,
 		handleEnded,
 		handleError,
@@ -48,9 +48,9 @@ export function MusicPlayer({
 		handleReactPlayerStart,
 		hasWindow,
 		howLooped,
-		isFullscreenable,
 		isMuted,
 		isPlaying,
+		isBrowserFullscreen,
 		nextSong,
 		playerRef,
 		played,
@@ -58,6 +58,7 @@ export function MusicPlayer({
 		toggleLooped,
 		toggleMuted,
 		togglePlayPause,
+		toggleBrowserFullscreen,
 	} = useMusicPlayer({
 		firstTrackNo,
 		playRequestId,
@@ -66,99 +67,108 @@ export function MusicPlayer({
 	});
 
 	return (
-		<footer className="w-full h-21 left-0 bottom-0 fixed bg-card shadow-3xl shadow-primary">
-			<div className="flex w-full items-center flex-col grow p-0 m-0">
-				<input
-					className="w-full -my-2"
-					type="range"
-					min={0}
-					max={0.999999}
-					step="any"
-					value={played}
-					onPointerDown={handleSeekMouseDown}
-					onChange={handleSeekChange}
-					onPointerUp={handleSeekMouseUp}
-					disabled={!playlist || playlist.length === 0}
-				/>
-				<div className="flex w-full items-center space-x-2 sm:space-x-6 px-1 sm:px-3 py-1">
-					<div className="flex items-center space-x-0.5">
-						<Button onClick={prevSong} className="player-button" size="icon">
-							<TrackPreviousIcon className="size-5" />
-						</Button>
-						<Button
-							onClick={togglePlayPause}
-							className="player-button"
-							size="icon-lg"
-						>
-							{isPlaying ? (
-								<PauseIcon className="size-6" />
-							) : (
-								<PlayIcon className="size-6" />
-							)}
-						</Button>
-						<Button onClick={nextSong} className="player-button" size="icon">
-							<TrackNextIcon className="size-5" />
-						</Button>
-					</div>
-
-					<div className="flex items-center space-x-0.5">
-						<Button
-							onClick={toggleLooped}
-							className={cn(
-								"hidden sm:flex",
-								howLooped === 0 ? "untoggled-button" : "toggled-button",
-							)}
-							size="icon"
-						>
-							{howLooped === 1 ? (
-								<ListBulletIcon className="size-5" />
-							) : howLooped === 2 ? (
-								"1"
-							) : (
-								""
-							)}
-							<LoopIcon className="size-5" />
-						</Button>
-						<Button
-							onClick={toggleMuted}
-							className={isMuted ? "untoggled-button" : "toggled-button"}
-							size="icon"
-						>
-							{isMuted ? (
-								<SpeakerOffIcon className="size-5" />
-							) : (
-								<SpeakerLoudIcon className="size-5" />
-							)}
-						</Button>
-
-						<Button
-							onClick={handleClickFullscreen}
-							className={cn(
-								"hidden sm:flex",
-								isFullscreenable ? "toggled-button" : "untoggled-button",
-							)}
-							size="icon"
-							disabled={!isFullscreenable}
-						>
-							<EnterFullScreenIcon className="size-5" />
-						</Button>
-					</div>
-
-					<div className="text-balance flex grow flex-col">
-						<div className="flex font-bold text-sm lg:text-base">
-							{playlist.length > currentSongIndex ? (
-								<Link to={playlistUrl}>{playlist[currentSongIndex].name}</Link>
-							) : (
-								"..."
-							)}
+		<>
+			<footer className="w-full h-21 left-0 bottom-0 fixed bg-card shadow-3xl shadow-primary z-10000">
+				<div className="flex w-full h-full items-center flex-col grow p-0 m-0">
+					<input
+						className="w-full -my-2"
+						type="range"
+						min={0}
+						max={0.999999}
+						step="any"
+						value={played}
+						onPointerDown={handleSeekMouseDown}
+						onChange={handleSeekChange}
+						onPointerUp={handleSeekMouseUp}
+						disabled={!playlist || playlist.length === 0}
+					/>
+					<div className="flex video-controls mr-18 h-full items-center place-items-start space-x-2 sm:space-x-6 px-1 sm:px-3 py-1">
+						<div className="flex items-center space-x-0.5">
+							<Button onClick={prevSong} className="player-button" size="icon">
+								<TrackPreviousIcon className="size-5" />
+							</Button>
+							<Button
+								onClick={togglePlayPause}
+								className="player-button"
+								size="icon-lg"
+							>
+								{isPlaying ? (
+									<PauseIcon className="size-6" />
+								) : (
+									<PlayIcon className="size-6" />
+								)}
+							</Button>
+							<Button onClick={nextSong} className="player-button" size="icon">
+								<TrackNextIcon className="size-5" />
+							</Button>
 						</div>
-						<div className="flex text-xs">
-							<Duration seconds={duration * played} />
-							<span className="mx-0.5">/</span>
-							<Duration seconds={duration} />
+
+						<div className="flex items-center space-x-0.5">
+							<Button
+								onClick={toggleLooped}
+								className={cn(
+									"hidden sm:flex",
+									howLooped === 0 ? "untoggled-button" : "toggled-button",
+								)}
+								size="icon"
+							>
+								{howLooped === 1 ? (
+									<ListBulletIcon className="size-5" />
+								) : howLooped === 2 ? (
+									"1"
+								) : (
+									""
+								)}
+								<LoopIcon className="size-5" />
+							</Button>
+							<Button
+								onClick={toggleMuted}
+								className={isMuted ? "untoggled-button" : "toggled-button"}
+								size="icon"
+							>
+								{isMuted ? (
+									<SpeakerOffIcon className="size-5" />
+								) : (
+									<SpeakerLoudIcon className="size-5" />
+								)}
+							</Button>
+
+							<Button
+								onClick={toggleBrowserFullscreen}
+								className={cn("hidden sm:flex", "toggled-button")}
+								size="icon"
+							>
+								{isBrowserFullscreen ? (
+									<ExitFullScreenIcon className="size-5" />
+								) : (
+									<EnterFullScreenIcon className="size-5" />
+								)}
+							</Button>
+						</div>
+
+						<div className="text-balance flex grow flex-col">
+							<div className="flex font-bold text-sm lg:text-base">
+								{playlist.length > currentSongIndex ? (
+									<Link to={playlistUrl}>
+										{playlist[currentSongIndex].name}
+									</Link>
+								) : (
+									"..."
+								)}
+							</div>
+							<div className="flex text-xs">
+								<Duration seconds={duration * played} />
+								<span className="mx-0.5">/</span>
+								<Duration seconds={duration} />
+							</div>
 						</div>
 					</div>
-
+				</div>
+			</footer>
+			<div
+				className={`video-container ${isBrowserFullscreen ? "browser-fullscreen" : ""}`}
+			>
+				<div className="player-wrapper">
 					{hasWindow &&
 						(isBandcampUrl(getCurrentUrl()) ? (
 							<BandcampPlayer
@@ -188,8 +198,8 @@ export function MusicPlayer({
 								ref={playerRef}
 								url={getCurrentUrl()}
 								className="react-player"
-								height="72px"
-								width="72px"
+								height="100%"
+								width="100%"
 								controls={true}
 								playing={isPlaying}
 								onStart={handleReactPlayerStart}
@@ -207,6 +217,6 @@ export function MusicPlayer({
 						))}
 				</div>
 			</div>
-		</footer>
+		</>
 	);
 }
