@@ -36,7 +36,7 @@ export function MusicPlayer({
 		duration,
 		currentUrl,
 		currentTrack,
-		handleBandcampReady,
+		syncIsMuted,
 		handleDuration,
 		handleEnded,
 		handleError,
@@ -46,7 +46,6 @@ export function MusicPlayer({
 		handleSeekChange,
 		handleSeekMouseDown,
 		handleSeekMouseUp,
-		handleReactPlayerStart,
 		hasWindow,
 		howLooped,
 		isMuted,
@@ -117,9 +116,7 @@ export function MusicPlayer({
 									<ListBulletIcon className="size-5" />
 								) : howLooped === 2 ? (
 									"1"
-								) : (
-									""
-								)}
+								) : null}
 								<LoopIcon className="size-5" />
 							</Button>
 							<Button
@@ -169,14 +166,14 @@ export function MusicPlayer({
 					{hasWindow &&
 						(isBandcampUrl(currentUrl) ? (
 							<BandcampPlayer
-								key={currentSongIndex} 
+								key={currentSongIndex}
 								ref={bandcampPlayerRef}
 								url={currentUrl}
 								playing={isPlaying}
 								volume={1}
 								muted={isMuted}
 								loop={howLooped === 2}
-								onReady={handleBandcampReady}
+								onReady={syncIsMuted}
 								onPlay={handlePlay}
 								onPause={handlePause}
 								onEnded={handleEnded}
@@ -199,7 +196,7 @@ export function MusicPlayer({
 								width="100%"
 								controls={true}
 								playing={isPlaying}
-								onStart={handleReactPlayerStart}
+								onStart={syncIsMuted}
 								onPlay={handlePlay}
 								onPause={handlePause}
 								onEnded={handleEnded}
