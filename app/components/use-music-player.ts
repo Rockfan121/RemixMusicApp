@@ -48,6 +48,9 @@ export function useMusicPlayer({
 
 	const playRequestIdRef = useRef(playRequestId);
 	playRequestIdRef.current = playRequestId;
+
+	const howLoopedRef = useRef(howLooped);
+	howLoopedRef.current = howLooped;
 	// -------------------------------------------------------------------------
 
 	const seekPlayer = useCallback((fraction: number) => {
@@ -149,12 +152,12 @@ export function useMusicPlayer({
 		[],
 	);
 
-	const nextSong = async () => {
+	const nextSong = useCallback(async () => {
 		await changeSong((prevIndex, playlistLength) => {
 			if (playlistLength === 0) return 0;
 			return prevIndex + 1 < playlistLength ? prevIndex + 1 : 0;
 		});
-	};
+	}, [changeSong]);
 
 	const someOtherSong = useCallback(
 		async (index: number) => {
@@ -168,12 +171,12 @@ export function useMusicPlayer({
 		[changeSong],
 	);
 
-	const prevSong = async () => {
+	const prevSong = useCallback(async () => {
 		await changeSong((prevIndex, playlistLength) => {
 			if (playlistLength === 0) return 0;
 			return prevIndex - 1 >= 0 ? prevIndex - 1 : playlistLength - 1;
 		});
-	};
+	}, [changeSong]);
 
 	// Use refs for all values read after the await — the 1 second delay
 	// makes stale closures on currentSongIndex and playlist a real risk.
@@ -229,31 +232,25 @@ export function useMusicPlayer({
 		someOtherSong(newIndex);
 	}, [someOtherSong]);
 
-	const handleReactPlayerStart = () => {
-		syncIsMuted();
-	};
-
-	const handleBandcampReady = () => {
-		syncIsMuted();
-	};
-
 	useEffect(() => {
 		if (!hasWindow) return;
 		void syncIsMuted();
 	}, [hasWindow, syncIsMuted]);
 
-	const handlePlay = () => {
+	const handlePlay = useCallback(() => {
 		setIsPlaying(true);
-	};
+	}, []);
 
-	const handlePause = () => {
+	const handlePause = useCallback(() => {
 		setIsPlaying(false);
-	};
+	}, []);
 
-	const handleEnded = () => {
-		if (currentSongIndex + 1 < playlist.length || howLooped > 0) nextSong();
+	const handleEnded = useCallback(() => {
+		const idx = currentSongIndexRef.current;
+		const pl = playlistRef.current;
+		if (idx + 1 < pl.length || howLoopedRef.current > 0) nextSong();
 		else handlePause();
-	};
+	}, [handlePause, nextSong]);
 
 	const handleSeekMouseDown = () => setSeeking(true);
 
@@ -296,7 +293,7 @@ export function useMusicPlayer({
 		duration,
 		currentUrl,
 		currentTrack,
-		handleBandcampReady,
+		syncIsMuted,
 		handleDuration,
 		handleEnded,
 		handleError,
@@ -306,7 +303,6 @@ export function useMusicPlayer({
 		handleSeekChange,
 		handleSeekMouseDown,
 		handleSeekMouseUp,
-		handleReactPlayerStart,
 		hasWindow,
 		howLooped,
 		isMuted,
