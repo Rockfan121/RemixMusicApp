@@ -34,7 +34,8 @@ export function MusicPlayer({
 		bandcampPlayerRef,
 		currentSongIndex,
 		duration,
-		getCurrentUrl,
+		currentUrl,
+		currentTrack,
 		handleBandcampReady,
 		handleDuration,
 		handleEnded,
@@ -148,13 +149,9 @@ export function MusicPlayer({
 
 						<div className="text-balance flex grow flex-col">
 							<div className="flex font-bold text-sm lg:text-base">
-								{playlist.length > currentSongIndex ? (
-									<Link to={playlistUrl}>
-										{playlist[currentSongIndex].name}
-									</Link>
-								) : (
-									"..."
-								)}
+								<Link to={playlistUrl ?? ""}>
+									{currentTrack?.name ?? "..."}
+								</Link>
 							</div>
 							<div className="flex text-xs">
 								<Duration seconds={duration * played} />
@@ -170,11 +167,11 @@ export function MusicPlayer({
 			>
 				<div className="player-wrapper">
 					{hasWindow &&
-						(isBandcampUrl(getCurrentUrl()) ? (
+						(isBandcampUrl(currentUrl) ? (
 							<BandcampPlayer
-								key={currentSongIndex} //`${currentSongIndex}-${playlistUrl.substring(22)}`
+								key={currentSongIndex} 
 								ref={bandcampPlayerRef}
-								url={getCurrentUrl()}
+								url={currentUrl}
 								playing={isPlaying}
 								volume={1}
 								muted={isMuted}
@@ -187,7 +184,7 @@ export function MusicPlayer({
 								onDuration={handleDuration}
 								onError={handleError}
 							/>
-						) : isDailymotionUrl(getCurrentUrl()) ? (
+						) : isDailymotionUrl(currentUrl) ? (
 							<DailymotionSkipper
 								onSkip={handleError}
 								trackToken={currentSongIndex}
@@ -196,7 +193,7 @@ export function MusicPlayer({
 							<ReactPlayer
 								key={currentSongIndex}
 								ref={playerRef}
-								url={getCurrentUrl()}
+								url={currentUrl}
 								className="react-player"
 								height="100%"
 								width="100%"
