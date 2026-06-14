@@ -1,5 +1,5 @@
 import type { BaseSyntheticEvent } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import { toast } from "sonner";
 import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
@@ -277,21 +277,25 @@ export function useMusicPlayer({
 
 	const handleDuration = useCallback((d: number) => setDuration(d), []);
 
-	const getUrl = (index: number) => {
-		let result = "";
-		if (playlist.length > index) {
-			result = getMusicServiceAndUrl(playlist[index].eId);
-		}
-		return result;
-	};
+	const currentUrl = useMemo(
+		() =>
+			playlist.length > currentSongIndex
+				? getMusicServiceAndUrl(playlist[currentSongIndex].eId)
+				: "",
+		[playlist, currentSongIndex],
+	);
 
-	const getCurrentUrl = () => getUrl(currentSongIndex);
+	const currentTrack = useMemo(
+		() => playlist[currentSongIndex] ?? null,
+		[playlist, currentSongIndex],
+	);
 
 	return {
 		bandcampPlayerRef,
 		currentSongIndex,
 		duration,
-		getCurrentUrl,
+		currentUrl,
+		currentTrack,
 		handleBandcampReady,
 		handleDuration,
 		handleEnded,
