@@ -1,11 +1,10 @@
 import type { BaseSyntheticEvent } from "react";
 import { createElement, useCallback, useEffect, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
-import screenfull from "screenfull";
 import { toast } from "sonner";
 import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
-import { sleep, timeout1500 } from "@/helpers/timeouts";
+import { sleep } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 
@@ -28,11 +27,11 @@ export function useMusicPlayer({
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [howLooped, setHowLooped] = useState<LoopMode>(1);
 	const [isMuted, setIsMuted] = useState(false);
-	const [isFullscreenable, setIsFullscreenable] = useState(true);
 	const [played, setPlayed] = useState(0);
 	const [duration, setDuration] = useState(0);
 	const [seeking, setSeeking] = useState(false);
 	const [hasWindow, setHasWindow] = useState(false);
+	const [isBrowserFullscreen, setIsBrowserFullscreen] = useState(false);
 
 	const playerRef = useRef<ReactPlayer | null>(null);
 	const bandcampPlayerRef = useRef<BandcampPlayerHandle | null>(null);
@@ -123,6 +122,7 @@ export function useMusicPlayer({
 	const toggleLooped = () =>
 		setHowLooped((prev) => ((prev + 1) % 3) as LoopMode);
 	const toggleMuted = () => setIsMuted((prev) => !prev);
+	const toggleBrowserFullscreen = () => setIsBrowserFullscreen((prev) => !prev);
 
 	useEffect(() => {
 		return () => {
@@ -232,12 +232,10 @@ export function useMusicPlayer({
 	}, [someOtherSong]);
 
 	const handleReactPlayerStart = () => {
-		setIsFullscreenable(true);
 		syncIsMuted();
 	};
 
 	const handleBandcampReady = () => {
-		setIsFullscreenable(false);
 		syncIsMuted();
 	};
 
@@ -281,15 +279,6 @@ export function useMusicPlayer({
 
 	const handleDuration = useCallback((d: number) => setDuration(d), []);
 
-	const handleClickFullscreen = () => {
-		const playerElement = hasWindow
-			? document.querySelector(".react-player")
-			: null;
-		if (playerElement && screenfull.isEnabled) {
-			screenfull.request(playerElement);
-		}
-	};
-
 	const getUrl = (index: number) => {
 		let result = "";
 		if (playlist.length > index) {
@@ -306,7 +295,6 @@ export function useMusicPlayer({
 		duration,
 		getCurrentUrl,
 		handleBandcampReady,
-		handleClickFullscreen,
 		handleDuration,
 		handleEnded,
 		handleError,
@@ -319,9 +307,9 @@ export function useMusicPlayer({
 		handleReactPlayerStart,
 		hasWindow,
 		howLooped,
-		isFullscreenable,
 		isMuted,
 		isPlaying,
+		isBrowserFullscreen,
 		nextSong,
 		playerRef,
 		played,
@@ -329,5 +317,6 @@ export function useMusicPlayer({
 		toggleLooped,
 		toggleMuted,
 		togglePlayPause,
+		toggleBrowserFullscreen,
 	};
 }
