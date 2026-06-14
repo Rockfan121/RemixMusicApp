@@ -1,5 +1,5 @@
 import type { BaseSyntheticEvent } from "react";
-import { createElement, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import { toast } from "sonner";
 import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
@@ -100,12 +100,6 @@ export function useMusicPlayer({
 		}
 	}, []);
 
-	const startPlayingFromBeginning = useCallback(() => {
-		setPlayed(0);
-		setIsPlaying(true);
-		seekPlayer(0);
-	}, [seekPlayer]);
-
 	// Mount guard:
 	const abortRef = useRef<AbortController | null>(null);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: playRequestId is needed for refreshment every time a user clicks a track (even if it's the same track again)
@@ -114,9 +108,13 @@ export function useMusicPlayer({
 			abortRef.current?.abort();
 			setHasWindow(true);
 			setCurrentSongIndex(firstTrackNo);
-			if (playlist.length > 0) startPlayingFromBeginning();
+			if (playlist.length > 0) {
+				setPlayed(0);
+				setIsPlaying(true);
+				seekPlayer(0);
+			}
 		}
-	}, [firstTrackNo, playRequestId, startPlayingFromBeginning, playlist]);
+	}, [firstTrackNo, playRequestId, playlist]);
 
 	const togglePlayPause = () => setIsPlaying((prev) => !prev);
 	const toggleLooped = () =>

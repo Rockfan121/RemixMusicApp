@@ -31,27 +31,22 @@ export const isDailymotionUrl = (url: string) =>
 	MATCH_URL_DAILYMOTION.test(url);
 
 const getYouTubeUrl = (id: string) => {
-	console.log("getYouTubeUrl");
 	return `https://www.youtube.com/watch?v=${id}`;
 };
 
 const getSoundCloudUrl = (id: string) => {
-	console.log("getSoundCloudUrl");
 	return `https://soundcloud.com/${id}`;
 };
 
 const getDailyMotionUrl = (id: string) => {
-	console.log("getDailyMotionUrl");
 	return `https://www.dailymotion.com/video/${id}`;
 };
 
 const getVimeoUrl = (id: string) => {
-	console.log("getVimeoUrl");
 	return `https://vimeo.com/${id}`;
 };
 
 const getBandcampUrl = (id: string) => {
-	console.log("getBandcampUrl");
 	const splitId = id.split("/");
 	const artist = splitId[0];
 	const track = splitId[1];
