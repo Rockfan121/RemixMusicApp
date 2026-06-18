@@ -132,8 +132,9 @@ export const BandcampPlayer = forwardRef<
 			});
 
 			let cancelled = false;
+			const signal = AbortSignal.timeout(4500);
 
-			fetch(`/api/bandcamp-track?${params}`)
+			fetch(`/api/bandcamp-track?${params}`, { signal })
 				.then((res) => res.json())
 				.then((data: { error?: string } & Partial<BandcampTrackData>) => {
 					if (cancelled) return;
