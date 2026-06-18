@@ -20,6 +20,10 @@ import DailymotionSkipper from "./DailymotionSkipper";
 import { Duration } from "./duration";
 import type { MusicPlayerProps } from "./use-music-player";
 import { useMusicPlayer } from "./use-music-player";
+
+interface Props extends MusicPlayerProps {
+	playlistUrl: string;
+}
 /**
  * Component wrapping ReactPlayer, playing music from some playlist
  */
@@ -29,7 +33,7 @@ export function MusicPlayer({
 	firstTrackNo,
 	playRequestId,
 	playlistUrl,
-}: MusicPlayerProps) {
+}: Props) {
 	const {
 		bandcampPlayerRef,
 		currentSongIndex,
@@ -63,7 +67,6 @@ export function MusicPlayer({
 		firstTrackNo,
 		playRequestId,
 		playlist,
-		playlistUrl,
 	});
 
 	return (

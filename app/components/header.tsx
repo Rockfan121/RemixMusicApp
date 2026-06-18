@@ -1,6 +1,5 @@
 import {
 	CounterClockwiseClockIcon,
-	CrossCircledIcon,
 	Crosshair2Icon,
 	RocketIcon,
 } from "@radix-ui/react-icons";
@@ -11,7 +10,7 @@ interface Props {
 	rightSlot?: React.ReactNode;
 }
 
-export function Header({ rightSlot, errorMessage }: Props) {
+export function Header({ rightSlot }: Props) {
 	return (
 		<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 bg-primary h-11">
 			<div className="flex items-center space-x-3">

@@ -14,14 +14,12 @@ export interface MusicPlayerProps {
 	playlist: Array<Track>;
 	firstTrackNo: number;
 	playRequestId: number;
-	playlistUrl: string;
 }
 
 export function useMusicPlayer({
 	playlist,
 	firstTrackNo,
 	playRequestId,
-	playlistUrl: _playlistUrl,
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
@@ -111,13 +109,13 @@ export function useMusicPlayer({
 			abortRef.current?.abort();
 			setHasWindow(true);
 			setCurrentSongIndex(firstTrackNo);
-			if (playlist.length > 0) {
+			if (playlistRef.current.length > 0) {
 				setPlayed(0);
 				setIsPlaying(true);
 				seekPlayer(0);
 			}
 		}
-	}, [firstTrackNo, playRequestId, playlist]);
+	}, [firstTrackNo, playRequestId]);
 
 	const togglePlayPause = () => setIsPlaying((prev) => !prev);
 	const toggleLooped = () =>
@@ -181,11 +179,14 @@ export function useMusicPlayer({
 	// Use refs for all values read after the await — the 1 second delay
 	// makes stale closures on currentSongIndex and playlist a real risk.
 	const handleError = useCallback(async () => {
-		console.log("onError");
-		// Snapshot synchronously before the await — safe to use closure values here
 		const indexAtError = currentSongIndexRef.current;
 		const currentTrack = playlistRef.current[indexAtError];
 		const playRequestAtError = playRequestIdRef.current;
+
+		console.log(
+			`onError - Track "${currentTrack?.name ?? "Unknown"}" can't be played`,
+		);
+		// Snapshot synchronously before the await — safe to use closure values here
 
 		abortRef.current?.abort();
 		const ctrl = new AbortController();
@@ -197,7 +198,8 @@ export function useMusicPlayer({
 
 		try {
 			await sleep(1000, ctrl.signal);
-		} catch {
+		} catch (error) {
+			console.log(`Error in player: ${error}`);
 			return;
 		}
 
@@ -274,17 +276,14 @@ export function useMusicPlayer({
 
 	const handleDuration = useCallback((d: number) => setDuration(d), []);
 
-	const currentUrl = useMemo(
-		() =>
-			playlist.length > currentSongIndex
-				? getMusicServiceAndUrl(playlist[currentSongIndex].eId)
-				: "",
-		[playlist, currentSongIndex],
-	);
-
 	const currentTrack = useMemo(
 		() => playlist[currentSongIndex] ?? null,
 		[playlist, currentSongIndex],
+	);
+
+	const currentUrl = useMemo(
+		() => (currentTrack ? getMusicServiceAndUrl(currentTrack.eId) : ""),
+		[currentTrack],
 	);
 
 	return {

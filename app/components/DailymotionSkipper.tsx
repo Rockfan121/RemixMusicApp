@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 interface DailymotionSkipperProps {
-	onSkip: () => void;
+	onSkip: () => unknown;
 	trackToken: number;
 }
 
