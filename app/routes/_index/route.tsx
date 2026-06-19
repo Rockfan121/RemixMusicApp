@@ -1,3 +1,10 @@
+import type { MetaFunction } from "react-router";
+import { title } from "@/config.shared";
+
+export const meta: MetaFunction = () => {
+	return [{ title: title() }];
+};
+
 export default function Index() {
 	return (
 		<main className="flex h-screen items-center justify-center">
