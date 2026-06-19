@@ -1,4 +1,4 @@
-import type { BaseSyntheticEvent } from "react";
+import type { BaseSyntheticEvent, MutableRefObject } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import { toast } from "sonner";
@@ -102,7 +102,9 @@ export function useMusicPlayer({
 	}, []);
 
 	// Mount guard:
-	const abortRef = useRef<AbortController | null>(null);
+	const abortRef = useRef<AbortController | null>(
+		null,
+	) as MutableRefObject<AbortController | null>;
 	// biome-ignore lint/correctness/useExhaustiveDependencies: playRequestId is needed for refreshment every time a user clicks a track (even if it's the same track again)
 	useEffect(() => {
 		if (typeof document !== "undefined") {
