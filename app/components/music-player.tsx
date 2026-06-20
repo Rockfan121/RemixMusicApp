@@ -10,8 +10,16 @@ import {
 	TrackNextIcon,
 	TrackPreviousIcon,
 } from "@radix-ui/react-icons";
-import ReactPlayer from "react-player";
+import _ReactPlayer from "react-player";
 import { Link } from "react-router";
+
+// Vite 8 CJS/ESM interop: react-player's CJS bundle sets __esModule:true and
+// nests the class under .default, so the raw module object may land here
+// instead of the class itself. Unwrap if needed.
+const ReactPlayer =
+	(_ReactPlayer as unknown as { default: typeof _ReactPlayer }).default ??
+	_ReactPlayer;
+
 import { BandcampPlayer } from "@/components/BandcampPlayer";
 import { Button } from "@/components/ui/button";
 import { isBandcampUrl, isDailymotionUrl } from "@/helpers/media-url";
