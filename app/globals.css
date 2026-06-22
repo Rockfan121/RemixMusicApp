@@ -280,6 +280,7 @@
 
 .video-controls {
 	width: calc(100% - 72px);
+	margin-right: 72px;
 }
 
 .video-container {
@@ -308,7 +309,7 @@
 	width: 100vw;
 	height: 100vh;
 	max-width: none;
-	aspect-ratio: auto;
+	aspect-ratio: 1;
 	z-index: 9999;
 	display: flex;
 	align-items: center;
