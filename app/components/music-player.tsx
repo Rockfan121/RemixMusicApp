@@ -93,7 +93,7 @@ export function MusicPlayer({
 						onPointerUp={handleSeekMouseUp}
 						disabled={!playlist || playlist.length === 0}
 					/>
-					<div className="flex video-controls mr-18 h-full items-center place-items-start space-x-2 sm:space-x-6 px-1 sm:px-3 py-1">
+					<div className="flex video-controls h-full items-center place-items-start space-x-2 sm:space-x-6 px-1 sm:px-3 py-1">
 						<div className="flex items-center space-x-0.5">
 							<Button onClick={prevSong} className="player-button" size="icon">
 								<TrackPreviousIcon className="size-5" />

@@ -1,4 +1,4 @@
-import type { BaseSyntheticEvent, MutableRefObject } from "react";
+import type { BaseSyntheticEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import { toast } from "sonner";
@@ -102,9 +102,7 @@ export function useMusicPlayer({
 	}, []);
 
 	// Mount guard:
-	const abortRef = useRef<AbortController | null>(
-		null,
-	) as MutableRefObject<AbortController | null>;
+	const abortRef = useRef<AbortController | null>(null);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: playRequestId is needed for refreshment every time a user clicks a track (even if it's the same track again)
 	useEffect(() => {
 		if (typeof document !== "undefined") {
@@ -138,7 +136,7 @@ export function useMusicPlayer({
 			abortRef.current?.abort(); // cancel any previous in-flight change
 			const ctrl = new AbortController();
 			abortRef.current = ctrl;
-			//setPlayed(0);
+			setPlayed(0);
 
 			try {
 				await sleep(200, ctrl.signal);
@@ -148,6 +146,7 @@ export function useMusicPlayer({
 			} catch {
 				/*aborted */
 			}
+			setIsPlaying(true);
 		},
 		[],
 	);
@@ -236,10 +235,11 @@ export function useMusicPlayer({
 		someOtherSong(newIndex);
 	}, [someOtherSong]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: isMuted have to fire this hook in order to make it working correctly
 	useEffect(() => {
 		if (!hasWindow) return;
 		void syncIsMuted();
-	}, [hasWindow, syncIsMuted]);
+	}, [hasWindow, isMuted, syncIsMuted]);
 
 	const handlePlay = useCallback(() => {
 		setIsPlaying(true);
