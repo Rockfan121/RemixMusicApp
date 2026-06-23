@@ -177,7 +177,7 @@ export function MusicPlayer({
 					{hasWindow &&
 						(isBandcampUrl(currentUrl) ? (
 							<BandcampPlayer
-								key={currentSongIndex}
+								key={`${currentSongIndex}_${playRequestId}`}
 								ref={bandcampPlayerRef}
 								url={currentUrl}
 								playing={isPlaying}
@@ -195,11 +195,11 @@ export function MusicPlayer({
 						) : isDailymotionUrl(currentUrl) ? (
 							<DailymotionSkipper
 								onSkip={handleError}
-								trackToken={currentSongIndex}
+								trackToken={`${currentSongIndex}_${playRequestId}`}
 							/>
 						) : (
 							<ReactPlayer
-								key={currentSongIndex}
+								key={`${currentSongIndex}_${playRequestId}`}
 								ref={playerRef}
 								url={currentUrl}
 								className="react-player"

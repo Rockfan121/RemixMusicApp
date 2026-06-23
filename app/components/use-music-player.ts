@@ -30,6 +30,15 @@ export function useMusicPlayer({
 	const [seeking, setSeeking] = useState(false);
 	const [hasWindow, setHasWindow] = useState(false);
 	const [isBrowserFullscreen, setIsBrowserFullscreen] = useState(false);
+	// Tracks the last playRequestId that was synced to currentSongIndex during render.
+	// When it differs from the incoming playRequestId, we synchronously reset
+	// currentSongIndex to firstTrackNo so that ReactPlayer never briefly renders
+	// with a stale index into the new playlist (which would fire a spurious onError).
+	const [syncedPlayRequestId, setSyncedPlayRequestId] = useState(playRequestId);
+	if (syncedPlayRequestId !== playRequestId) {
+		setSyncedPlayRequestId(playRequestId);
+		setCurrentSongIndex(firstTrackNo);
+	}
 
 	const playerRef = useRef<ReactPlayer | null>(null);
 	const bandcampPlayerRef = useRef<BandcampPlayerHandle | null>(null);
@@ -108,14 +117,16 @@ export function useMusicPlayer({
 		if (typeof document !== "undefined") {
 			abortRef.current?.abort();
 			setHasWindow(true);
-			setCurrentSongIndex(firstTrackNo);
+			// setCurrentSongIndex is intentionally omitted here: the render-time
+			// syncedPlayRequestId guard above already resets it synchronously,
+			// so by the time this effect runs the value is already correct.
 			if (playlistRef.current.length > 0) {
 				setPlayed(0);
 				setIsPlaying(true);
 				seekPlayer(0);
 			}
 		}
-	}, [firstTrackNo, playRequestId]);
+	}, [playRequestId]);
 
 	const togglePlayPause = () => setIsPlaying((prev) => !prev);
 	const toggleLooped = () =>
@@ -143,10 +154,10 @@ export function useMusicPlayer({
 				setCurrentSongIndex((prevIndex) =>
 					getNextIndex(prevIndex, playlistRef.current.length),
 				);
+				setIsPlaying(true);
 			} catch {
 				/*aborted */
 			}
-			setIsPlaying(true);
 		},
 		[],
 	);
@@ -206,7 +217,8 @@ export function useMusicPlayer({
 
 		if (
 			ctrl.signal.aborted ||
-			playRequestAtError !== playRequestIdRef.current
+			playRequestAtError !== playRequestIdRef.current ||
+			indexAtError !== currentSongIndexRef.current
 		) {
 			return;
 		}
