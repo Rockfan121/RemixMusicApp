@@ -22,9 +22,8 @@ const ReactPlayer =
 
 import { BandcampPlayer } from "@/components/BandcampPlayer";
 import { Button } from "@/components/ui/button";
-import { isBandcampUrl, isDailymotionUrl } from "@/helpers/media-url";
+import { isBandcampUrl } from "@/helpers/media-url";
 import { cn } from "@/lib/styles";
-import DailymotionSkipper from "./DailymotionSkipper";
 import { Duration } from "./duration";
 import type { MusicPlayerProps } from "./use-music-player";
 import { useMusicPlayer } from "./use-music-player";
@@ -191,11 +190,6 @@ export function MusicPlayer({
 								onProgress={handleProgress}
 								onDuration={handleDuration}
 								onError={handleError}
-							/>
-						) : isDailymotionUrl(currentUrl) ? (
-							<DailymotionSkipper
-								onSkip={handleError}
-								trackToken={`${currentSongIndex}_${playRequestId}`}
 							/>
 						) : (
 							<ReactPlayer

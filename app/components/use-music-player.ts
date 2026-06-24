@@ -58,6 +58,14 @@ export function useMusicPlayer({
 
 	const howLoopedRef = useRef(howLooped);
 	howLoopedRef.current = howLooped;
+
+	const isPlayingRef = useRef(isPlaying);
+	isPlayingRef.current = isPlaying;
+
+	const seekingRef = useRef(seeking);
+	seekingRef.current = seeking;
+
+	const lastActionTimeRef = useRef(Date.now());
 	// -------------------------------------------------------------------------
 
 	const seekPlayer = useCallback((fraction: number) => {
@@ -155,6 +163,7 @@ export function useMusicPlayer({
 					getNextIndex(prevIndex, playlistRef.current.length),
 				);
 				setIsPlaying(true);
+				lastActionTimeRef.current = Date.now();
 			} catch {
 				/*aborted */
 			}
@@ -255,6 +264,7 @@ export function useMusicPlayer({
 
 	const handlePlay = useCallback(() => {
 		setIsPlaying(true);
+		lastActionTimeRef.current = Date.now();
 	}, []);
 
 	const handlePause = useCallback(() => {
@@ -281,6 +291,7 @@ export function useMusicPlayer({
 
 	const handleProgress = useCallback(
 		(progress: ProgressState) => {
+			lastActionTimeRef.current = Date.now();
 			if (!seeking) {
 				setPlayed(progress.played);
 			}
@@ -299,6 +310,22 @@ export function useMusicPlayer({
 		() => (currentTrack ? getMusicServiceAndUrl(currentTrack.eId) : ""),
 		[currentTrack],
 	);
+
+	// Watchdog Timer: Detects silent stalls or stuck SDKs (e.g. Dailymotion freezes, YouTube iframe hangs).
+	// If isPlaying is true but no progress or actions occur within 15s, fire handleError to auto-skip.
+	// This complements Vercel's 10s timeout without causing false positives on slow networks.
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (isPlayingRef.current && !seekingRef.current) {
+				if (Date.now() - lastActionTimeRef.current > 15000) {
+					console.log("Watchdog triggered: Track stuck for 15s, skipping...");
+					handleError();
+					lastActionTimeRef.current = Date.now(); // Reset to prevent rapid refiring while skipping
+				}
+			}
+		}, 1000);
+		return () => clearInterval(interval);
+	}, [handleError]);
 
 	return {
 		bandcampPlayerRef,
