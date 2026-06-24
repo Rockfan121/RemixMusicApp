@@ -319,7 +319,7 @@ export function useMusicPlayer({
 			if (isPlayingRef.current && !seekingRef.current) {
 				if (Date.now() - lastActionTimeRef.current > 15000) {
 					console.log("Watchdog triggered: Track stuck for 15s, skipping...");
-					handleError();
+					void handleError();
 					lastActionTimeRef.current = Date.now(); // Reset to prevent rapid refiring while skipping
 				}
 			}
