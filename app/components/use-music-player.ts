@@ -317,7 +317,7 @@ export function useMusicPlayer({
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (isPlayingRef.current && !seekingRef.current) {
-				if (Date.now() - lastActionTimeRef.current > 15000) {
+				if (Date.now() - lastActionTimeRef.current > 11000) {
 					console.log("Watchdog triggered: Track stuck for 15s, skipping...");
 					void handleError();
 					lastActionTimeRef.current = Date.now(); // Reset to prevent rapid refiring while skipping
