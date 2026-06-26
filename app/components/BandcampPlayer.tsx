@@ -20,6 +20,8 @@ interface BandcampTrackData {
 	coverArt: string;
 }
 
+type FetchResponse = { error?: string } & Partial<BandcampTrackData>;
+
 interface ProgressState {
 	played: number;
 	loaded: number;
@@ -131,13 +133,26 @@ export const BandcampPlayer = forwardRef<
 				track: parsed.track,
 			});
 
-			let cancelled = false;
-			const signal = AbortSignal.timeout(4500);
+			//Manual controller for unmounting/re-rendering
+			const manualController = new AbortController();
+			//Timeout signal
+			const timeoutSignal = AbortSignal.timeout(4500);
+			//The fetch will abort if EITHER signal triggers
+			const combinedSignal = AbortSignal.any([
+				manualController.signal,
+				timeoutSignal,
+			]);
 
-			fetch(`/api/bandcamp-track?${params}`, { signal })
-				.then((res) => res.json())
-				.then((data: { error?: string } & Partial<BandcampTrackData>) => {
-					if (cancelled) return;
+			fetch(`/api/bandcamp-track?${params}`, { signal: combinedSignal })
+				.then(async (res) => {
+					if (!res.ok) {
+						throw new Error(`HTTP error! status: ${res.status}`);
+					}
+					return res.json();
+				})
+				.then((data: FetchResponse) => {
+					if (manualController.signal.aborted) return;
+
 					if (data.error) {
 						console.error("BandcampPlayer: proxy error:", data.error);
 						onErrorRef.current?.(new Error(data.error));
@@ -147,14 +162,20 @@ export const BandcampPlayer = forwardRef<
 					setIsLoading(false);
 				})
 				.catch((err: unknown) => {
-					if (cancelled) return;
-					console.error("BandcampPlayer: fetch failed:", err);
+					if (manualController.signal.aborted) return;
+
+					if (err instanceof DOMException && err.name === "TimeoutError") {
+						console.error("BandcampPlayer: track fetch timed out after 4.5s");
+					} else {
+						console.error("BandcampPlayer: fetch failed:", err);
+					}
+
 					setIsLoading(false);
 					onErrorRef.current?.(err);
 				});
 
 			return () => {
-				cancelled = true;
+				manualController.abort();
 			};
 		}, [url]); // only url — callbacks are stable via refs
 
