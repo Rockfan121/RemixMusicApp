@@ -220,7 +220,8 @@ export function useMusicPlayer({
 		try {
 			await sleep(1000, ctrl.signal);
 		} catch (error) {
-			console.log(`Error in player: ${error}`);
+			if (error instanceof DOMException && error.name !== "AbortError")
+				console.log(`Error in player: ${error}`);
 			return;
 		}
 
@@ -312,13 +313,12 @@ export function useMusicPlayer({
 	);
 
 	// Watchdog Timer: Detects silent stalls or stuck SDKs (e.g. Dailymotion freezes, YouTube iframe hangs).
-	// If isPlaying is true but no progress or actions occur within 15s, fire handleError to auto-skip.
-	// This complements Vercel's 10s timeout without causing false positives on slow networks.
+	// If isPlaying is true but no progress or actions occur within 11s, fire handleError to auto-skip.
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (isPlayingRef.current && !seekingRef.current) {
 				if (Date.now() - lastActionTimeRef.current > 11000) {
-					console.log("Watchdog triggered: Track stuck for 15s, skipping...");
+					console.log("Watchdog triggered: Track stuck for 11s, skipping...");
 					void handleError();
 					lastActionTimeRef.current = Date.now(); // Reset to prevent rapid refiring while skipping
 				}
