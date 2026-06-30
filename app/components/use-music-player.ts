@@ -323,7 +323,7 @@ export function useMusicPlayer({
 					lastActionTimeRef.current = Date.now(); // Reset to prevent rapid refiring while skipping
 				}
 			}
-		}, 1000);
+		}, 4000);
 		return () => clearInterval(interval);
 	}, [handleError]);
 

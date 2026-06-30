@@ -264,8 +264,7 @@ export const BandcampPlayer = forwardRef<
 					style={{
 						width: "100%",
 						height: "100%",
-						marginTop: "1px",
-						objectFit: "cover",
+						objectFit: "contain",
 					}}
 				/>
 			</>

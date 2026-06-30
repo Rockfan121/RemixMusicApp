@@ -211,7 +211,6 @@ export function MusicPlayer({
 								onError={handleError}
 								onProgress={handleProgress}
 								onDuration={handleDuration}
-								style={{ marginTop: "1px" }}
 							/>
 						))}
 				</div>
