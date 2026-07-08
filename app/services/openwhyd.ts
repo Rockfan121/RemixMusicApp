@@ -10,8 +10,7 @@ export function apiPlaylist(
 	userId: string | undefined,
 	playlistId: string | undefined,
 ) {
-	return `${BASE_URL}/api/playlist/
-		${userId}_${playlistId}`;
+	return `${BASE_URL}/api/playlist/${userId}_${playlistId}`;
 }
 
 export function apiUser(userId: string | undefined) {
@@ -27,8 +26,7 @@ export function userPlaylist(
 	playlistId: string | undefined,
 	afterId?: string,
 ) {
-	const base = `${BASE_URL}/u/${userId}/playlist/
-			${playlistId}?format=json&limit=${MAX_FETCHED_ITEMS - 1}`;
+	const base = `${BASE_URL}/u/${userId}/playlist/${playlistId}?format=json&limit=${MAX_FETCHED_ITEMS - 1}`;
 	return afterId ? `${base}&after=${afterId}` : base;
 }
 

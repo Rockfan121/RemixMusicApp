@@ -9,6 +9,9 @@
 		"fix": "biome check . --write --max-diagnostics 40",
 		"lint": "biome check . --max-diagnostics 40",
 		"start": "cross-env NODE_ENV=production node ./server.js",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
 		"typecheck": "react-router typegen && tsc"
 	},
 	"dependencies": {
@@ -47,17 +50,24 @@
 		"@react-router/dev": "^8.0.0",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.2.1",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.2",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/compression": "^1.8.1",
 		"@types/express": "^5.0.6",
 		"@types/node": "^25.9.3",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
+		"@vitest/coverage-v8": "^4.1.10",
 		"dotenv-cli": "^11.0.0",
+		"jsdom": "^29.1.1",
+		"msw": "^2.15.0",
 		"tailwindcss": "^4.2.1",
 		"typescript": "^6.0.3",
 		"vite": "^8.0.16",
 		"vite-env-only": "^3.0.3",
-		"vite-tsconfig-paths": "^6.1.1"
+		"vite-tsconfig-paths": "^6.1.1",
+		"vitest": "^4.1.10"
 	},
 	"engines": {
 		"node": ">=22.12.0"
