@@ -18,13 +18,13 @@ export default function Player() {
 	return (
 		<>
 			<aside className="h-full w-80 fixed top-0 left-0 pt-12 pb-28 px-3 overflow-hidden hidden md:block border-r-2 border-secondary">
-				<h4 className="m-3 mb-1 text-[17px] font-semibold leading-none text-ring">
+				<h3>
 					<Link to={RECENT_TRACKS_LINK}>{PlaylistsNames.All}</Link>
-				</h4>
+				</h3>
 				<Separator className="my-2.5" />
-				<h4 className="m-3 mb-1 text-[17px] font-semibold leading-none text-ring">
+				<h3>
 					<Link to={HOT_TRACKS_LINK}>{PlaylistsNames.Hot}</Link>
-				</h4>
+				</h3>
 				<Separator className="my-2.5" />
 				<PlaylistScrollArea title="Recently played" link="/recent">
 					{recentPl}

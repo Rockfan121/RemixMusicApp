@@ -70,7 +70,6 @@ export default function PlaylistsList({
 				name: PlaylistsNames.UserAll,
 				uId: userIdResolved,
 				uNm: userNameResolved,
-				//url: `/player/tracks/${userIdResolved}/all`,
 				plId: "",
 				nbTracks: noOfPostsResolved,
 			},
@@ -79,7 +78,6 @@ export default function PlaylistsList({
 				name: PlaylistsNames.UserLikes,
 				uId: userIdResolved,
 				uNm: userNameResolved,
-				//url: `/player/tracks/${userIdResolved}/likes`,
 				plId: "",
 				nbTracks: noOfLikesResolved,
 			},
@@ -88,20 +86,19 @@ export default function PlaylistsList({
 				name: PlaylistsNames.UserStream,
 				uId: userIdResolved,
 				uNm: userNameResolved,
-				//url: `/player/tracks/${userIdResolved}/stream`,
 				plId: "",
 				nbTracks: -1,
 			},
 		];
 		specialPlaylists = userSpecialPlaylists.map((p) => (
-			<Link to={myUrl(p)} key={p.id}>
-				<CaptionedImage
-					title={p.name}
-					subtitle={p.uNm}
-					coverImg={imgUrl(p.id)}
-					trackCount={p.nbTracks}
-				/>
-			</Link>
+			<CaptionedImage
+				title={p.name}
+				subtitle={p.uNm}
+				coverImg={imgUrl(p.id)}
+				trackCount={p.nbTracks}
+				url={myUrl(p)}
+				key={p.id}
+			/>
 		));
 		if (typeof children !== "undefined" && children.length > 0) {
 			const userPlaylists = children as UserPlaylist[];
@@ -113,14 +110,14 @@ export default function PlaylistsList({
 					: userPlaylists;
 
 			playlists = filteredUserPlaylists.map((p) => (
-				<Link to={`/tracks/${userIdResolved}/${p.id}`} key={p.url}>
-					<CaptionedImage
-						title={p.name}
-						subtitle={userNameResolved}
-						coverImg={imgUrl(`${userIdResolved}_${p.id}`)}
-						trackCount={p.nbTracks}
-					/>
-				</Link>
+				<CaptionedImage
+					title={p.name}
+					subtitle={userNameResolved}
+					coverImg={imgUrl(`${userIdResolved}_${p.id}`)}
+					trackCount={p.nbTracks}
+					url={`/tracks/${userIdResolved}/${p.id}`}
+					key={p.url}
+				/>
 			));
 		}
 	} else if (typeof children !== "undefined" && children.length > 0) {
@@ -132,20 +129,20 @@ export default function PlaylistsList({
 					)
 				: apiPlaylists;
 		playlists = filteredApiPlaylist.map((p) => (
-			<Link to={myUrl(p)} key={p.id}>
-				<CaptionedImage
-					title={p.name}
-					subtitle={p.uNm}
-					coverImg={imgUrl(p.id)}
-					trackCount={p.nbTracks}
-				/>
-			</Link>
+			<CaptionedImage
+				title={p.name}
+				subtitle={p.uNm}
+				coverImg={imgUrl(p.id)}
+				trackCount={p.nbTracks}
+				url={myUrl(p)}
+				key={p.id}
+			/>
 		));
 	}
 
 	if (specialPlaylists || playlists) {
 		contentGrid = (
-			<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16">
+			<div className="grid-with-images">
 				{specialPlaylists}
 				{playlists}
 			</div>
@@ -167,14 +164,14 @@ export default function PlaylistsList({
 		const globalSpecialPlaylists = [allPlaylistInfo, hotPlaylistInfo];
 
 		specialPlaylists = globalSpecialPlaylists.map((p) => (
-			<Link to={myUrl(p)} key={p.id}>
-				<CaptionedImage
-					title={p.name}
-					subtitle={p.uNm}
-					coverImg={imgUrl(p.id)}
-					trackCount={p.nbTracks}
-				/>
-			</Link>
+			<CaptionedImage
+				title={p.name}
+				subtitle={p.uNm}
+				coverImg={imgUrl(p.id)}
+				trackCount={p.nbTracks}
+				url={myUrl(p)}
+				key={p.id}
+			/>
 		));
 
 		playlists = (
@@ -189,7 +186,7 @@ export default function PlaylistsList({
 		contentGrid = (
 			<>
 				{playlists}
-				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 mx-12 mb-16 mt-10">
+				<div className="grid-with-images mx-12 mb-16 mt-10">
 					{specialPlaylists}
 				</div>
 			</>
@@ -200,13 +197,11 @@ export default function PlaylistsList({
 
 	return (
 		<>
-			<div className="flex space-x-5 mx-6 mb-4">
-				<h4 className="mx-4 text-lg sm:text-xl font-bold text-ring">
-					{listIntro}
-				</h4>
+			<div className="flex space-x-5 mx-6 my-4">
+				<h4>{listIntro}</h4>
 				{searchInput}
 			</div>
-			{contentGrid}
+			<div className="mx-6 mb-4">{contentGrid}</div>
 			<ScrollToTop smooth className="to-top-button" />
 		</>
 	);

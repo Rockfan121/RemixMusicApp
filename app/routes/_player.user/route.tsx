@@ -54,7 +54,7 @@ export default function Exploring() {
 		<>
 			<PlaylistsList
 				listIntro={userNameRes ? `Playlists by ${userNameRes}` : PAGE_TITLE}
-				listEmptyText="Enter correct userId of one of Openwhyd users and click the button to view all their playlists"
+				listEmptyText="The user you looked for doesn't exist... But you can listen to some other tracks - click some playlist below!"
 				userName={userNameRes}
 				userId={userIdRes}
 				noOfLikes={noOfLikes}

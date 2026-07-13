@@ -36,16 +36,20 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 			hasMore: Array.isArray(tracks) && tracks.length === MAX_FETCHED_ITEMS,
 		};
 	}
+
 	return {
-		PLAYLIST_INFO: {},
-		TRACKS: {},
+		PLAYLIST_INFO: [],
+		TRACKS: [],
 		hasMore: false,
 	};
 };
 
 export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 	if (typeof loaderData !== "undefined") {
-		if (!Object.hasOwn(loaderData.PLAYLIST_INFO[0], "name")) {
+		if (
+			!loaderData.PLAYLIST_INFO ||
+			!Object.hasOwn(loaderData.PLAYLIST_INFO[0], "name")
+		) {
 			return [{ title: title("Playlist not found") }];
 		}
 		return [
@@ -63,7 +67,7 @@ export default function TracksView() {
 	const { PLAYLIST_INFO, TRACKS, hasMore } = useLoaderData<typeof loader>();
 	const params = useParams();
 
-	if (!Object.hasOwn(PLAYLIST_INFO[0], "name")) {
+	if (!PLAYLIST_INFO || !Object.hasOwn(PLAYLIST_INFO[0], "name")) {
 		const nonexistentPlaylist: ApiPlaylist = {
 			// No playlist found - it doesn't exist
 			id: `${params.userId}_${params.playlistId}`,

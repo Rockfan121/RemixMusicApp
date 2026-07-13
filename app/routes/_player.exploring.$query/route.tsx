@@ -59,59 +59,56 @@ export default function Exploring() {
 
 	const mappedPlaylists = uniquePlaylists.map((p) =>
 		p ? (
-			<Link to={`/tracks/${p.idParts[0]}/${p.idParts[1]}`} key={p.id}>
-				<CaptionedImage
-					title={p.name}
-					subtitle=""
-					coverImg={imgUrl(p.id)}
-					trackCount={p.nbTracks}
-				/>
-			</Link>
+			<CaptionedImage
+				title={p.name}
+				subtitle=""
+				coverImg={imgUrl(p.id)}
+				trackCount={p.nbTracks}
+				url={`/tracks/${p.idParts[0]}/${p.idParts[1]}`}
+				key={p.id}
+			/>
 		) : null,
 	);
 
 	const mappedUsers = users.map((u) =>
 		u ? (
-			<Link to={`/user?q=${u._id}`} key={u._id}>
-				<CaptionedImage title={u.name} subtitle="" coverImg={userImg(u._id)} />
-			</Link>
+			<CaptionedImage
+				title={u.name}
+				subtitle=""
+				coverImg={userImg(u._id)}
+				url={`/user?q=${u._id}`}
+				key={u._id}
+			/>
 		) : null,
 	);
 
 	const mappedTracks = tracks.map((t) =>
 		t ? (
-			<Link to={`/tracks/${t.uId}/${t.pl?.id}`} key={t._id}>
-				<CaptionedImage title={t.name} subtitle={t.uNm} coverImg={t.img} />
-			</Link>
+			<CaptionedImage
+				title={t.name}
+				subtitle={t.uNm}
+				coverImg={t.img}
+				url={`/tracks/${t.uId}/${t.pl?.id}`}
+				key={t._id}
+			/>
 		) : null,
 	);
 
 	return (
-		<div className="space-x-5 mx-6 mb-4">
-			<h4 className="mx-4 text-lg sm:text-xl font-bold text-ring">
-				{`Search for ${query}`}
+		<div className="mx-6 my-4">
+			<h4>
+				Search for{" "}
+				<span className="text-accent-foreground italic">{` ${query}`}</span>
 			</h4>
 
-			<h5 className="m-4 mt-6 text-md sm:text-lg font-bold text-ring italic">
-				Playlists
-			</h5>
-			<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 m-6">
-				{mappedPlaylists}
-			</div>
+			<h5>Playlists</h5>
+			<div className="grid-with-images">{mappedPlaylists}</div>
 			<Separator />
-			<h5 className="m-4 mt-6 text-md sm:text-lg font-bold text-ring italic">
-				Tracks
-			</h5>
-			<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 m-6">
-				{mappedTracks}
-			</div>
+			<h5>Tracks</h5>
+			<div className="grid-with-images">{mappedTracks}</div>
 			<Separator />
-			<h5 className="m-4 mt-6 text-md sm:text-lg font-bold text-ring italic">
-				Users
-			</h5>
-			<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 m-6">
-				{mappedUsers}
-			</div>
+			<h5>Users</h5>
+			<div className="grid-with-images">{mappedUsers}</div>
 			<ScrollToTop smooth className="to-top-button" />
 		</div>
 	);

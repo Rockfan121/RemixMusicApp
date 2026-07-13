@@ -4,6 +4,7 @@
 
 @theme {
 	--shadow-3xl: 0px 0px 20px 10px white;
+	--shadow-2xl: 0px 0px 10px 5px white;
 	--text-shadow-3xl:
 		10px 0px 8px white, -10px 0px 8px white, 0px 10px 8px white,
 		0px -10px 8px white;
@@ -220,13 +221,29 @@
 	@apply md:ml-80 px-2 pt-14 pb-24;
 }
 
+h3 {
+	@apply m-3 mb-1 text-[17px] font-semibold leading-none text-ring;
+}
+
+h4 {
+	@apply mx-4 text-lg sm:text-xl font-bold text-ring;
+}
+
+h5 {
+	@apply m-4 mt-6 sm:text-lg font-bold text-ring italic;
+}
+
+.grid-with-images {
+	@apply grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 m-6;
+}
+
 .content-loading {
 	opacity: 0.25;
 	transition: opacity 200ms;
 	transition-delay: 200ms;
 }
 .aside-container {
-	height: calc(50% - (--spacing(12)));
+	height: calc(100% - (--spacing(24)));
 }
 .scroll-container {
 	height: calc(100% - (--spacing(11)));

@@ -2,6 +2,7 @@ import {
 	CounterClockwiseClockIcon,
 	Crosshair2Icon,
 	RocketIcon,
+	StarFilledIcon,
 } from "@radix-ui/react-icons";
 import { Link } from "react-router";
 import { NavbarButton } from "./navbar-button";
@@ -27,7 +28,7 @@ export function Header({ rightSlot }: Props) {
 					<Crosshair2Icon className="navbar-icon" />
 				</NavbarButton>
 				<NavbarButton link="/tracks/hot" label="Hot tracks">
-					<Crosshair2Icon className="navbar-icon" />
+					<StarFilledIcon className="navbar-icon" />
 				</NavbarButton>
 				<NavbarButton link="/recent" label="Recently played">
 					<CounterClockwiseClockIcon className="navbar-icon" />
