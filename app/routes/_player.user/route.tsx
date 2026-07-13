@@ -1,10 +1,6 @@
-import { PaperPlaneIcon } from "@radix-ui/react-icons";
-import { useEffect } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { Form, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import PlaylistsList from "@/components/playlists";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { apiUser } from "@/services/openwhyd";
@@ -12,7 +8,7 @@ import { apiUser } from "@/services/openwhyd";
 const PAGE_TITLE = "Explore playlists";
 
 /**
- * Loader of "exploring" route checks if there is the "q" param in URL. The param is supposed to be user id of some Openwhyd user.
+ * Loader of "user" route checks if there is the "q" param in URL. The param is supposed to be user id of some Openwhyd user.
  * If the param is actually given, the loader will fetch that user's playlists.
  */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -54,32 +50,8 @@ export default function Exploring() {
 		noOfLikes = userRes.nbLikes;
 	}
 
-	useEffect(() => {
-		const searchField = document.getElementById("query");
-		if (searchField instanceof HTMLInputElement) {
-			searchField.value = query || "";
-		}
-	}, [query]);
-
 	return (
 		<>
-			<search>
-				<Form id="search-form">
-					<div className="flex mx-6 mb-10 w-60 max-w-sm items-center space-x-1">
-						<Input
-							defaultValue={query || ""}
-							id="query"
-							name="q"
-							placeholder="Openwhyd userId"
-							type="search"
-							pattern="\w+"
-						/>
-						<Button type="submit" size="icon">
-							<PaperPlaneIcon />
-						</Button>
-					</div>
-				</Form>
-			</search>
 			<PlaylistsList
 				listIntro={userNameRes ? `Playlists by ${userNameRes}` : PAGE_TITLE}
 				listEmptyText="Enter correct userId of one of Openwhyd users and click the button to view all their playlists"

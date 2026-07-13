@@ -23,7 +23,10 @@ export function Header({ rightSlot }: Props) {
 			</div>
 
 			<div className="flex items-center space-x-0.5">
-				<NavbarButton link="/exploring" label="Explore">
+				<NavbarButton link="/tracks/all" label="All tracks">
+					<Crosshair2Icon className="navbar-icon" />
+				</NavbarButton>
+				<NavbarButton link="/tracks/hot" label="Hot tracks">
 					<Crosshair2Icon className="navbar-icon" />
 				</NavbarButton>
 				<NavbarButton link="/recent" label="Recently played">
