@@ -2,20 +2,31 @@
 
 ## Stack
 
-React Router v7 (SSR) + Express + Tailwind CSS v4 + shadcn/ui + Biome. No test framework. All music data comes from the read-only Openwhyd public API. There is no database, authentication, or server-side session management.
+React Router v8 (SSR) + Express 5 + Tailwind CSS v4 + shadcn/ui + Biome + Vitest.
+All music data comes from the read-only Openwhyd public API.
+There is no database, authentication, or server-side session management.
+
+## Runtime & Tooling
+
+- Node: `>=22.12.0`
+- Module type: ESM (`"type": "module"`)
+- Linting/format checks: Biome (`biome check`)
+- Build: React Router build (`react-router build`)
+- Testing: Vitest 4 + jsdom + Testing Library + MSW
 
 ## Commands
 
 ```bash
-npm run dev                 # Start dev server (Express + Vite HMR)
+npm run dev                 # Start dev server (Express + Vite HMR via dotenv-cli)
 npm run build               # Production build
 npm run start               # Run production build
 npm run lint                # Biome check (no auto-fix)
 npm run fix                 # Biome check with auto-fix
 npm run typecheck           # react-router typegen + tsc
+npm run test                # Vitest run
+npm run test:watch          # Vitest watch
+npm run test:coverage       # Vitest with v8 coverage
 ```
-
-There is no test runner.
 
 ## Architecture
 
@@ -29,47 +40,64 @@ Browser -> Express (server.js)
   -> Streamed HTML -> hydrates in browser
 ```
 
-`server.js` creates a bare `createRequestHandler({ build })` — no `getLoadContext`, no context injection, no database.
+`server.js` creates `createRequestHandler({ build, mode: process.env.NODE_ENV })`.
 
 ### APIs
 
 #### Openwhyd API
-All Openwhyd URL builders live in `app/services/openwhyd.ts`. Loaders call `fetch()` directly — no abstraction layer. All Openwhyd data is read-only; never write to it.
+All Openwhyd URL builders live in `app/services/openwhyd.ts`.
+Route loaders call `fetch()` directly with those URL builders.
+Openwhyd data is read-only; never write to it.
 
 #### Bandcamp API
-Track metadata is fetched server-side via the `bandcamp-fetch` package in the `api.bandcamp-track` resource route. This route is called client-side by the `BandcampPlayer` component when needed.
+Track metadata is fetched server-side in `app/routes/api.bandcamp-track/route.ts` using `bandcamp-fetch`.
+`BandcampPlayer` calls this resource route client-side when a Bandcamp track is played.
 
 ### Music player architecture
 
-`_shell.player/route.tsx` is the layout route for all player views. It owns all playback state in React component state (`useState`):
+`app/root.tsx` owns player state and wires app-wide playback:
 
 - `playlist` — current track list (`Track[]`)
 - `firstTrackNo` — index of the track to start from
-- `timestamp` — forces `MusicPlayer` to restart on re-selection of the same playlist
+- `playRequestId` — increments to force a new play request (including replaying same track)
 - `playlistUrl` — URL of the currently active playlist
+- `recentPl` — recently played playlists from localStorage
 
-It exposes two callbacks to child routes via `<Outlet context={contextValue} />` typed as `ContextType` (`app/types/context-type.ts`):
+`PlayerContext` is defined in `app/types/player-context.ts` and exposes:
 
-- `callback(tracks, startIndex, playlist)` — starts playback and records the playlist to recently-played
-- `favesCallback(playlist)` — toggles a playlist in/out of favorites
+- `callback(tracks, startIndex, playlist)` — starts playback and records recently played
+- `recentPl` — recent playlists list used by sidebar routes
 
-Child routes receive context with `useOutletContext<ContextType>()`.
+Playback behavior and player-side effects are implemented in:
+
+- `app/components/music-player.tsx`
+- `app/components/use-music-player.ts`
+- `app/components/BandcampPlayer.tsx`
 
 ### Client-side persistence
 
-No global state store. Favorites and recently-played playlists are persisted to `localStorage` via helpers in `app/helpers/`:
+No global state store.
+Recently played playlists are persisted to `localStorage` via:
 
-- `app/helpers/favorite-playlists.ts`
 - `app/helpers/recent-playlists.ts`
 
 ## Routing Conventions
 
-Flat-file routes under `app/routes/`, using React Router v7 conventions:
+Flat-file routes under `app/routes/` using React Router fs-routes conventions:
 
-- `_shell/route.tsx` — layout route (no URL segment)
-- `_shell._index/route.tsx` — matches `/`
-- `_shell.player.tracks.$userId.$playlistId/route.tsx` — dynamic segments use `$`
-- Each route folder has a `route.tsx` entry point; co-located components go in the same folder
+- `_index/route.tsx` — home route
+- `_player/route.tsx` — player layout route (sidebar + outlet)
+- `_player.tracks.$userId.$playlistId/route.tsx` — dynamic segments use `$`
+- Each route folder has `route.tsx`; co-located route-specific components stay nearby
+
+## Testing Conventions
+
+- Test runner: Vitest (`app/**/*.test.{ts,tsx}`)
+- Default environment: `jsdom`
+- Global test setup: `app/test/setup.ts`
+- MSW handlers: `app/mocks/handlers.ts`
+- MSW server: `app/mocks/server.ts`
+- Node-only tests should use `// @vitest-environment node`
 
 ## Code Conventions
 
@@ -77,56 +105,63 @@ Flat-file routes under `app/routes/`, using React Router v7 conventions:
 
 Always use `@/` to import from `app/`:
 
-```typescript
+```ts
 import { getRecentPlaylists } from "@/helpers/recent-playlists";
 ```
 
 ### Components
 
-- shadcn/ui primitives go in `app/components/ui/` — do not modify these manually; use the shadcn CLI
-- Feature components go in `app/components/`
+- shadcn/ui primitives are in `app/components/ui/`
+- Feature components are in `app/components/`
 - Use `@radix-ui/react-icons` for icons
 
 ### Theming
 
-Multiple themes driven by CSS variables in `app/globals.css`. Use `var(--...)` tokens instead of hard-coded colours. The `ThemeSwitcher` component at `app/components/theme-switcher.tsx` manages the active theme.
+Themes are driven by CSS variables in `app/globals.css`.
+Use theme tokens (`var(--...)`) instead of hard-coded colors.
+Theme switcher logic lives in `app/components/theme-switcher.tsx` and `app/components/theme-switcher-button.tsx`.
 
 ### Linting
 
-Biome enforces: no parameter reassignment, `as const` assertions, self-closing JSX elements. Run `npm run fix` before committing. CI runs `biome ci .` on every push.
+Biome rules include (among others):
+
+- `noParameterAssign`
+- `useAsConstAssertion`
+- `useSelfClosingElements`
+- `useUniqueElementIds` (warn)
+
+Run `npm run fix` before committing when possible.
 
 ### TypeScript
 
-Strict mode is on. Route loader/action types are generated via `react-router typegen` — always run `npm run typecheck` after adding or renaming routes. Use `useLoaderData<typeof loader>()` for type-safe loader data.
+Strict mode is enabled.
+Route types are generated via `react-router typegen`.
+Use `useLoaderData<typeof loader>()` for typed loader data.
 
 ## Code Quality
 
 ### Up-to-date technology
 
-Always use the current stable APIs of the installed package versions listed in `package.json`. Prefer React Router v7 idioms over legacy Remix v2 patterns. Do not suggest deprecated APIs, polyfills for features natively available in Node ≥ 22, or packages that duplicate built-in browser/Node capabilities.
+Use current stable APIs from installed package versions in `package.json`.
+Prefer React Router v8 idioms over legacy Remix patterns.
+Do not add polyfills for features already available in Node >= 22.
 
 ### Efficiency
 
-Write reasonably efficient code:
-
-- Avoid unnecessary re-renders — use `useMemo` / `useCallback` only when the benefit is clear and measurable
-- Avoid redundant network requests; prefer streaming SSR loader patterns for large data sets
-- Keep bundle size in mind: do not add heavy dependencies for trivial tasks
+- Avoid unnecessary re-renders; use memoization only when it has clear value
+- Avoid redundant network calls
+- Avoid heavy dependencies for trivial tasks
 
 ### Security
 
-Follow OWASP Top 10 guidelines. In particular:
-
-- Validate and sanitize all user-supplied input at every system boundary (loader, action, API route)
-- Never expose internal error details or stack traces to the client — log server-side, return a generic message to the browser
-- Use `fetch()` with an explicit `AbortSignal` and timeout for all outbound API calls to prevent hanging requests
-- Do not construct URLs or query strings by concatenating unsanitized user input — use `URL` / `URLSearchParams`
-- Avoid `dangerouslySetInnerHTML`; if unavoidable, sanitize with DOMPurify first
-- Set appropriate HTTP response headers (no-store for sensitive responses, correct Content-Type)
+- Validate and sanitize user-supplied input at every boundary (loader/action/resource route)
+- Avoid exposing internal server errors to clients
+- Use timeouts/abort signals for outbound fetches where feasible
+- Build URLs using `URL` / `URLSearchParams` for query parameters
+- Avoid `dangerouslySetInnerHTML` unless required and controlled
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
 | `PORT` | No | HTTP port (defaults to 3000) |
-
