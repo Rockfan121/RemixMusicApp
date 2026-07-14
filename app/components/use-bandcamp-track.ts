@@ -10,6 +10,9 @@ export interface BandcampTrackData {
 
 type FetchResponse = { error?: string } & Partial<BandcampTrackData>;
 
+/** Abort the track-metadata fetch after this many milliseconds. */
+const BANDCAMP_FETCH_TIMEOUT_MS = 4500;
+
 function parseBandcampUrl(url: string) {
 	const match = url.match(
 		/^https?:\/\/([^.]+)\.bandcamp\.com\/track\/([^/?#]+)/,
@@ -60,7 +63,7 @@ export function useBandcampTrack(
 		//Manual controller for unmounting/re-rendering
 		const manualController = new AbortController();
 		//Timeout signal
-		const timeoutSignal = AbortSignal.timeout(4500);
+		const timeoutSignal = AbortSignal.timeout(BANDCAMP_FETCH_TIMEOUT_MS);
 		//The fetch will abort if EITHER signal triggers
 		const combinedSignal = AbortSignal.any([
 			manualController.signal,
@@ -89,7 +92,9 @@ export function useBandcampTrack(
 				if (manualController.signal.aborted) return;
 
 				if (err instanceof DOMException && err.name === "TimeoutError") {
-					console.error("BandcampPlayer: track fetch timed out after 4.5s");
+					console.error(
+						`BandcampPlayer: track fetch timed out after ${BANDCAMP_FETCH_TIMEOUT_MS}ms`,
+					);
 				} else {
 					console.error("BandcampPlayer: fetch failed:", err);
 				}

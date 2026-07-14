@@ -95,7 +95,8 @@ export async function fetchHotPlaylist(skip?: number): Promise<{
 	raw: { tracks?: Track[] };
 }> {
 	const res = await fetch(hotPlaylist(skip));
-	if (!res.ok) throw new Error(`fetchHotPlaylist: HTTP ${res.status}`);
+	if (!res.ok)
+		throw new Error(`fetchHotPlaylist: HTTP ${res.status} ${res.statusText}`);
 	const data = (await res.json()) as { tracks?: Track[] };
 	const tracks = data?.tracks ?? [];
 	return {
@@ -113,7 +114,8 @@ export async function fetchAllPlaylist(afterId?: string): Promise<{
 	hasMore: boolean;
 }> {
 	const res = await fetch(allPlaylist(afterId));
-	if (!res.ok) throw new Error(`fetchAllPlaylist: HTTP ${res.status}`);
+	if (!res.ok)
+		throw new Error(`fetchAllPlaylist: HTTP ${res.status} ${res.statusText}`);
 	const tracks = (await res.json()) as Track[];
 	return {
 		tracks,
@@ -132,9 +134,10 @@ export async function fetchUserPlaylist(
 ): Promise<{ tracks: Track[]; hasMore: boolean } | null> {
 	const res = await fetch(userPlaylist(userId, playlistId, afterId));
 	if (!res.ok) return null;
-	// Openwhyd returns "moved" HTML when the playlist doesn't exist
+	// Openwhyd responds with an HTML "moved" page (starting with "m") when the
+	// playlist does not exist or has been deleted, rather than a 404 status.
 	const text = await res.text();
-	if (text[0] === "m") return null;
+	if (text.startsWith("moved")) return null;
 	const tracks = JSON.parse(text) as Track[];
 	return {
 		tracks,

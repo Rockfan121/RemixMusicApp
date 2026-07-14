@@ -62,7 +62,7 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 	return [{ title: title("Playlist not found") }];
 };
 
-export default function UserLikesView() {
+export default function UserLikesTracks() {
 	const { playlistInfo, TRACKS, hasMore } = useLoaderData<typeof loader>();
 
 	return (
