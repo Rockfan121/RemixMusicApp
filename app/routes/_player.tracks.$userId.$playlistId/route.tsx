@@ -21,7 +21,11 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 		);
 
 		const text_user_res = await user_res.clone();
-		if (user_res.status !== 200 || (await text_user_res.text())[0] === "m") {
+		// Openwhyd responds with an HTML "moved" page when the playlist doesn't exist
+		if (
+			user_res.status !== 200 ||
+			(await text_user_res.text()).startsWith("moved")
+		) {
 			return {
 				PLAYLIST_INFO: await api_res.json(),
 				TRACKS: {},

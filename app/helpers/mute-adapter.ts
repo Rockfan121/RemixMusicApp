@@ -43,7 +43,10 @@ export function createMuteAdapter(
 		typeof player.getMuted === "function" &&
 		typeof player.setMuted === "function"
 	) {
-		// Vimeo Player SDK — setMuted is async; guard against rapid toggles
+		// Vimeo Player SDK — setMuted is async; guard against rapid toggles using
+		// a sequence number so only the most-recent call's final value is applied.
+		// Without this, a fast mute→unmute could settle on the wrong state if the
+		// first async call resolves after the second one starts.
 		return {
 			async setMuted(muted: boolean) {
 				if (!muteSyncSeqRef) {
