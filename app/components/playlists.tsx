@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { imgUrl, myUrl } from "@/types/apiplaylist-helpers";
+import { imgUrl, myUrl } from "@/helpers/apiplaylist-helpers";
 import type { ApiPlaylist, UserPlaylist } from "@/types/openwhyd-types";
 import {
 	allPlaylistInfo,

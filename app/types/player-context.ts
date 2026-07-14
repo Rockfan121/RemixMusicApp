@@ -7,7 +7,11 @@ import type { ApiPlaylist, Track } from "./openwhyd-types";
  */
 
 interface PlayerContextType {
-	callback: (a: Array<Track>, b: number, c: ApiPlaylist) => void;
+	callback: (
+		tracks: Track[],
+		startIndex: number,
+		playlist: ApiPlaylist,
+	) => void;
 	recentPl: ApiPlaylist[];
 }
 

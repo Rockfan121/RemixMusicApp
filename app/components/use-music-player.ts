@@ -4,6 +4,7 @@ import type ReactPlayer from "react-player";
 import { toast } from "sonner";
 import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
+import { createMuteAdapter } from "@/helpers/mute-adapter";
 import { sleep } from "@/helpers/timeouts";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
@@ -88,34 +89,9 @@ export function useMusicPlayer({
 		}
 
 		const internalPlayer = playerRef.current?.getInternalPlayer();
-		if (internalPlayer) {
-			if (typeof internalPlayer.isMuted === "function") {
-				// YouTube player
-				if (shouldBeMuted) {
-					internalPlayer.mute();
-				} else {
-					internalPlayer.unMute();
-				}
-			} else if (typeof internalPlayer.getMuted === "function") {
-				// Vimeo player
-				if (typeof internalPlayer.setMuted === "function") {
-					const syncSeq = ++muteSyncSeqRef.current;
-					await (internalPlayer.setMuted(shouldBeMuted) as Promise<void>);
-					if (syncSeq !== muteSyncSeqRef.current) {
-						await (internalPlayer.setMuted(
-							isMutedRef.current,
-						) as Promise<void>);
-					}
-				}
-			} else if (typeof internalPlayer.setVolume === "function") {
-				// SoundCloud player — no native mute function, use volume instead
-				if (shouldBeMuted) {
-					internalPlayer.setVolume(0);
-				} else {
-					internalPlayer.setVolume(100);
-				}
-			}
-		}
+		await createMuteAdapter(internalPlayer, muteSyncSeqRef)?.setMuted(
+			shouldBeMuted,
+		);
 	}, []);
 
 	// Mount guard:

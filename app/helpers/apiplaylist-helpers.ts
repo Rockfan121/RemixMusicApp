@@ -4,12 +4,12 @@ import musical_note from "@/assets/musical_note.jpg";
 import plate from "@/assets/plate.jpg";
 import sheet_music from "@/assets/sheet_music.jpg";
 import { playlistImg } from "@/services/openwhyd";
-import type { ApiPlaylist } from "./openwhyd-types";
+import type { ApiPlaylist } from "@/types/openwhyd-types";
 import {
 	HOT_TRACKS_LINK,
 	PlaylistsIDs,
 	RECENT_TRACKS_LINK,
-} from "./playlists-types";
+} from "@/types/playlists-types";
 
 export function myUrl(pl: ApiPlaylist) {
 	switch (pl.id) {
