@@ -4,9 +4,9 @@ import ScrollToTop from "react-scroll-to-top";
 import CaptionedImage from "@/components/captioned-image";
 import { Separator } from "@/components/ui/separator";
 import { title } from "@/config.shared";
+import { imgUrl } from "@/helpers/apiplaylist-helpers";
 import { timeout300 } from "@/helpers/timeouts";
 import { search, userImg } from "@/services/openwhyd";
-import { imgUrl } from "@/types/apiplaylist-helpers";
 import type {
 	SearchedPlaylist,
 	SearchedUser,

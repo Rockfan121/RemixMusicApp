@@ -17,11 +17,11 @@ import {
 } from "@/components/theme-switcher";
 import { ThemeSwitcherButton } from "@/components/theme-switcher-button";
 import { Toaster } from "@/components/ui/sonner";
+import { myUrl } from "@/helpers/apiplaylist-helpers";
 import {
 	addToRecentPlaylists,
 	getRecentPlaylists,
 } from "@/helpers/recent-playlists";
-import { myUrl } from "@/types/apiplaylist-helpers";
 import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
 import stylesheet from "./globals.css?url";
 import { PlayerContext } from "./types/player-context";
@@ -61,13 +61,17 @@ export default function Root() {
 	const [playlistUrl, setPlaylistUrl] = useState<string>("");
 	const [recentPl, setRecentPl] = useState<ApiPlaylist[]>([]);
 
-	const handleCallback = (a: Array<Track>, b: number, c: ApiPlaylist) => {
-		setPlaylist(a);
-		setFirstTrackNo(b);
+	const handleCallback = (
+		tracks: Array<Track>,
+		startIndex: number,
+		playlist: ApiPlaylist,
+	) => {
+		setPlaylist(tracks);
+		setFirstTrackNo(startIndex);
 		setPlayRequestId((id) => id + 1);
-		setPlaylistUrl(myUrl(c));
+		setPlaylistUrl(myUrl(playlist));
 
-		addToRecentPlaylists(c);
+		addToRecentPlaylists(playlist);
 		setRecentPl(getRecentPlaylists());
 	};
 
