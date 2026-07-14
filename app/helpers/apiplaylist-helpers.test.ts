@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { imgUrl, myUrl, openwhydUrl } from "@/helpers/apiplaylist-helpers";
 import { playlistImg } from "@/services/openwhyd";
-import { imgUrl, myUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 import {
 	HOT_TRACKS_LINK,

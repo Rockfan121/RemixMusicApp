@@ -16,12 +16,22 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	const api_res = await fetch(apiUser(params.userId));
 
 	if (api_res.status === 200) {
+		const userInfo = await api_res.json();
 		await new Promise(timeout300);
 		const user_res = await fetch(userLikesPlaylist(params.userId, afterId));
 
+		const playlistInfo: ApiPlaylist = {
+			id: PlaylistsIDs.UserLikes,
+			name: `${PAGE_TITLE}`,
+			uId: userInfo.id,
+			uNm: userInfo.name,
+			plId: "",
+			nbTracks: userInfo.nbLikes,
+		};
+
 		if (user_res.status !== 200) {
 			return {
-				USER_INFO: await api_res.json(),
+				playlistInfo,
 				TRACKS: {},
 				hasMore: false,
 			};
@@ -29,44 +39,44 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 		const tracks = await user_res.json();
 		return {
-			USER_INFO: await api_res.json(),
+			playlistInfo,
 			TRACKS: tracks,
 			hasMore: Array.isArray(tracks) && tracks.length === 21,
 		};
 	}
 	return {
-		USER_INFO: {},
+		playlistInfo: null,
 		TRACKS: {},
 		hasMore: false,
 	};
 };
 
 export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
-	if (typeof loaderData !== "undefined") {
+	if (loaderData?.playlistInfo) {
 		return [
 			{
-				title: title(`${PAGE_TITLE} - ${loaderData.USER_INFO.name}`),
+				title: title(`${PAGE_TITLE} - ${loaderData.playlistInfo.uNm}`),
 			},
 		];
 	}
 	return [{ title: title("Playlist not found") }];
 };
 
-export default function UserAllTracks() {
-	const { USER_INFO, TRACKS, hasMore } = useLoaderData<typeof loader>();
-
-	const userLikesInfo: ApiPlaylist = {
-		id: PlaylistsIDs.UserLikes,
-		name: `${PAGE_TITLE}`,
-		uId: USER_INFO.id,
-		uNm: USER_INFO.name,
-		plId: "",
-		nbTracks: USER_INFO.nbLikes,
-	};
+export default function UserLikesView() {
+	const { playlistInfo, TRACKS, hasMore } = useLoaderData<typeof loader>();
 
 	return (
 		<TracksContainer
-			playlistInfo={userLikesInfo}
+			playlistInfo={
+				playlistInfo ?? {
+					id: PlaylistsIDs.UserLikes,
+					name: PAGE_TITLE,
+					uId: "",
+					uNm: "",
+					plId: "",
+					nbTracks: 0,
+				}
+			}
 			tracks={TRACKS}
 			hasMore={hasMore}
 		/>

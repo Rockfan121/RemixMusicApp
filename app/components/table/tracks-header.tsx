@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
-import { imgUrl, openwhydUrl } from "@/types/apiplaylist-helpers";
+import { imgUrl, openwhydUrl } from "@/helpers/apiplaylist-helpers";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 import { PlaylistsIDs } from "@/types/playlists-types";
 import ItemCover from "../item-cover";
