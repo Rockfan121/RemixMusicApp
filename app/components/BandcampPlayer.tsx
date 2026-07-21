@@ -1,18 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { useBandcampTrack } from "@/components/use-bandcamp-track";
-
-export interface BandcampPlayerHandle {
-	seekTo: (fraction: number) => void;
-	setMuted: (muted: boolean) => void;
-	getMuted: () => boolean;
-}
-
-interface ProgressState {
-	played: number;
-	loaded: number;
-	playedSeconds: number;
-	loadedSeconds: number;
-}
+import type { BandcampPlayerHandle } from "@/types/bandcamp";
+import type { ProgressState } from "@/types/progress-state-type";
 
 interface BandcampPlayerProps {
 	url: string;
