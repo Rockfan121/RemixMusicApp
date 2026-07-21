@@ -52,7 +52,7 @@ export function ThemeSwitcherButton() {
 							type="button"
 							className="w-full"
 							onClick={() => setTheme(t)}
-							aria-selected={theme === t}
+							aria-pressed={theme === t}
 						>
 							{t.charAt(0).toUpperCase() + t.slice(1)}
 						</button>

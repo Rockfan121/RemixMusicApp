@@ -1,4 +1,5 @@
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import { useId } from "react";
 import { type MetaFunction, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
 	const navigate = useNavigate();
+	const queryId = useId();
 
 	function search(formData: FormData) {
 		const query = formData.get("query");
@@ -30,7 +32,7 @@ export default function Index() {
 					<form action={search}>
 						<div className="flex py-6 max-w-2xs sm:max-w-xs md:max-w-sm items-center space-x-1">
 							<Input
-								id="query"
+								id={queryId}
 								name="query"
 								placeholder="Search tracks, playlists or users"
 								type="text"
