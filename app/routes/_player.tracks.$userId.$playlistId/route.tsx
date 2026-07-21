@@ -3,48 +3,36 @@ import { useLoaderData, useParams } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
 import TracksHeader from "@/components/table/tracks-header";
 import TracksReplacement from "@/components/table/tracks-replacement";
-import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
-import { apiPlaylist, userPlaylist } from "@/services/openwhyd";
+import { fetchApiPlaylist, fetchUserPlaylist } from "@/services/openwhyd";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 //Fetch tracks from one of Openwhyd users playlists
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	const afterId = new URL(request.url).searchParams.get("after") ?? undefined;
 	await new Promise(timeout300);
-	const api_res = await fetch(apiPlaylist(params.userId, params.playlistId));
+	const playlistInfo = await fetchApiPlaylist(params.userId, params.playlistId);
 
-	if (api_res.status === 200) {
-		await new Promise(timeout300);
-		const user_res = await fetch(
-			userPlaylist(params.userId, params.playlistId, afterId),
-		);
+	if (!playlistInfo) {
+		return { PLAYLIST_INFO: [], TRACKS: [], hasMore: false };
+	}
 
-		const text_user_res = await user_res.clone();
-		// Openwhyd responds with an HTML "moved" page when the playlist doesn't exist
-		if (
-			user_res.status !== 200 ||
-			(await text_user_res.text()).startsWith("moved")
-		) {
-			return {
-				PLAYLIST_INFO: await api_res.json(),
-				TRACKS: {},
-				hasMore: false,
-			};
-		}
+	await new Promise(timeout300);
+	const userTracks = await fetchUserPlaylist(
+		params.userId,
+		params.playlistId,
+		afterId,
+	);
 
-		const tracks = await user_res.json();
-		return {
-			PLAYLIST_INFO: await api_res.json(),
-			TRACKS: tracks,
-			hasMore: Array.isArray(tracks) && tracks.length === MAX_FETCHED_ITEMS,
-		};
+	if (!userTracks) {
+		return { PLAYLIST_INFO: playlistInfo, TRACKS: {}, hasMore: false };
 	}
 
 	return {
-		PLAYLIST_INFO: [],
-		TRACKS: [],
-		hasMore: false,
+		PLAYLIST_INFO: playlistInfo,
+		TRACKS: userTracks.tracks,
+		hasMore: userTracks.hasMore,
 	};
 };
 
