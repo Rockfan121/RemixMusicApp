@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import ScrollToTop from "react-scroll-to-top";
 import CaptionedImage from "@/components/captioned-image";
 import { Separator } from "@/components/ui/separator";

@@ -38,7 +38,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Exploring() {
-	const { userRes, query } = useLoaderData<typeof loader>();
+	const { userRes } = useLoaderData<typeof loader>();
 	let userNameRes = "";
 	let userIdRes = "";
 	let noOfPosts = -1;
@@ -51,17 +51,15 @@ export default function Exploring() {
 	}
 
 	return (
-		<>
-			<PlaylistsList
-				listIntro={userNameRes ? `Playlists by ${userNameRes}` : PAGE_TITLE}
-				listEmptyText="The user you looked for doesn't exist... But you can listen to some other tracks - click some playlist below!"
-				userName={userNameRes}
-				userId={userIdRes}
-				noOfLikes={noOfLikes}
-				noOfPosts={noOfPosts}
-			>
-				{userRes.pl}
-			</PlaylistsList>
-		</>
+		<PlaylistsList
+			listIntro={userNameRes ? `Playlists by ${userNameRes}` : PAGE_TITLE}
+			listEmptyText="The user you looked for doesn't exist... But you can listen to some other tracks - click some playlist below!"
+			userName={userNameRes}
+			userId={userIdRes}
+			noOfLikes={noOfLikes}
+			noOfPosts={noOfPosts}
+		>
+			{userRes.pl}
+		</PlaylistsList>
 	);
 }
