@@ -6,7 +6,7 @@ import TracksReplacement from "@/components/table/tracks-replacement";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { fetchApiPlaylist, fetchUserPlaylist } from "@/services/openwhyd";
-import type { ApiPlaylist } from "@/types/openwhyd-types";
+import type { ApiPlaylist, Track } from "@/types/openwhyd-types";
 
 //Fetch tracks from one of Openwhyd users playlists
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
@@ -15,7 +15,11 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	const playlistInfo = await fetchApiPlaylist(params.userId, params.playlistId);
 
 	if (!playlistInfo) {
-		return { PLAYLIST_INFO: [], TRACKS: [], hasMore: false };
+		return {
+			PLAYLIST_INFO: [] as ApiPlaylist[],
+			TRACKS: [] as Track[],
+			hasMore: false,
+		};
 	}
 
 	await new Promise(timeout300);
@@ -26,7 +30,11 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	);
 
 	if (!userTracks) {
-		return { PLAYLIST_INFO: playlistInfo, TRACKS: {}, hasMore: false };
+		return {
+			PLAYLIST_INFO: playlistInfo,
+			TRACKS: [] as Track[],
+			hasMore: false,
+		};
 	}
 
 	return {
