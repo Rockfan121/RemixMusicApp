@@ -1,9 +1,9 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
-import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
-import { hotPlaylist } from "@/services/openwhyd";
+import { fetchHotPlaylist } from "@/services/openwhyd";
 import { hotPlaylistInfo, PlaylistsNames } from "@/types/playlists-types";
 
 const PAGE_TITLE = PlaylistsNames.Hot;
@@ -12,17 +12,12 @@ const PAGE_TITLE = PlaylistsNames.Hot;
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const skip = Number(new URL(request.url).searchParams.get("skip") ?? 0);
 	await new Promise(timeout300);
-	const hot_res = await fetch(hotPlaylist(skip || undefined));
-
-	if (hot_res.status === 200) {
-		const data = await hot_res.json();
-		const tracks = data?.tracks ?? [];
-		return {
-			TRACKS: data,
-			hasMore: Array.isArray(tracks) && tracks.length === MAX_FETCHED_ITEMS,
-		};
+	try {
+		const { raw, hasMore } = await fetchHotPlaylist(skip || undefined);
+		return { TRACKS: raw, hasMore };
+	} catch {
+		return { TRACKS: {}, hasMore: false };
 	}
-	return { TRACKS: {}, hasMore: false };
 };
 
 export const meta: MetaFunction = () => {
