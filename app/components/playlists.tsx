@@ -1,7 +1,6 @@
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import type React from "react";
-import { useState } from "react";
-import { Link } from "react-router";
+import { useId, useState } from "react";
 import ScrollToTop from "react-scroll-to-top";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
@@ -41,6 +40,7 @@ export default function PlaylistsList({
 	noOfPosts?: number;
 }) {
 	const [localQuery, setLocalQuery] = useState("");
+	const searchInputId = useId();
 
 	let userNameResolved = "";
 	if (typeof userName !== "undefined") userNameResolved = userName;
@@ -154,7 +154,7 @@ export default function PlaylistsList({
 					className="search-input"
 					placeholder="Search"
 					type="search"
-					id="localQuery"
+					id={searchInputId}
 					name="pl"
 					onChange={handleQueryChange}
 				/>

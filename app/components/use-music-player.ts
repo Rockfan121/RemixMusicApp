@@ -2,10 +2,10 @@ import type { BaseSyntheticEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import { toast } from "sonner";
-import type { BandcampPlayerHandle } from "@/types/bandcamp";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
 import { createMuteAdapter } from "@/helpers/mute-adapter";
 import { sleep } from "@/helpers/timeouts";
+import type { BandcampPlayerHandle } from "@/types/bandcamp";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 
