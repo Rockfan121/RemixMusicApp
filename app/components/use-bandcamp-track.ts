@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
-export interface BandcampTrackData {
-	streamUrl: string;
-	duration: number;
-	trackTitle: string;
-	albumTitle: string;
-	coverArt: string;
-}
+import type { BandcampTrackData } from "@/types/bandcamp";
 
 type FetchResponse = { error?: string } & Partial<BandcampTrackData>;
 
