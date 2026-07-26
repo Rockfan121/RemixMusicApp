@@ -9,7 +9,11 @@ import type { BandcampPlayerHandle } from "@/types/bandcamp";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 
-type LoopMode = 0 | 1 | 2; //0=off, 1=playlist, 2=track
+export type LoopMode = 0 | 1 | 2; //0=off, 1=playlist, 2=track
+/** Default loop mode: 1 = playlist loop */
+export const DEFAULT_LOOP_MODE: LoopMode = 1;
+/** Watchdog threshold: auto-skip a stuck track after this many ms with no playback progress */
+export const WATCHDOG_THRESHOLD_MS = 11_000;
 
 export interface MusicPlayerProps {
 	playlist: Array<Track>;
@@ -24,7 +28,7 @@ export function useMusicPlayer({
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
-	const [howLooped, setHowLooped] = useState<LoopMode>(1);
+	const [howLooped, setHowLooped] = useState<LoopMode>(DEFAULT_LOOP_MODE);
 	const [isMuted, setIsMuted] = useState(false);
 	const [played, setPlayed] = useState(0);
 	const [duration, setDuration] = useState(0);
@@ -293,7 +297,7 @@ export function useMusicPlayer({
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (isPlayingRef.current && !seekingRef.current) {
-				if (Date.now() - lastActionTimeRef.current > 11000) {
+				if (Date.now() - lastActionTimeRef.current > WATCHDOG_THRESHOLD_MS) {
 					console.log("Watchdog triggered: Track stuck for 11s, skipping...");
 					void handleError();
 					lastActionTimeRef.current = Date.now(); // Reset to prevent rapid refiring while skipping

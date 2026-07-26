@@ -11,7 +11,11 @@ vi.mock("@/helpers/timeouts", () => ({
 }));
 
 import { toast } from "sonner";
-import { useMusicPlayer } from "./use-music-player";
+import {
+	DEFAULT_LOOP_MODE,
+	WATCHDOG_THRESHOLD_MS,
+	useMusicPlayer,
+} from "./use-music-player";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -95,9 +99,9 @@ describe("useMusicPlayer – initial state", () => {
 		expect(result.current.currentTrack).toEqual(TRACKS[0]);
 	});
 
-	it("returns a boolean isPlaying value", () => {
+	it("starts playing immediately when a non-empty playlist is provided", () => {
 		const { result } = renderPlayer();
-		expect(typeof result.current.isPlaying).toBe("boolean");
+		expect(result.current.isPlaying).toBe(true);
 	});
 });
 
@@ -160,16 +164,16 @@ describe("useMusicPlayer – toggles", () => {
 		expect(result.current.isMuted).toBe(false);
 	});
 
-	it("toggleLooped cycles 1 → 2 → 0 → 1", () => {
+	it("toggleLooped cycles through all three modes and wraps back to the default", () => {
 		const { result } = renderPlayer();
-		// Initial howLooped is 1
-		expect(result.current.howLooped).toBe(1);
+		// Verify the initial mode is the exported default
+		expect(result.current.howLooped).toBe(DEFAULT_LOOP_MODE); // 1 = playlist loop
 		act(() => result.current.toggleLooped());
-		expect(result.current.howLooped).toBe(2);
+		expect(result.current.howLooped).toBe(2); // track loop
 		act(() => result.current.toggleLooped());
-		expect(result.current.howLooped).toBe(0);
+		expect(result.current.howLooped).toBe(0); // off
 		act(() => result.current.toggleLooped());
-		expect(result.current.howLooped).toBe(1);
+		expect(result.current.howLooped).toBe(DEFAULT_LOOP_MODE); // back to start
 	});
 });
 
@@ -185,8 +189,8 @@ describe("useMusicPlayer – handleEnded", () => {
 		// Jump to the last track
 		await jumpTo(rerender, TRACKS.length - 1);
 
-		// Disable loop: default is 1, so toggle twice: 1→2→0
-		act(() => result.current.toggleLooped()); // 1→2
+		// Disable loop: DEFAULT_LOOP_MODE is 1 (playlist), so toggle twice: 1→2→0
+		act(() => result.current.toggleLooped()); // DEFAULT_LOOP_MODE→2
 		act(() => result.current.toggleLooped()); // 2→0
 		expect(result.current.howLooped).toBe(0);
 
@@ -215,13 +219,13 @@ describe("useMusicPlayer – handleError", () => {
 		vi.useRealTimers();
 	});
 
-	it("shows a toast and advances past the broken track", async () => {
+	it("shows a toast and advances to the next track past the broken one", async () => {
 		const { result } = renderPlayer({ firstTrackNo: 0 });
 		await act(() => result.current.handleError());
 
 		expect(toast.error).toHaveBeenCalledOnce();
-		// Should have moved to a different index (track 0 is broken)
-		expect(result.current.currentSongIndex).not.toBe(0);
+		// Track 0 is broken; the hook must advance to track 1
+		expect(result.current.currentSongIndex).toBe(1);
 	});
 
 	it("does not advance when the playlist has only one track", async () => {
@@ -244,7 +248,7 @@ describe("useMusicPlayer – watchdog timer", () => {
 		vi.useRealTimers();
 	});
 
-	it("auto-skips a stuck track after 11 seconds of isPlaying with no progress", async () => {
+	it(`auto-skips a stuck track after ${WATCHDOG_THRESHOLD_MS}ms of isPlaying with no progress`, async () => {
 		vi.useFakeTimers();
 		const { result } = renderPlayer({ firstTrackNo: 0 });
 
@@ -252,35 +256,36 @@ describe("useMusicPlayer – watchdog timer", () => {
 		act(() => result.current.handlePlay());
 		expect(result.current.isPlaying).toBe(true);
 
-		// Advance time by 12 seconds without any handleProgress call
+		// Advance past the watchdog threshold without any handleProgress call
 		await act(async () => {
-			vi.advanceTimersByTime(12_000);
+			vi.advanceTimersByTime(WATCHDOG_THRESHOLD_MS + 1_000);
 		});
 
 		// The watchdog should have triggered handleError, moving off track 0
-		expect(result.current.currentSongIndex).not.toBe(0);
+		expect(result.current.currentSongIndex).toBe(1);
 	});
 
-	it("does not skip when progress events arrive within 11 seconds", async () => {
+	it("does not skip when progress events arrive within the watchdog threshold", async () => {
 		vi.useFakeTimers();
 		const { result } = renderPlayer({ firstTrackNo: 0 });
 
 		act(() => result.current.handlePlay());
 
-		// Simulate progress every 5 seconds
+		// Simulate progress in two bursts — each well under WATCHDOG_THRESHOLD_MS
+		const halfThreshold = Math.floor(WATCHDOG_THRESHOLD_MS / 2);
 		await act(async () => {
-			vi.advanceTimersByTime(5_000);
+			vi.advanceTimersByTime(halfThreshold);
 		});
 		act(() =>
 			result.current.handleProgress({
 				played: 0.1,
 				loaded: 0.5,
-				playedSeconds: 5,
-				loadedSeconds: 25,
+				playedSeconds: halfThreshold / 1_000,
+				loadedSeconds: halfThreshold / 500,
 			}),
 		);
 		await act(async () => {
-			vi.advanceTimersByTime(5_000);
+			vi.advanceTimersByTime(halfThreshold);
 		});
 
 		// Should still be on the same track
