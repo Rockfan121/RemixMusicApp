@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
+import headphones from "@/assets/headphones.jpg";
+import music_heart from "@/assets/music_heart.jpg";
+import musical_note from "@/assets/musical_note.jpg";
+import plate from "@/assets/plate.jpg";
+import sheet_music from "@/assets/sheet_music.jpg";
 import { imgUrl, myUrl, openwhydUrl } from "@/helpers/apiplaylist-helpers";
-import { playlistImg } from "@/services/openwhyd";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 import {
 	HOT_TRACKS_LINK,
@@ -105,38 +109,30 @@ describe("openwhydUrl", () => {
 // ---------------------------------------------------------------------------
 
 describe("imgUrl", () => {
-	it("returns a non-empty string for the All playlist ID", () => {
-		const result = imgUrl(PlaylistsIDs.All);
-		expect(typeof result).toBe("string");
-		expect(result).toBeTruthy();
+	it("returns the plate asset for the All playlist ID", () => {
+		expect(imgUrl(PlaylistsIDs.All)).toBe(plate);
 	});
 
-	it("returns a non-empty string for the Hot playlist ID", () => {
-		const result = imgUrl(PlaylistsIDs.Hot);
-		expect(typeof result).toBe("string");
-		expect(result).toBeTruthy();
+	it("returns the headphones asset for the Hot playlist ID", () => {
+		expect(imgUrl(PlaylistsIDs.Hot)).toBe(headphones);
 	});
 
-	it("returns a non-empty string for the UserAll playlist ID", () => {
-		const result = imgUrl(PlaylistsIDs.UserAll);
-		expect(typeof result).toBe("string");
-		expect(result).toBeTruthy();
+	it("returns the sheet_music asset for the UserAll playlist ID", () => {
+		expect(imgUrl(PlaylistsIDs.UserAll)).toBe(sheet_music);
 	});
 
-	it("returns a non-empty string for the UserLikes playlist ID", () => {
-		const result = imgUrl(PlaylistsIDs.UserLikes);
-		expect(typeof result).toBe("string");
-		expect(result).toBeTruthy();
+	it("returns the music_heart asset for the UserLikes playlist ID", () => {
+		expect(imgUrl(PlaylistsIDs.UserLikes)).toBe(music_heart);
 	});
 
-	it("returns a non-empty string for the UserStream playlist ID", () => {
-		const result = imgUrl(PlaylistsIDs.UserStream);
-		expect(typeof result).toBe("string");
-		expect(result).toBeTruthy();
+	it("returns the musical_note asset for the UserStream playlist ID", () => {
+		expect(imgUrl(PlaylistsIDs.UserStream)).toBe(musical_note);
 	});
 
-	it("delegates to playlistImg for an unknown playlist ID", () => {
+	it("returns the Openwhyd image CDN URL for an unknown playlist ID", () => {
 		const unknownId = "abc123_99";
-		expect(imgUrl(unknownId)).toBe(playlistImg(unknownId));
+		expect(imgUrl(unknownId)).toBe(
+			"https://openwhyd.org/img/playlist/abc123_99",
+		);
 	});
 });
