@@ -1,7 +1,7 @@
 import { MAX_PLAYLISTS } from "@/config.shared";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 
-const RECENT_PLAYLISTS_KEY = "recentPlaylists";
+export const RECENT_PLAYLISTS_KEY = "recentPlaylists";
 
 /**
  * Adds a playlist to recent playlists in localStorage
