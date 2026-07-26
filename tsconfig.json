@@ -2,7 +2,7 @@
 	"include": ["**/*.ts", "**/*.tsx", "server.js", ".react-router/types/**/*"],
 	"compilerOptions": {
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
-		"types": ["@react-router/node", "node", "vite/client"],
+		"types": ["@react-router/node", "node", "vite/client", "vitest/globals"],
 		"isolatedModules": true,
 		"esModuleInterop": true,
 		"jsx": "react-jsx",

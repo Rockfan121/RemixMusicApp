@@ -272,11 +272,11 @@ h5 {
 }
 
 .to-top-button {
-	bottom: 120px !important;
+	bottom: 120px;
 	padding: 5px;
 	box-shadow:
 		7px 0px 15px 0 dimgrey,
-		-7px 0px 15px 0 dimgrey !important;
+		-7px 0px 15px 0 dimgrey;
 }
 
 .cover-background-image {

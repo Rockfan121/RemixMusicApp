@@ -1,10 +1,10 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import TracksContainer from "@/components/table/tracks-container";
-import { MAX_FETCHED_ITEMS, title } from "@/config.shared";
+import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
-import { apiUser, userAllPlaylist } from "@/services/openwhyd";
-import type { ApiPlaylist } from "@/types/openwhyd-types";
+import { fetchUserSpecialPlaylist } from "@/services/openwhyd";
+import type { Track } from "@/types/openwhyd-types";
 import { PlaylistsIDs, PlaylistsNames } from "@/types/playlists-types";
 
 const PAGE_TITLE = PlaylistsNames.UserAll;
@@ -13,39 +13,23 @@ const PAGE_TITLE = PlaylistsNames.UserAll;
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	const afterId = new URL(request.url).searchParams.get("after") ?? undefined;
 	await new Promise(timeout300);
-	const api_res = await fetch(apiUser(params.userId));
+	const result = await fetchUserSpecialPlaylist(params.userId, "all", afterId);
 
-	if (api_res.status === 200) {
-		await new Promise(timeout300);
-		const user_res = await fetch(userAllPlaylist(params.userId, afterId));
-
-		if (user_res.status !== 200) {
-			return {
-				USER_INFO: await api_res.json(),
-				TRACKS: {},
-				hasMore: false,
-			};
-		}
-
-		const tracks = await user_res.json();
-		return {
-			USER_INFO: await api_res.json(),
-			TRACKS: tracks,
-			hasMore: Array.isArray(tracks) && tracks.length === MAX_FETCHED_ITEMS,
-		};
+	if (!result) {
+		return { playlistInfo: null, TRACKS: [] as Track[], hasMore: false };
 	}
 	return {
-		USER_INFO: {},
-		TRACKS: {},
-		hasMore: false,
+		playlistInfo: result.playlistInfo,
+		TRACKS: result.tracks,
+		hasMore: result.hasMore,
 	};
 };
 
 export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
-	if (typeof loaderData !== "undefined") {
+	if (loaderData?.playlistInfo) {
 		return [
 			{
-				title: title(`${PAGE_TITLE} - ${loaderData.USER_INFO.name}`),
+				title: title(`${PAGE_TITLE} - ${loaderData.playlistInfo.uNm}`),
 			},
 		];
 	}
@@ -53,20 +37,20 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 };
 
 export default function UserAllTracks() {
-	const { USER_INFO, TRACKS, hasMore } = useLoaderData<typeof loader>();
-
-	const userAllPlaylistInfo: ApiPlaylist = {
-		id: PlaylistsIDs.UserAll,
-		name: `${PAGE_TITLE}`,
-		uId: USER_INFO.id,
-		uNm: USER_INFO.name,
-		plId: "",
-		nbTracks: USER_INFO.nbPosts,
-	};
+	const { playlistInfo, TRACKS, hasMore } = useLoaderData<typeof loader>();
 
 	return (
 		<TracksContainer
-			playlistInfo={userAllPlaylistInfo}
+			playlistInfo={
+				playlistInfo ?? {
+					id: PlaylistsIDs.UserAll,
+					name: PAGE_TITLE,
+					uId: "",
+					uNm: "",
+					plId: "",
+					nbTracks: 0,
+				}
+			}
 			tracks={TRACKS}
 			hasMore={hasMore}
 		/>

@@ -2,13 +2,18 @@ import type { BaseSyntheticEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import { toast } from "sonner";
-import type { BandcampPlayerHandle } from "@/components/BandcampPlayer";
 import { getMusicServiceAndUrl } from "@/helpers/media-url";
+import { createMuteAdapter } from "@/helpers/mute-adapter";
 import { sleep } from "@/helpers/timeouts";
+import type { BandcampPlayerHandle } from "@/types/bandcamp";
 import type { Track } from "@/types/openwhyd-types";
 import type { ProgressState } from "@/types/progress-state-type";
 
-type LoopMode = 0 | 1 | 2; //0=off, 1=playlist, 2=track
+export type LoopMode = 0 | 1 | 2; //0=off, 1=playlist, 2=track
+/** Default loop mode: 1 = playlist loop */
+export const DEFAULT_LOOP_MODE: LoopMode = 1;
+/** Watchdog threshold: auto-skip a stuck track after this many ms with no playback progress */
+export const WATCHDOG_THRESHOLD_MS = 11_000;
 
 export interface MusicPlayerProps {
 	playlist: Array<Track>;
@@ -23,7 +28,7 @@ export function useMusicPlayer({
 }: MusicPlayerProps) {
 	const [currentSongIndex, setCurrentSongIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
-	const [howLooped, setHowLooped] = useState<LoopMode>(1);
+	const [howLooped, setHowLooped] = useState<LoopMode>(DEFAULT_LOOP_MODE);
 	const [isMuted, setIsMuted] = useState(false);
 	const [played, setPlayed] = useState(0);
 	const [duration, setDuration] = useState(0);
@@ -88,34 +93,9 @@ export function useMusicPlayer({
 		}
 
 		const internalPlayer = playerRef.current?.getInternalPlayer();
-		if (internalPlayer) {
-			if (typeof internalPlayer.isMuted === "function") {
-				// YouTube player
-				if (shouldBeMuted) {
-					internalPlayer.mute();
-				} else {
-					internalPlayer.unMute();
-				}
-			} else if (typeof internalPlayer.getMuted === "function") {
-				// Vimeo player
-				if (typeof internalPlayer.setMuted === "function") {
-					const syncSeq = ++muteSyncSeqRef.current;
-					await (internalPlayer.setMuted(shouldBeMuted) as Promise<void>);
-					if (syncSeq !== muteSyncSeqRef.current) {
-						await (internalPlayer.setMuted(
-							isMutedRef.current,
-						) as Promise<void>);
-					}
-				}
-			} else if (typeof internalPlayer.setVolume === "function") {
-				// SoundCloud player — no native mute function, use volume instead
-				if (shouldBeMuted) {
-					internalPlayer.setVolume(0);
-				} else {
-					internalPlayer.setVolume(100);
-				}
-			}
-		}
+		await createMuteAdapter(internalPlayer, muteSyncSeqRef)?.setMuted(
+			shouldBeMuted,
+		);
 	}, []);
 
 	// Mount guard:
@@ -317,7 +297,7 @@ export function useMusicPlayer({
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (isPlayingRef.current && !seekingRef.current) {
-				if (Date.now() - lastActionTimeRef.current > 11000) {
+				if (Date.now() - lastActionTimeRef.current > WATCHDOG_THRESHOLD_MS) {
 					console.log("Watchdog triggered: Track stuck for 11s, skipping...");
 					void handleError();
 					lastActionTimeRef.current = Date.now(); // Reset to prevent rapid refiring while skipping

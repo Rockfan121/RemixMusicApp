@@ -1,33 +1,7 @@
-import {
-	forwardRef,
-	useEffect,
-	useImperativeHandle,
-	useRef,
-	useState,
-} from "react";
-
-export interface BandcampPlayerHandle {
-	seekTo: (fraction: number) => void;
-	setMuted: (muted: boolean) => void;
-	getMuted: () => boolean;
-}
-
-interface BandcampTrackData {
-	streamUrl: string;
-	duration: number;
-	trackTitle: string;
-	albumTitle: string;
-	coverArt: string;
-}
-
-type FetchResponse = { error?: string } & Partial<BandcampTrackData>;
-
-interface ProgressState {
-	played: number;
-	loaded: number;
-	playedSeconds: number;
-	loadedSeconds: number;
-}
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { useBandcampTrack } from "@/components/use-bandcamp-track";
+import type { BandcampPlayerHandle } from "@/types/bandcamp";
+import type { ProgressState } from "@/types/progress-state-type";
 
 interface BandcampPlayerProps {
 	url: string;
@@ -42,14 +16,6 @@ interface BandcampPlayerProps {
 	onProgress?: (state: ProgressState) => void;
 	onDuration?: (duration: number) => void;
 	onError?: (error: unknown) => void;
-}
-
-function parseBandcampUrl(url: string) {
-	const match = url.match(
-		/^https?:\/\/([^.]+)\.bandcamp\.com\/track\/([^/?#]+)/,
-	);
-	if (!match) return null;
-	return { artist: match[1], track: match[2] };
 }
 
 /**
@@ -80,8 +46,6 @@ export const BandcampPlayer = forwardRef<
 		ref,
 	) => {
 		const audioRef = useRef<HTMLAudioElement>(null);
-		const [trackData, setTrackData] = useState<BandcampTrackData | null>(null);
-		const [isLoading, setIsLoading] = useState(true);
 
 		// Store callbacks in refs so effects that read them don't need them as
 		// dependencies. This prevents a re-fetch every time the parent re-renders
@@ -92,14 +56,14 @@ export const BandcampPlayer = forwardRef<
 		const onEndedRef = useRef(onEnded);
 		const onProgressRef = useRef(onProgress);
 		const onDurationRef = useRef(onDuration);
-		const onErrorRef = useRef(onError);
 		onReadyRef.current = onReady;
 		onPlayRef.current = onPlay;
 		onPauseRef.current = onPause;
 		onEndedRef.current = onEnded;
 		onProgressRef.current = onProgress;
 		onDurationRef.current = onDuration;
-		onErrorRef.current = onError;
+
+		const { trackData, isLoading } = useBandcampTrack(url, onError);
 
 		useImperativeHandle(ref, () => ({
 			seekTo: (fraction: number) => {
@@ -114,70 +78,6 @@ export const BandcampPlayer = forwardRef<
 			},
 			getMuted: () => audioRef.current?.muted ?? false,
 		}));
-
-		// Fetch stream data from proxy whenever the Bandcamp URL changes.
-		// Callbacks intentionally omitted from deps — they are read via refs so
-		// that non-memoised parent functions don't trigger an unnecessary re-fetch.
-		useEffect(() => {
-			const parsed = parseBandcampUrl(url);
-			if (!parsed) {
-				onErrorRef.current?.(new Error(`Invalid Bandcamp URL: ${url}`));
-				return;
-			}
-
-			setTrackData(null);
-			setIsLoading(true);
-
-			const params = new URLSearchParams({
-				artist: parsed.artist,
-				track: parsed.track,
-			});
-
-			//Manual controller for unmounting/re-rendering
-			const manualController = new AbortController();
-			//Timeout signal
-			const timeoutSignal = AbortSignal.timeout(4500);
-			//The fetch will abort if EITHER signal triggers
-			const combinedSignal = AbortSignal.any([
-				manualController.signal,
-				timeoutSignal,
-			]);
-
-			fetch(`/api/bandcamp-track?${params}`, { signal: combinedSignal })
-				.then(async (res) => {
-					if (!res.ok) {
-						throw new Error(`HTTP error! status: ${res.status}`);
-					}
-					return res.json();
-				})
-				.then((data: FetchResponse) => {
-					if (manualController.signal.aborted) return;
-
-					if (data.error) {
-						console.error("BandcampPlayer: proxy error:", data.error);
-						onErrorRef.current?.(new Error(data.error));
-					} else {
-						setTrackData(data as BandcampTrackData);
-					}
-					setIsLoading(false);
-				})
-				.catch((err: unknown) => {
-					if (manualController.signal.aborted) return;
-
-					if (err instanceof DOMException && err.name === "TimeoutError") {
-						console.error("BandcampPlayer: track fetch timed out after 4.5s");
-					} else {
-						console.error("BandcampPlayer: fetch failed:", err);
-					}
-
-					setIsLoading(false);
-					onErrorRef.current?.(err);
-				});
-
-			return () => {
-				manualController.abort();
-			};
-		}, [url]); // only url — callbacks are stable via refs
 
 		// Play / pause control
 		useEffect(() => {
@@ -254,7 +154,7 @@ export const BandcampPlayer = forwardRef<
 						});
 					}}
 					onError={(e) => {
-						onErrorRef.current?.(e);
+						onError?.(e);
 					}}
 					style={{ display: "none" }}
 				/>
