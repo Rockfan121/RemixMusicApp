@@ -13,7 +13,7 @@ interface Props {
 
 export function Header({ rightSlot }: Props) {
 	return (
-		<header className="fixed z-10 flex w-full top-0 left-0 items-center justify-between px-4 bg-primary h-11">
+		<header className="fixed z-40 flex w-full top-0 left-0 items-center justify-between px-4 bg-primary h-11">
 			<div className="flex items-center space-x-3">
 				<Link className="flex items-center space-x-2 text-white" to="/">
 					<RocketIcon className="mx-1 h-8 w-8" />
