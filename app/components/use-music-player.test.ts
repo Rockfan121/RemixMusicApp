@@ -13,8 +13,8 @@ vi.mock("@/helpers/timeouts", () => ({
 import { toast } from "sonner";
 import {
 	DEFAULT_LOOP_MODE,
-	WATCHDOG_THRESHOLD_MS,
 	useMusicPlayer,
+	WATCHDOG_THRESHOLD_MS,
 } from "./use-music-player";
 
 // ---------------------------------------------------------------------------

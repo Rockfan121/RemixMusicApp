@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MAX_PLAYLISTS } from "@/config.shared";
 import {
-	RECENT_PLAYLISTS_KEY,
 	addToRecentPlaylists,
 	getRecentPlaylists,
+	RECENT_PLAYLISTS_KEY,
 } from "@/helpers/recent-playlists";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 
