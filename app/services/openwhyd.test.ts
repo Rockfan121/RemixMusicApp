@@ -33,6 +33,11 @@ describe("apiPlaylist", () => {
 		);
 	});
 
+	it("handles undefined userId and playlistId", () => {
+		expect(apiPlaylist(undefined, undefined)).toBe(
+			"https://openwhyd.org/api/playlist/undefined_undefined",
+		);
+	});
 });
 
 describe("apiUser", () => {
