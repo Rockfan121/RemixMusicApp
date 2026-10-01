@@ -304,7 +304,7 @@ describe("fetchUserPlaylist", () => {
 		expect(result).toBeNull();
 	});
 
-	it("returns null when the response body starts with 'moved'", async () => {
+	it("returns null when the response body starts with 'meh'", async () => {
 		server.use(
 			http.get(
 				"https://openwhyd.org/u/:userId/playlist/:playlistId",

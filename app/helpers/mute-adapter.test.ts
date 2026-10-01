@@ -58,8 +58,8 @@ describe("createMuteAdapter – YouTube IFrame API", () => {
 describe("createMuteAdapter – Vimeo Player SDK (no muteSyncSeqRef)", () => {
 	function makeVimeoPlayer() {
 		return {
-			getMuted: vi.fn().mockResolvedValue(false),
-			setMuted: vi.fn().mockResolvedValue(undefined),
+			getMuted: vi.fn(),
+			setMuted: vi.fn(),
 		};
 	}
 
@@ -84,8 +84,8 @@ describe("createMuteAdapter – Vimeo Player SDK (no muteSyncSeqRef)", () => {
 describe("createMuteAdapter – Vimeo Player SDK (with muteSyncSeqRef, no race)", () => {
 	it("calls player.setMuted once when the sequence number is not superseded", async () => {
 		const player = {
-			getMuted: vi.fn().mockResolvedValue(false),
-			setMuted: vi.fn().mockResolvedValue(undefined),
+			getMuted: vi.fn(),
+			setMuted: vi.fn(),
 		};
 		const seqRef = { current: 0 };
 		const adapter = createMuteAdapter(player, seqRef);
@@ -99,7 +99,7 @@ describe("createMuteAdapter – Vimeo Player SDK (with muteSyncSeqRef, race cond
 	it("re-applies the value when a concurrent call bumps the sequence number mid-await", async () => {
 		const player = {
 			getMuted: vi.fn(),
-			setMuted: vi.fn().mockResolvedValue(undefined),
+			setMuted: vi.fn(),
 		};
 		const seqRef = { current: 0 };
 		const adapter = createMuteAdapter(player, seqRef);

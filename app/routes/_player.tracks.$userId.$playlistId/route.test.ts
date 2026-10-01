@@ -100,7 +100,7 @@ describe("playlist loader", () => {
 		expect(res.hasMore).toBe(true);
 	});
 
-	it("returns empty TRACKS when the user playlist endpoint returns 'moved' text", async () => {
+	it("returns empty TRACKS when the user playlist endpoint returns 'meh' text", async () => {
 		server.use(
 			http.get("https://openwhyd.org/api/playlist/:id", () =>
 				HttpResponse.json(PLAYLIST_INFO),
