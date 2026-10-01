@@ -134,10 +134,10 @@ export async function fetchUserPlaylist(
 ): Promise<{ tracks: Track[]; hasMore: boolean } | null> {
 	const res = await fetch(userPlaylist(userId, playlistId, afterId));
 	if (!res.ok) return null;
-	// Openwhyd responds with an HTML "moved" page (starting with "m") when the
+	// Openwhyd responds with an HTML "meh" page (starting with "m") when the
 	// playlist does not exist or has been deleted, rather than a 404 status.
 	const text = await res.text();
-	if (text.startsWith("moved")) return null;
+	if (text.startsWith("meh")) return null;
 	const tracks = JSON.parse(text) as Track[];
 	return {
 		tracks,
