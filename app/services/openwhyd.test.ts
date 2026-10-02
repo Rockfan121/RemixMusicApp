@@ -1,7 +1,6 @@
 // @vitest-environment node
 
 import { HttpResponse, http } from "msw";
-import { describe, expect, it } from "vitest";
 import { MAX_FETCHED_ITEMS, MAX_PLAYLISTS } from "@/config.shared";
 import { server } from "@/mocks/server";
 import {

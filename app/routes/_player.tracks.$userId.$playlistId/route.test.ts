@@ -1,7 +1,6 @@
 // @vitest-environment node
 
 import { HttpResponse, http } from "msw";
-import { describe, expect, it, vi } from "vitest";
 import { MAX_FETCHED_ITEMS } from "@/config.shared";
 import { server } from "@/mocks/server";
 

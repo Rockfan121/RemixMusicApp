@@ -1,5 +1,4 @@
 // @vitest-environment node
-import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock bandcamp-fetch before importing the loader so the vi.mock hoisting works
 vi.mock("bandcamp-fetch", () => ({

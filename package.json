@@ -10,7 +10,7 @@
 		"lint": "biome check . --max-diagnostics 40",
 		"start": "cross-env NODE_ENV=production node ./server.js",
 		"test": "vitest run --testTimeout=20000",
-		"test:watch": "vitest --testTimeout=20000",
+		"test:watch": "vitest --watch --testTimeout=20000",
 		"test:coverage": "vitest run --coverage --testTimeout=20000",
 		"typecheck": "react-router typegen && tsc"
 	},

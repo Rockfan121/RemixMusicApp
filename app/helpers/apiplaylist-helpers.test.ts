@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import headphones from "@/assets/headphones.jpg";
 import music_heart from "@/assets/music_heart.jpg";
 import musical_note from "@/assets/musical_note.jpg";
