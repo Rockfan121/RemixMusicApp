@@ -4,16 +4,21 @@ import { defineConfig } from "vite";
 import { envOnlyMacros } from "vite-env-only";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
 	ssr: {
 		resolve: {
 			externalConditions: ["node"],
 		},
 	},
-	plugins: [tailwindcss(), envOnlyMacros(), tsconfigPaths(), reactRouter()],
+	plugins: [
+		tailwindcss(),
+		envOnlyMacros(),
+		tsconfigPaths(),
+		...(mode === "test" ? [] : [reactRouter()]),
+	],
 	test: {
 		environment: "jsdom",
-		globals: false,
+		globals: true,
 		setupFiles: ["./app/test/setup.ts"],
 		include: ["app/**/*.test.{ts,tsx}"],
 		coverage: {
@@ -26,7 +31,6 @@ export default defineConfig(() => ({
 				"app/**/*.test.{ts,tsx}",
 				"app/entry.client.tsx",
 				"app/entry.server.tsx",
-				"app/root.tsx",
 			],
 		},
 	},
