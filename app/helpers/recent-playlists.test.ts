@@ -1,4 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MAX_PLAYLISTS } from "@/config.shared";
 import {
 	addToRecentPlaylists,
@@ -24,6 +23,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	localStorage.clear();
+	vi.restoreAllMocks();
 });
 
 // ---------------------------------------------------------------------------
@@ -42,8 +42,10 @@ describe("getRecentPlaylists", () => {
 	});
 
 	it("returns an empty array when stored JSON is malformed", () => {
+		const error = vi.spyOn(console, "error").mockImplementation(() => {});
 		localStorage.setItem(RECENT_PLAYLISTS_KEY, "not-valid-json{{{");
 		expect(getRecentPlaylists()).toEqual([]);
+		expect(error).toHaveBeenCalledOnce();
 	});
 });
 

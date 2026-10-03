@@ -82,6 +82,7 @@ export function MusicPlayer({
 				<div className="flex w-full h-full items-center flex-col grow p-0 m-0">
 					<input
 						className="w-full -my-2"
+						aria-label="Playback position"
 						type="range"
 						min={0}
 						max={0.999999}
@@ -94,10 +95,16 @@ export function MusicPlayer({
 					/>
 					<div className="flex video-controls h-full items-center place-items-start space-x-2 sm:space-x-6 px-1 sm:px-3 py-1">
 						<div className="flex items-center space-x-0.5">
-							<Button onClick={prevSong} className="player-button" size="icon">
+							<Button
+								aria-label="Previous track"
+								onClick={prevSong}
+								className="player-button"
+								size="icon"
+							>
 								<TrackPreviousIcon className="size-5" />
 							</Button>
 							<Button
+								aria-label={isPlaying ? "Pause" : "Play"}
 								onClick={togglePlayPause}
 								className="player-button"
 								size="icon-lg"
@@ -108,13 +115,19 @@ export function MusicPlayer({
 									<PlayIcon className="size-6" />
 								)}
 							</Button>
-							<Button onClick={nextSong} className="player-button" size="icon">
+							<Button
+								aria-label="Next track"
+								onClick={nextSong}
+								className="player-button"
+								size="icon"
+							>
 								<TrackNextIcon className="size-5" />
 							</Button>
 						</div>
 
 						<div className="flex items-center space-x-0.5">
 							<Button
+								aria-label="Change loop mode"
 								onClick={toggleLooped}
 								className={cn(
 									"hidden sm:flex",
@@ -130,6 +143,7 @@ export function MusicPlayer({
 								<LoopIcon className="size-5" />
 							</Button>
 							<Button
+								aria-label={isMuted ? "Unmute" : "Mute"}
 								onClick={toggleMuted}
 								className={isMuted ? "untoggled-button" : "toggled-button"}
 								size="icon"
@@ -142,6 +156,9 @@ export function MusicPlayer({
 							</Button>
 
 							<Button
+								aria-label={
+									isBrowserFullscreen ? "Exit fullscreen" : "Enter fullscreen"
+								}
 								onClick={toggleBrowserFullscreen}
 								className={cn("hidden sm:flex", "toggled-button")}
 								size="icon"

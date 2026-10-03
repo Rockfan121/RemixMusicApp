@@ -292,6 +292,25 @@ describe("fetchUserPlaylist", () => {
 		expect(result?.hasMore).toBe(false);
 	});
 
+	it("forwards afterId and reports another page for a full response", async () => {
+		const tracks = makeTracks(MAX_FETCHED_ITEMS);
+		let receivedAfter: string | null = null;
+		server.use(
+			http.get(
+				"https://openwhyd.org/u/:userId/playlist/:playlistId",
+				({ request }) => {
+					receivedAfter = new URL(request.url).searchParams.get("after");
+					return HttpResponse.json(tracks);
+				},
+			),
+		);
+
+		const result = await fetchUserPlaylist("abc123", "5", "last-track");
+
+		expect(receivedAfter).toBe("last-track");
+		expect(result).toEqual({ tracks, hasMore: true });
+	});
+
 	it("returns null when the response is non-200", async () => {
 		server.use(
 			http.get(
@@ -303,7 +322,7 @@ describe("fetchUserPlaylist", () => {
 		expect(result).toBeNull();
 	});
 
-	it("returns null when the response body starts with 'meh'", async () => {
+	it("returns null when the response is not JSON", async () => {
 		server.use(
 			http.get(
 				"https://openwhyd.org/u/:userId/playlist/:playlistId",
@@ -315,7 +334,7 @@ describe("fetchUserPlaylist", () => {
 			),
 		);
 		const result = await fetchUserPlaylist("abc123", "5");
-		expect(result).toBeNull();
+		expect(result).rejects.toThrow();
 	});
 });
 
@@ -348,7 +367,7 @@ describe("fetchApiPlaylist", () => {
 			),
 		);
 		const result = await fetchApiPlaylist("abc123", "5");
-		expect(result).toBeNull();
+		expect(result).rejects.toThrow();
 	});
 });
 
@@ -371,7 +390,7 @@ describe("fetchUserInfo", () => {
 			),
 		);
 		const result = await fetchUserInfo("abc123");
-		expect(result).toBeNull();
+		expect(result).rejects.toThrow();
 	});
 });
 
@@ -384,11 +403,11 @@ describe("fetchUserSpecialPlaylist", () => {
 			),
 		);
 		const result = await fetchUserSpecialPlaylist("abc123", "all");
-		expect(result).toBeNull();
+		expect(result).rejects.toThrow();
 	});
 
 	it("returns playlistInfo and tracks for type 'all'", async () => {
-		const tracks = makeTracks(3);
+		const tracks = makeTracks(MAX_FETCHED_ITEMS - 1);
 		server.use(
 			http.get("https://openwhyd.org/api/user/:userId", () =>
 				HttpResponse.json(USER_INFO),
@@ -398,23 +417,46 @@ describe("fetchUserSpecialPlaylist", () => {
 			),
 		);
 		const result = await fetchUserSpecialPlaylist("abc123", "all");
-		expect(result?.playlistInfo.uNm).toBe("testuser");
-		expect(result?.tracks).toEqual(tracks);
-		expect(result?.hasMore).toBe(false);
+		expect(result).toEqual({
+			playlistInfo: {
+				id: "uAll",
+				name: "uAll",
+				uId: "abc123",
+				uNm: "testuser",
+				plId: "",
+				nbTracks: 10,
+			},
+			tracks,
+			hasMore: true,
+		});
 	});
 
-	it("returns playlistInfo and tracks for type 'likes'", async () => {
-		const tracks = makeTracks(3);
+	it("returns likes metadata, full-page state, and forwards afterId", async () => {
+		const tracks = makeTracks(21);
+		let receivedAfter: string | null = null;
 		server.use(
 			http.get("https://openwhyd.org/api/user/:userId", () =>
 				HttpResponse.json(USER_INFO),
 			),
-			http.get("https://openwhyd.org/u/:userId/likes", () =>
-				HttpResponse.json(tracks),
-			),
+			http.get("https://openwhyd.org/u/:userId/likes", ({ request }) => {
+				receivedAfter = new URL(request.url).searchParams.get("after");
+				return HttpResponse.json(tracks);
+			}),
 		);
-		const result = await fetchUserSpecialPlaylist("abc123", "likes");
-		expect(result?.tracks).toEqual(tracks);
+		const result = await fetchUserSpecialPlaylist("abc123", "likes", "last-like");
+		expect(receivedAfter).toBe("last-like");
+		expect(result).toEqual({
+			playlistInfo: {
+				id: "uLikes",
+				name: "uLikes",
+				uId: "abc123",
+				uNm: "testuser",
+				plId: "",
+				nbTracks: 5,
+			},
+			tracks,
+			hasMore: true,
+		});
 	});
 
 	it("returns playlistInfo and tracks for type 'stream'", async () => {
@@ -427,6 +469,18 @@ describe("fetchUserSpecialPlaylist", () => {
 		);
 		const result = await fetchUserSpecialPlaylist("abc123", "stream");
 		expect(result?.tracks).toEqual(tracks);
+		expect(result).toEqual({
+			playlistInfo: {
+				id: "uStream",
+				name: "uStream",
+				uId: "abc123",
+				uNm: "testuser",
+				plId: "",
+				nbTracks: -1,
+			},
+			tracks,
+			hasMore: false,
+		});
 	});
 
 	it("returns empty tracks and hasMore=false when the tracks endpoint fails", async () => {
@@ -467,6 +521,6 @@ describe("fetchUserListOfPlaylists", () => {
 			),
 		);
 		const result = await fetchUserListOfPlaylists("abc123");
-		expect(result).toBeNull();
+		expect(result).rejects.toThrow();
 	});
 });

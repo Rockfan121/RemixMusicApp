@@ -96,16 +96,16 @@ export const BandcampPlayer = forwardRef<
 		// Volume control
 		useEffect(() => {
 			const audio = audioRef.current;
-			if (!audio) return;
+			if (!audio || !trackData) return;
 			audio.volume = volume;
-		}, [volume]);
+		}, [volume, trackData]);
 
-		// Muted control
+		//Muted control
 		useEffect(() => {
 			const audio = audioRef.current;
-			if (!audio) return;
+			if (!audio || !trackData) return;
 			audio.muted = muted;
-		}, [muted]);
+		}, [muted, trackData]);
 
 		if (isLoading) {
 			return (
@@ -123,9 +123,10 @@ export const BandcampPlayer = forwardRef<
 		return (
 			<>
 				{/* Hidden audio element — playback is controlled via refs and effects */}
-				{/* biome-ignore lint/a11y/useMediaCaption: music streaming has no caption track */}
+				{/* biome-ignore lint/a11y/useMediaCaption: streamed music has no captions */}
 				<audio
 					ref={audioRef}
+					data-testid="bandcamp-audio"
 					src={trackData.streamUrl}
 					loop={loop}
 					onCanPlay={() => onReadyRef.current?.()}
