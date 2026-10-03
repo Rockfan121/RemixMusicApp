@@ -2,7 +2,7 @@ import { RowsIcon } from "@radix-ui/react-icons";
 import { Link, NavLink } from "react-router";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { myUrl } from "@/types/apiplaylist-helpers";
+import { myUrl } from "@/helpers/apiplaylist-helpers";
 import type { ApiPlaylist } from "@/types/openwhyd-types";
 
 const PlaylistItem = ({
