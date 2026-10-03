@@ -124,20 +124,31 @@ describe("Root playback callback", () => {
 
 		const playerRequest = await screen.findByLabelText("Player request");
 		expect(playerRequest).toHaveAttribute("data-play-request-id", "0");
-		expect(screen.getByLabelText("Recent playlist count")).toHaveTextContent("0");
+		expect(screen.getByLabelText("Recent playlist count")).toHaveTextContent(
+			"0",
+		);
 
-		await user.click(screen.getByRole("button", { name: "Play selected track" }));
+		await user.click(
+			screen.getByRole("button", { name: "Play selected track" }),
+		);
 
 		await waitFor(() =>
 			expect(playerRequest).toHaveAttribute("data-play-request-id", "1"),
 		);
 		expect(playerRequest).toHaveAttribute("data-first-track-no", "1");
-		expect(playerRequest).toHaveAttribute("data-playlist-url", "/tracks/user/1");
+		expect(playerRequest).toHaveAttribute(
+			"data-playlist-url",
+			"/tracks/user/1",
+		);
 		expect(playerRequest).toHaveAttribute("data-track-count", "2");
-		expect(screen.getByLabelText("Recent playlist count")).toHaveTextContent("1");
+		expect(screen.getByLabelText("Recent playlist count")).toHaveTextContent(
+			"1",
+		);
 		expect(getRecentPlaylists()).toEqual([PLAYLIST]);
 
-		await user.click(screen.getByRole("button", { name: "Play selected track" }));
+		await user.click(
+			screen.getByRole("button", { name: "Play selected track" }),
+		);
 
 		await waitFor(() =>
 			expect(playerRequest).toHaveAttribute("data-play-request-id", "2"),

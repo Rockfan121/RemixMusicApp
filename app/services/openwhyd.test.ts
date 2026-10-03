@@ -443,7 +443,11 @@ describe("fetchUserSpecialPlaylist", () => {
 				return HttpResponse.json(tracks);
 			}),
 		);
-		const result = await fetchUserSpecialPlaylist("abc123", "likes", "last-like");
+		const result = await fetchUserSpecialPlaylist(
+			"abc123",
+			"likes",
+			"last-like",
+		);
 		expect(receivedAfter).toBe("last-like");
 		expect(result).toEqual({
 			playlistInfo: {
