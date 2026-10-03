@@ -11,10 +11,7 @@ vi.mock("react-player", async () => {
 	const React = await import("react");
 	return {
 		default: React.forwardRef(
-			(
-				props: { url: string; playing: boolean; muted: boolean },
-				ref,
-			) => {
+			(props: { url: string; playing: boolean; muted: boolean }, ref) => {
 				React.useImperativeHandle(ref, () => ({
 					seekTo: vi.fn(),
 					getInternalPlayer: () => null,
@@ -96,9 +93,10 @@ describe("MusicPlayer", () => {
 			"data-url",
 			"https://www.youtube.com/watch?v=one",
 		);
-		expect(
-			screen.getByRole("link", { name: "Track one" }),
-		).toHaveAttribute("href", "/tracks/user/1");
+		expect(screen.getByRole("link", { name: "Track one" })).toHaveAttribute(
+			"href",
+			"/tracks/user/1",
+		);
 
 		await user.click(screen.getByRole("button", { name: "Pause" }));
 		expect(screen.getByRole("button", { name: "Play" })).toBeVisible();
@@ -113,27 +111,26 @@ describe("MusicPlayer", () => {
 
 		await user.click(screen.getByRole("button", { name: "Next track" }));
 		await waitFor(() =>
-			expect(
-				screen.getByRole("link", { name: "Track two" }),
-			).toBeVisible(),
+			expect(screen.getByRole("link", { name: "Track two" })).toBeVisible(),
 		);
 		expect(screen.getByTestId("react-player")).toHaveAttribute(
 			"data-url",
 			"https://www.youtube.com/watch?v=two",
 		);
 
-		fireEvent.change(screen.getByRole("slider", { name: "Playback position" }), {
-			target: { value: "0.5" },
-		});
-		expect(screen.getByRole("slider", { name: "Playback position" })).toHaveValue(
-			"0.5",
+		fireEvent.change(
+			screen.getByRole("slider", { name: "Playback position" }),
+			{
+				target: { value: "0.5" },
+			},
 		);
+		expect(
+			screen.getByRole("slider", { name: "Playback position" }),
+		).toHaveValue("0.5");
 	});
 
 	it("selects BandcampPlayer rather than ReactPlayer for Bandcamp tracks", async () => {
-		renderPlayer([
-			makeTrack("bandcamp", "/bc/someartist/some-track"),
-		]);
+		renderPlayer([makeTrack("bandcamp", "/bc/someartist/some-track")]);
 
 		const bandcampPlayer = await screen.findByTestId("bandcamp-player");
 		expect(bandcampPlayer).toHaveAttribute(

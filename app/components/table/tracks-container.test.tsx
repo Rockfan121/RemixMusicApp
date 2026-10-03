@@ -92,7 +92,10 @@ describe("TracksContainer", () => {
 	});
 
 	it("renders tracks and hands the selected track list to the player", async () => {
-		const tracks = [makeTrack(), makeTrack({ _id: "track-2", name: "Second Track" })];
+		const tracks = [
+			makeTrack(),
+			makeTrack({ _id: "track-2", name: "Second Track" }),
+		];
 		const user = userEvent.setup();
 		renderTracksContainer({ tracks });
 
@@ -141,9 +144,7 @@ describe("TracksContainer", () => {
 
 		await waitFor(() => expect(resolveNextPage).toBeDefined());
 		expect(requestedUrl?.searchParams.get("after")).toBe("42");
-		expect(
-			screen.getByRole("button", { name: /loading/i }),
-		).toBeDisabled();
+		expect(screen.getByRole("button", { name: /loading/i })).toBeDisabled();
 
 		resolveNextPage?.({ TRACKS: [nextTrack], hasMore: false });
 

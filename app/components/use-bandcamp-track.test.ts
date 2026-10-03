@@ -61,7 +61,9 @@ describe("useBandcampTrack", () => {
 
 		await waitFor(() => expect(onError).toHaveBeenCalledOnce());
 		expect(onError).toHaveBeenCalledWith(
-			expect.objectContaining({ message: `Invalid Bandcamp URL: ${INVALID_URL}` }),
+			expect.objectContaining({
+				message: `Invalid Bandcamp URL: ${INVALID_URL}`,
+			}),
 		);
 		expect(proxyRequested).toBe(false);
 		expect(result.current.trackData).toBeNull();
