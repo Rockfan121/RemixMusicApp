@@ -30,25 +30,25 @@ export default function Index() {
 						</h1>
 					</div>
 
-				<search>
-					<form action={search}>
-						<div className="flex py-6 max-w-2xs sm:max-w-xs md:max-w-sm items-center space-x-1">
-							<Input
-								id={queryId}
-								name="query"
-								placeholder="Search tracks, playlists or users"
-								type="text"
-								pattern="\w+"
-								className="h-11 w-2xs sm:w-xs md:w-sm bg-accent"
-							/>
-							<Button type="submit" size="icon-lg">
-								<PaperPlaneIcon />
-							</Button>
-						</div>
-					</form>
-				</search>
-			</div>
-		</main>
+					<search>
+						<form action={search}>
+							<div className="flex py-6 max-w-2xs sm:max-w-xs md:max-w-sm items-center space-x-1">
+								<Input
+									id={queryId}
+									name="query"
+									placeholder="Search tracks, playlists or users"
+									type="text"
+									pattern="\w+"
+									className="h-11 w-2xs sm:w-xs md:w-sm bg-accent"
+								/>
+								<Button type="submit" size="icon-lg">
+									<PaperPlaneIcon />
+								</Button>
+							</div>
+						</form>
+					</search>
+				</div>
+			</main>
 		</div>
 	);
 }
