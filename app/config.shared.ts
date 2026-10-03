@@ -5,6 +5,7 @@ export const MAX_PLAYLISTS = 200;
 
 // Maximum number of items to fetch from Openwhyd API once a time
 export const MAX_FETCHED_ITEMS = 50;
+export const MAX_FETCHED_LIKED_ITEMS = 21;
 
 export function title(pageTitle?: string) {
 	if (!pageTitle) return APP_NAME;

@@ -42,6 +42,8 @@ export function useBandcampTrack(
 		const parsed = parseBandcampUrl(url);
 		if (!parsed) {
 			onErrorRef.current?.(new Error(`Invalid Bandcamp URL: ${url}`));
+			setIsLoading(false);
+			setTrackData(null);
 			return;
 		}
 
@@ -52,6 +54,8 @@ export function useBandcampTrack(
 			artist: parsed.artist,
 			track: parsed.track,
 		});
+		const proxyUrl = new URL("/api/bandcamp-track", window.location.origin);
+		proxyUrl.search = params.toString();
 
 		//Manual controller for unmounting/re-rendering
 		const manualController = new AbortController();
@@ -63,7 +67,7 @@ export function useBandcampTrack(
 			timeoutSignal,
 		]);
 
-		fetch(`/api/bandcamp-track?${params}`, { signal: combinedSignal })
+		fetch(proxyUrl, { signal: combinedSignal })
 			.then(async (res) => {
 				if (!res.ok) {
 					throw new Error(`HTTP error! status: ${res.status}`);

@@ -43,7 +43,10 @@ describe("loader – missing query parameters", () => {
 		});
 		expect(res.status).toBe(400);
 		const body = await res.json();
-		expect(body).toHaveProperty("error");
+		expect(body).toEqual({
+			error: "Missing required query parameters: artist, track",
+		});
+		expect(mockGetInfo).not.toHaveBeenCalled();
 	});
 
 	it("returns 400 when only artist is provided", async () => {
@@ -82,6 +85,10 @@ describe("loader – successful response", () => {
 		});
 
 		expect(res.status).toBe(200);
+		expect(res.headers.get("Cache-Control")).toBe("public, max-age=3600");
+		expect(mockGetInfo).toHaveBeenCalledWith({
+			trackUrl: "https://someartist.bandcamp.com/track/some-track",
+		});
 		const body = await res.json();
 		expect(body).toEqual({
 			streamUrl: "https://example.com/stream.mp3",
@@ -129,8 +136,11 @@ describe("loader – no stream URL", () => {
 		});
 
 		expect(res.status).toBe(404);
+		expect(res.headers.get("Cache-Control")).toBe("no-store");
 		const body = await res.json();
-		expect(body).toHaveProperty("error");
+		expect(body).toEqual({
+			error: "No stream URL available for this track",
+		});
 	});
 });
 
@@ -145,6 +155,7 @@ describe("loader – bandcamp-fetch throws", () => {
 		});
 
 		expect(res.status).toBe(500);
+		expect(res.headers.get("Cache-Control")).toBe("no-store");
 		const body = await res.json();
 		expect(body.error).toBe("Bandcamp unavailable");
 	});

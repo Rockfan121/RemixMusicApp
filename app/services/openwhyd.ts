@@ -1,4 +1,8 @@
-import { MAX_FETCHED_ITEMS, MAX_PLAYLISTS } from "@/config.shared";
+import {
+	MAX_FETCHED_ITEMS,
+	MAX_FETCHED_LIKED_ITEMS,
+	MAX_PLAYLISTS,
+} from "@/config.shared";
 import type { ApiPlaylist, Track, UserPlaylist } from "@/types/openwhyd-types";
 import { PlaylistsIDs } from "@/types/playlists-types";
 
@@ -89,14 +93,20 @@ type UserInfo = {
  * Returns `{ tracks, hasMore }` where `tracks` is the flat array extracted
  * from the `{ tracks: [] }` envelope that Openwhyd returns for this endpoint.
  */
+
+function throwErrorMessage(functionName: string, response: Response): never {
+	throw new Error(
+		`${functionName}: HTTP ${response.status} ${response.statusText}, ${response.url}`,
+	);
+}
+
 export async function fetchHotPlaylist(skip?: number): Promise<{
 	tracks: Track[];
 	hasMore: boolean;
 	raw: { tracks?: Track[] };
 }> {
 	const res = await fetch(hotPlaylist(skip));
-	if (!res.ok)
-		throw new Error(`fetchHotPlaylist: HTTP ${res.status} ${res.statusText}`);
+	if (!res.ok) throwErrorMessage("fetchHotPlaylist", res);
 	const data = (await res.json()) as { tracks?: Track[] };
 	const tracks = data?.tracks ?? [];
 	return {
@@ -114,8 +124,7 @@ export async function fetchAllPlaylist(afterId?: string): Promise<{
 	hasMore: boolean;
 }> {
 	const res = await fetch(allPlaylist(afterId));
-	if (!res.ok)
-		throw new Error(`fetchAllPlaylist: HTTP ${res.status} ${res.statusText}`);
+	if (!res.ok) throwErrorMessage("fetchAllPlaylist", res);
 	const tracks = (await res.json()) as Track[];
 	return {
 		tracks,
@@ -125,20 +134,24 @@ export async function fetchAllPlaylist(afterId?: string): Promise<{
 
 /**
  * Fetches a specific user playlist by userId + playlistId.
- * Returns `null` if the playlist is inaccessible (non-200 or redirect response).
+ * Throws an error if the playlist is inaccessible (non-200 or redirect response).
  */
 export async function fetchUserPlaylist(
 	userId: string | undefined,
 	playlistId: string | undefined,
 	afterId?: string,
-): Promise<{ tracks: Track[]; hasMore: boolean } | null> {
+): Promise<{ tracks: Track[]; hasMore: boolean }> {
 	const res = await fetch(userPlaylist(userId, playlistId, afterId));
-	if (!res.ok) return null;
-	// Openwhyd responds with an HTML "meh" page (starting with "m") when the
-	// playlist does not exist or has been deleted, rather than a 404 status.
+	if (!res.ok) throwErrorMessage("fetchUserPlaylist", res);
+	// Openwhyd responds with a non-JSON redirect page when a playlist is
+	// unavailable, rather than a 404 status.
 	const text = await res.text();
-	if (text.startsWith("meh")) return null;
-	const tracks = JSON.parse(text) as Track[];
+	let tracks: Track[];
+	try {
+		tracks = JSON.parse(text) as Track[];
+	} catch {
+		throw new Error(`fetchUserPlaylist: JSON parsing has failed, ${res.url}`);
+	}
 	return {
 		tracks,
 		hasMore: Array.isArray(tracks) && tracks.length === MAX_FETCHED_ITEMS,
@@ -147,32 +160,33 @@ export async function fetchUserPlaylist(
 
 /**
  * Fetches the /api/playlist/:userId_:playlistId metadata endpoint.
- * Returns null when the playlist does not exist (non-200).
+ * Throws an error when the playlist does not exist (non-200).
  */
 export async function fetchApiPlaylist(
 	userId: string | undefined,
 	playlistId: string | undefined,
-): Promise<ApiPlaylist[] | null> {
+): Promise<ApiPlaylist[]> {
 	const res = await fetch(apiPlaylist(userId, playlistId));
-	if (!res.ok) return null;
+	if (!res.ok) throwErrorMessage("fetchApiPlaylist", res);
 	return (await res.json()) as ApiPlaylist[];
 }
 
 /**
  * Fetches user info from /api/user/:userId.
- * Returns null when the user does not exist (non-200).
+ * Throws an error when the user does not exist (non-200).
  */
 export async function fetchUserInfo(
 	userId: string | undefined,
-): Promise<UserInfo | null> {
+): Promise<UserInfo> {
 	const res = await fetch(apiUser(userId));
-	if (!res.ok) return null;
+	if (!res.ok) throwErrorMessage("fetchUserInfo", res);
 	return (await res.json()) as UserInfo;
 }
 
 /**
  * Fetches one of the three user special playlists (all / likes / stream).
  * Constructs and returns the typed `ApiPlaylist` descriptor together with tracks.
+ * Throws an error if fetchUserInfo fails.
  */
 export async function fetchUserSpecialPlaylist(
 	userId: string | undefined,
@@ -182,9 +196,8 @@ export async function fetchUserSpecialPlaylist(
 	playlistInfo: ApiPlaylist;
 	tracks: Track[];
 	hasMore: boolean;
-} | null> {
+}> {
 	const userInfo = await fetchUserInfo(userId);
-	if (!userInfo) return null;
 
 	let tracksRes: Response;
 	let playlistIdConst: string;
@@ -200,7 +213,7 @@ export async function fetchUserSpecialPlaylist(
 		tracksRes = await fetch(userLikesPlaylist(userId, afterId));
 		playlistIdConst = PlaylistsIDs.UserLikes;
 		nbTracks = userInfo.nbLikes;
-		hasMoreLimit = 21;
+		hasMoreLimit = MAX_FETCHED_LIKED_ITEMS;
 	} else {
 		tracksRes = await fetch(userStreamPlaylist(userId, afterId));
 		playlistIdConst = PlaylistsIDs.UserStream;
@@ -231,12 +244,12 @@ export async function fetchUserSpecialPlaylist(
 
 /**
  * Fetches the list of user playlists.
- * Returns null when the user does not exist (non-200).
+ * Throws an error when the user does not exist (non-200).
  */
 export async function fetchUserListOfPlaylists(
 	userId: string | undefined,
-): Promise<UserPlaylist[] | null> {
+): Promise<UserPlaylist[]> {
 	const res = await fetch(userListOfPlaylists(userId));
-	if (!res.ok) return null;
+	if (!res.ok) throwErrorMessage("fetchUserListOfPlaylists", res);
 	return (await res.json()) as UserPlaylist[];
 }
