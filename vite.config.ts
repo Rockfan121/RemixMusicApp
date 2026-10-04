@@ -1,7 +1,7 @@
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
-import { envOnlyMacros } from "vite-env-only";
+import envOnly from "vite-env-only";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => ({
@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
 	},
 	plugins: [
 		tailwindcss(),
-		envOnlyMacros(),
+		envOnly(), //since 3.x.x envOnlyMacros()
 		tsconfigPaths(),
 		...(mode === "test" ? [] : [reactRouter()]),
 	],
