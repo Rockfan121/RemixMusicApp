@@ -71,7 +71,7 @@ describe("user-all loader", () => {
 	});
 
 	it("returns hasMore=true when the API returns MAX_FETCHED_ITEMS-1 tracks", async () => {
-		const tracks = makeTracks(MAX_FETCHED_ITEMS - 1);
+		const tracks = makeTracks(MAX_FETCHED_ITEMS);
 		server.use(
 			http.get("https://openwhyd.org/api/user/:userId", () =>
 				HttpResponse.json(USER_INFO),
