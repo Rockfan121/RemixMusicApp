@@ -60,15 +60,25 @@ export function useTracksLoader(
 		setCanLoadMore(fetcher.data.hasMore);
 	}, [fetcher.state, fetcher.data, location.pathname]);
 
+	const checkIfIsSpecial = (urlPart: string) => {
+		return urlPart === "stream" || urlPart === "likes" || urlPart === "all";
+	};
+
 	const handleLoadMore = () => {
 		const isHot = location.pathname === HOT_TRACKS_LINK;
+		const splitUrl = location.pathname.split("/");
+		const isSpecial = checkIfIsSpecial(splitUrl[splitUrl.length - 1]);
+		console.log("isSpecial: ");
+		console.log(isSpecial);
 		const lastTrackNo = allTracks.length - 1;
 		const order = allTracks[lastTrackNo].order;
 		const params = isHot
 			? `?skip=${allTracks.length}`
-			: order
-				? `?after=${order}`
-				: `?after=${allTracks[lastTrackNo]._id}`;
+			: isSpecial
+				? `?after=${allTracks[lastTrackNo]._id}`
+				: order
+					? `?after=${order}`
+					: `?after=${allTracks[lastTrackNo]._id}`;
 		fetcher.load(`${location.pathname}${params}`);
 	};
 

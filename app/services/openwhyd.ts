@@ -4,7 +4,7 @@ import {
 	MAX_PLAYLISTS,
 } from "@/config.shared";
 import type { ApiPlaylist, Track, UserPlaylist } from "@/types/openwhyd-types";
-import { PlaylistsIDs } from "@/types/playlists-types";
+import { PlaylistsIDs, PlaylistsNames } from "@/types/playlists-types";
 
 const BASE_URL = "https://openwhyd.org";
 
@@ -201,29 +201,33 @@ export async function fetchUserSpecialPlaylist(
 
 	let tracksRes: Response;
 	let playlistIdConst: string;
+	let playlistName: string;
 	let nbTracks: number;
 	let hasMoreLimit: number;
 
 	if (type === "all") {
 		tracksRes = await fetch(userAllPlaylist(userId, afterId));
 		playlistIdConst = PlaylistsIDs.UserAll;
+		playlistName = PlaylistsNames.UserAll;
 		nbTracks = userInfo.nbPosts;
-		hasMoreLimit = MAX_FETCHED_ITEMS - 1;
+		hasMoreLimit = MAX_FETCHED_ITEMS;
 	} else if (type === "likes") {
 		tracksRes = await fetch(userLikesPlaylist(userId, afterId));
 		playlistIdConst = PlaylistsIDs.UserLikes;
+		playlistName = PlaylistsNames.UserLikes;
 		nbTracks = userInfo.nbLikes;
 		hasMoreLimit = MAX_FETCHED_LIKED_ITEMS;
 	} else {
 		tracksRes = await fetch(userStreamPlaylist(userId, afterId));
 		playlistIdConst = PlaylistsIDs.UserStream;
+		playlistName = PlaylistsNames.UserStream;
 		nbTracks = -1;
 		hasMoreLimit = MAX_FETCHED_ITEMS;
 	}
 
 	const playlistInfo: ApiPlaylist = {
 		id: playlistIdConst,
-		name: playlistIdConst,
+		name: playlistName,
 		uId: userInfo.id,
 		uNm: userInfo.name,
 		plId: "",
