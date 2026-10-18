@@ -229,7 +229,7 @@ No `.env*`, compose file, Dependabot/Renovate configuration, `.npmrc`, or source
 | `react-player` 2.16.1 / `vite-env-only` 2.4.1 | Outdated major versions available | `npm outdated` reports newer majors, not a vulnerability finding. Review migrations and provider/CSP behavior before upgrading. |
 | `bandcamp-fetch` 3.2.1 | No advisory reported | High-risk role because it fetches remote scraped content; SEC-001 must validate input before calling it. |
 
-The committed `package-lock.json` includes integrity metadata. Packages use caret ranges in `package.json`; no `.npmrc` with `engine-strict` was found. `package.json` has no `postinstall` or `prepare` hook. `engines.node` is declared as `>=22.12.0`, but enforcement depends on the installer/runtime because `engine-strict` is absent.
+The committed `package-lock.json` includes integrity metadata. Packages use caret ranges in `package.json`; no `.npmrc` with `engine-strict` was found. `package.json` has no `postinstall` or `prepare` hook. `engines.node` is declared as `24.21.x`, but enforcement depends on the installer/runtime because `engine-strict` is absent.
 
 ## 8. What is already done well
 

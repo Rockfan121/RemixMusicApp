@@ -4,7 +4,7 @@
 
 This plan is based on `SECURITY_REPORT.md` and the current implementations in `server.js`, `app/services/openwhyd.ts`, `app/routes/api.bandcamp-track/route.ts`, `app/components/use-bandcamp-track.ts`, `app/helpers/media-url.ts`, `app/helpers/recent-playlists.ts`, `app/components/theme-switcher.tsx`, `app/entry.server.tsx`, their tests, and the Docker/workflow configuration.
 
-Use existing Node 22 APIs (`URL`, `URLSearchParams`, `AbortSignal.timeout`) and `@/` imports. Do not add a dependency for validation, timeouts, or headers unless the dependency-free implementation proves inadequate. Preserve currently valid Openwhyd identifiers and supported YouTube, SoundCloud, DailyMotion, Vimeo, and Bandcamp playback. Every step must retain React Router v8 typed loader usage and pass Biome.
+Use existing Node 24.21.x APIs (`URL`, `URLSearchParams`, `AbortSignal.timeout`) and `@/` imports. Do not add a dependency for validation, timeouts, or headers unless the dependency-free implementation proves inadequate. Preserve currently valid Openwhyd identifiers and supported YouTube, SoundCloud, DailyMotion, Vimeo, and Bandcamp playback. Every step must retain React Router v8 typed loader usage and pass Biome.
 
 ## Prioritisation
 
@@ -88,7 +88,7 @@ Rank is risk reduction divided by implementation effort.
 
 - **Findings:** SEC-006, SEC-009.
 - **Files:** modify `.github/workflows/code_quality.yaml:12-16`, `.github/workflows/codeql.yml:58,62,90`, `Dockerfile:2-47`; optionally create `.github/dependabot.yml`.
-- **Change:** Pin Actions to reviewed full commit SHAs with version comments and pin Biome setup to the repository’s expected Biome version rather than `latest`. Change Docker installs to `npm ci` and run the final container with a dedicated non-root user. Pin the base image by digest only after choosing a supported Node 22 image digest. Add Dependabot only if repository owners accept automated update PRs.
+- **Change:** Pin Actions to reviewed full commit SHAs with version comments and pin Biome setup to the repository’s expected Biome version rather than `latest`. Change Docker installs to `npm ci` and run the final container with a dedicated non-root user. Pin the Node 24.21.x base image by digest only after choosing a supported image digest. Add Dependabot only if repository owners accept automated update PRs.
 - **Behaviour impact:** None for application behavior; image/action updates need routine maintenance.
 - **Tests:** Build the Docker image in CI/staging and verify it can write only required runtime paths. Validate workflow YAML syntax; confirm CodeQL and quality workflows still run.
 - **Manual verification:** `docker build`, run with the configured port, request `/healthcheck` and an SSR page; inspect `id` in the container.
