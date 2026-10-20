@@ -18,18 +18,22 @@ Rank is risk reduction divided by implementation effort.
 | 4 | 3 | S10, S11, S12 | Operational and supply-chain hardening. |
 | 5 | 4 | S13 | Defer low-value or externally constrained work unless threat model changes. |
 
-## Phase 0 — Open decisions (waiting for approval)
+## Phase 0 — Decision recorded
 
-### S0 — Decide the future of the server-side Bandcamp proxy
+### S0 — Keep the server-side Bandcamp proxy with strict validation
 
 - **Finding:** SEC-001 (and controls in SEC-003, SEC-004, SEC-010).
-- **Files affected after approval:** `app/routes/api.bandcamp-track/route.ts:5-47`, `app/components/use-bandcamp-track.ts:9-108`, route tests, and possibly `app/components/BandcampPlayer.tsx`.
-- **Option A — keep the proxy with strict validation (recommended):** Accept a Bandcamp subdomain label and track slug only, construct `https://<artist>.bandcamp.com/track/<track>`, reject all malformed values before `bandcamp-fetch`, and apply the timeout/error/abuse controls described below. This retains current Bandcamp playback for conventional `artist.bandcamp.com/track/slug` URLs.
-- **Option B — remove/disable the proxy:** Do not call `bandcamp-fetch`; mark Bandcamp tracks unsupported or use a direct browser-side provider path. This eliminates server-side SSRF but changes Bandcamp playback and may lose signed-stream functionality.
-- **Trade-offs:** Option A preserves user behavior but requires maintaining Bandcamp URL policy and testing library redirect behavior. Option B has the smallest server attack surface but is a visible product change.
-- **Recommendation:** Approve Option A, but verify with a staging deployment that `bandcamp-fetch` does not follow redirects to non-Bandcamp hosts; otherwise the library must expose redirect control or the proxy should be disabled.
-- **Behaviour impact:** Option A: **⚠️ BEHAVIOUR CHANGE** — malformed/non-Bandcamp URLs receive 400 rather than a lookup. Option B: **⚠️ BEHAVIOUR CHANGE** — Bandcamp playback changes or disappears.
-- **Dependencies:** No implementation step for the proxy proceeds until this choice is approved.
+- **Decision:** Approved — retain the proxy and implement strict Bandcamp allowlisting.
+- **Implementation scope:** S7 will accept only conventional `artist.bandcamp.com/track/slug` input, reject malformed/non-Bandcamp values before `bandcamp-fetch`, and preserve valid Bandcamp playback.
+- **Redirect verification:** S7 must verify `bandcamp-fetch` redirect behavior in staging. If redirects cannot be disabled or revalidated as Bandcamp-only, stop the implementation and escalate before exposing the proxy.
+- **Behaviour impact:** **⚠️ BEHAVIOUR CHANGE** — malformed/non-Bandcamp URLs receive 400 rather than a lookup.
+- **Dependencies:** S7 may proceed after S2 and S8. Abuse-rate-limit policy remains deferred until a hosting provider is selected.
+
+### Deferred and skipped policy decisions
+
+- **S10 rate limiting / proxy trust:** Deferred until the hosting provider and reverse-proxy/WAF capabilities are selected. Do not add an in-process limiter or set `trust proxy` before that decision.
+- **S13 raw MP3 media hosts:** Skipped. Openwhyd may point to arbitrary websites hosting MP3 files, so a restrictive host allowlist would break intended playback. The existing scheme-level URL-safety work remains subject to a future, separate decision.
+- **Dependabot:** Approved for the Phase 1 S5 implementation; it is not a Phase 0 change.
 
 ## Phase 1 — Quick wins
 
