@@ -4,6 +4,7 @@ import TracksContainer from "@/components/table/tracks-container";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { fetchAllPlaylist } from "@/services/openwhyd";
+import type { Track } from "@/types/openwhyd-types";
 import { allPlaylistInfo, PlaylistsNames } from "@/types/playlists-types";
 
 const PAGE_TITLE = PlaylistsNames.All;
@@ -16,7 +17,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		const { tracks, hasMore } = await fetchAllPlaylist(afterId);
 		return { TRACKS: tracks, hasMore };
 	} catch {
-		return { TRACKS: {}, hasMore: false };
+		return { TRACKS: [] as Track[], hasMore: false };
 	}
 };
 

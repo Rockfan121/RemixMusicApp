@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { HttpResponse, http } from "msw";
+import { RouterContextProvider } from "react-router";
 import { MAX_FETCHED_ITEMS } from "@/config.shared";
 import { server } from "@/mocks/server";
 
@@ -41,7 +42,9 @@ describe("user-stream loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/stream`),
+			pattern: "/tracks/:userId/stream",
+			context: new RouterContextProvider(),
 		});
 		expect(res.playlistInfo).toBeNull();
 		expect(res.TRACKS).toEqual([]);
@@ -60,7 +63,9 @@ describe("user-stream loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/stream`),
+			pattern: "/tracks/:userId/stream",
+			context: new RouterContextProvider(),
 		});
 		expect(res.playlistInfo).not.toBeNull();
 		expect(res.playlistInfo?.uNm).toBe("testuser");
@@ -80,7 +85,9 @@ describe("user-stream loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/stream`),
+			pattern: "/tracks/:userId/stream",
+			context: new RouterContextProvider(),
 		});
 		expect(res.hasMore).toBe(true);
 	});
@@ -100,7 +107,9 @@ describe("user-stream loader", () => {
 		await loader({
 			request: makeRequest({ after: "xyz789" }),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/stream`),
+			pattern: "/tracks/:userId/stream",
+			context: new RouterContextProvider(),
 		});
 		expect(receivedAfter).toBe("xyz789");
 	});
@@ -119,7 +128,9 @@ describe("user-stream loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/stream`),
+			pattern: "/tracks/:userId/stream",
+			context: new RouterContextProvider(),
 		});
 		expect(res.TRACKS).toEqual([]);
 		expect(res.hasMore).toBe(false);

@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { HttpResponse, http } from "msw";
+import { RouterContextProvider } from "react-router";
 import { MAX_FETCHED_ITEMS } from "@/config.shared";
 import { server } from "@/mocks/server";
 
@@ -38,7 +39,9 @@ describe("hot-tracks loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/hot"),
+			pattern: "/tracks/hot",
+			context: new RouterContextProvider(),
 		});
 		expect(res.TRACKS).toEqual({ tracks });
 		expect(res.hasMore).toBe(false);
@@ -53,7 +56,9 @@ describe("hot-tracks loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/hot"),
+			pattern: "/tracks/hot",
+			context: new RouterContextProvider(),
 		});
 		expect(res.hasMore).toBe(true);
 	});
@@ -70,7 +75,9 @@ describe("hot-tracks loader", () => {
 		await loader({
 			request: makeRequest({ skip: "50" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/hot"),
+			pattern: "/tracks/hot",
+			context: new RouterContextProvider(),
 		});
 		expect(receivedSkip).toBe("50");
 	});
@@ -86,7 +93,9 @@ describe("hot-tracks loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/hot"),
+			pattern: "/tracks/hot",
+			context: new RouterContextProvider(),
 		});
 		expect(res.TRACKS).toEqual({});
 		expect(res.hasMore).toBe(false);
@@ -100,7 +109,9 @@ describe("hot-tracks loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/hot"),
+			pattern: "/tracks/hot",
+			context: new RouterContextProvider(),
 		});
 		expect(res.hasMore).toBe(false);
 	});
