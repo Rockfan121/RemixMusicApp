@@ -25,7 +25,7 @@ Rank is risk reduction divided by implementation effort.
 - **Finding:** SEC-001 (and controls in SEC-003, SEC-004, SEC-010).
 - **Decision:** Approved — retain the proxy and implement strict Bandcamp allowlisting.
 - **Implementation scope:** S7 will accept only conventional `artist.bandcamp.com/track/slug` input, reject malformed/non-Bandcamp values before `bandcamp-fetch`, and preserve valid Bandcamp playback.
-- **Redirect verification:** S7 must verify `bandcamp-fetch` redirect behavior in staging. If redirects cannot be disabled or revalidated as Bandcamp-only, stop the implementation and escalate before exposing the proxy.
+- **Redirect verification:** Blocked during source inspection on 2026-10-20. `bandcamp-fetch` 3.2.1 invokes native `fetch()` without a redirect option, so Node's default `redirect: "follow"` can follow a Bandcamp redirect to a non-Bandcamp host. Its public `track.getInfo()` API exposes no fetch/redirect-policy override. Stop proxy implementation until the dependency is replaced, patched/upstreamed to support `redirect: "error"` or an allowlisted manual redirect policy, or a separately approved compensating control is selected.
 - **Behaviour impact:** **⚠️ BEHAVIOUR CHANGE** — malformed/non-Bandcamp URLs receive 400 rather than a lookup.
 - **Dependencies:** S7 may proceed after S2 and S8. Abuse-rate-limit policy remains deferred until a hosting provider is selected.
 
