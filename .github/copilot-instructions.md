@@ -8,7 +8,7 @@ There is no database, authentication, or server-side session management.
 
 ## Runtime & Tooling
 
-- Node: `>=22.12.0`
+- Node: `>=24.21.0`
 - Module type: ESM (`"type": "module"`)
 - Linting/format checks: Biome (`biome check`)
 - Build: React Router build (`react-router build`)
@@ -144,7 +144,7 @@ Use `useLoaderData<typeof loader>()` for typed loader data.
 
 Use current stable APIs from installed package versions in `package.json`.
 Prefer React Router v8 idioms over legacy Remix patterns.
-Do not add polyfills for features already available in Node >= 22.
+Do not add polyfills for features already available in Node >=24.21.0.
 
 ### Efficiency
 

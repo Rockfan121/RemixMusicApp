@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { HttpResponse, http } from "msw";
+import { RouterContextProvider } from "react-router";
 import { MAX_FETCHED_ITEMS } from "@/config.shared";
 import { server } from "@/mocks/server";
 
@@ -36,7 +37,9 @@ describe("all-tracks loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/all"),
+			pattern: "/tracks/all",
+			context: new RouterContextProvider(),
 		});
 		expect(res.TRACKS).toEqual(tracks);
 		expect(res.hasMore).toBe(false);
@@ -51,7 +54,9 @@ describe("all-tracks loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/all"),
+			pattern: "/tracks/all",
+			context: new RouterContextProvider(),
 		});
 		expect(res.hasMore).toBe(true);
 	});
@@ -68,7 +73,9 @@ describe("all-tracks loader", () => {
 		await loader({
 			request: makeRequest({ after: "abc123" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/all"),
+			pattern: "/tracks/all",
+			context: new RouterContextProvider(),
 		});
 		expect(receivedAfter).toBe("abc123");
 	});
@@ -84,7 +91,9 @@ describe("all-tracks loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/tracks/all"),
+			pattern: "/tracks/all",
+			context: new RouterContextProvider(),
 		});
 		expect(res.TRACKS).toEqual({});
 		expect(res.hasMore).toBe(false);

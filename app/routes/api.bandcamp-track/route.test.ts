@@ -15,6 +15,7 @@ vi.mock("@/helpers/timeouts", () => ({
 }));
 
 import bcFetch from "bandcamp-fetch";
+import { RouterContextProvider } from "react-router";
 import { loader } from "./route";
 
 function makeRequest(params: Record<string, string>) {
@@ -39,7 +40,9 @@ describe("loader – missing query parameters", () => {
 		const res = await loader({
 			request: makeRequest({}),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 		expect(res.status).toBe(400);
 		const body = await res.json();
@@ -53,7 +56,9 @@ describe("loader – missing query parameters", () => {
 		const res = await loader({
 			request: makeRequest({ artist: "someartist" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 		expect(res.status).toBe(400);
 	});
@@ -62,7 +67,9 @@ describe("loader – missing query parameters", () => {
 		const res = await loader({
 			request: makeRequest({ track: "some-track" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 		expect(res.status).toBe(400);
 	});
@@ -81,7 +88,9 @@ describe("loader – successful response", () => {
 		const res = await loader({
 			request: makeRequest({ artist: "someartist", track: "some-track" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 
 		expect(res.status).toBe(200);
@@ -111,7 +120,9 @@ describe("loader – successful response", () => {
 		const res = await loader({
 			request: makeRequest({ artist: "someartist", track: "some-track" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 
 		const body = await res.json();
@@ -132,7 +143,9 @@ describe("loader – no stream URL", () => {
 		const res = await loader({
 			request: makeRequest({ artist: "someartist", track: "some-track" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 
 		expect(res.status).toBe(404);
@@ -151,7 +164,9 @@ describe("loader – bandcamp-fetch throws", () => {
 		const res = await loader({
 			request: makeRequest({ artist: "someartist", track: "some-track" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 
 		expect(res.status).toBe(500);
@@ -166,7 +181,9 @@ describe("loader – bandcamp-fetch throws", () => {
 		const res = await loader({
 			request: makeRequest({ artist: "someartist", track: "some-track" }),
 			params: {},
-			context: {},
+			url: new URL("http://localhost/api/bandcamp-track"),
+			pattern: "/api/bandcamp-track",
+			context: new RouterContextProvider(),
 		});
 
 		expect(res.status).toBe(500);

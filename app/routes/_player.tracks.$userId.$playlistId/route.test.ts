@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { HttpResponse, http } from "msw";
+import { RouterContextProvider } from "react-router";
 import { MAX_FETCHED_ITEMS } from "@/config.shared";
 import { server } from "@/mocks/server";
 
@@ -52,7 +53,9 @@ describe("playlist loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID, playlistId: PLAYLIST_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/${PLAYLIST_ID}`),
+			pattern: "/tracks/:userId/:playlistId",
+			context: new RouterContextProvider(),
 		});
 		expect(res.PLAYLIST_INFO).toEqual([]);
 		expect(res.TRACKS).toEqual([]);
@@ -73,7 +76,9 @@ describe("playlist loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID, playlistId: PLAYLIST_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/${PLAYLIST_ID}`),
+			pattern: "/tracks/:userId/:playlistId",
+			context: new RouterContextProvider(),
 		});
 		expect(res.PLAYLIST_INFO).toEqual(PLAYLIST_INFO);
 		expect(res.TRACKS).toEqual(tracks);
@@ -94,7 +99,9 @@ describe("playlist loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID, playlistId: PLAYLIST_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/${PLAYLIST_ID}`),
+			pattern: "/tracks/:userId/:playlistId",
+			context: new RouterContextProvider(),
 		});
 		expect(res.hasMore).toBe(true);
 	});
@@ -113,7 +120,9 @@ describe("playlist loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID, playlistId: PLAYLIST_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/${PLAYLIST_ID}`),
+			pattern: "/tracks/:userId/:playlistId",
+			context: new RouterContextProvider(),
 		});
 		expect(res.PLAYLIST_INFO).toEqual(PLAYLIST_INFO);
 		expect(res.TRACKS).toEqual([]);
@@ -138,7 +147,9 @@ describe("playlist loader", () => {
 		await loader({
 			request: makeRequest({ after: "abc123" }),
 			params: { userId: USER_ID, playlistId: PLAYLIST_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/${PLAYLIST_ID}`),
+			pattern: "/tracks/:userId/:playlistId",
+			context: new RouterContextProvider(),
 		});
 		expect(receivedAfter).toBe("abc123");
 	});

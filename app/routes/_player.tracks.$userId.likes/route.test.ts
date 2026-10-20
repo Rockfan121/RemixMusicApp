@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { HttpResponse, http } from "msw";
+import { RouterContextProvider } from "react-router";
 import { server } from "@/mocks/server";
 
 vi.mock("@/helpers/timeouts", () => ({
@@ -40,7 +41,9 @@ describe("user-likes loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/likes`),
+			pattern: "/tracks/:userId/likes",
+			context: new RouterContextProvider(),
 		});
 		expect(res.playlistInfo).toBeNull();
 		expect(res.TRACKS).toEqual([]);
@@ -61,7 +64,9 @@ describe("user-likes loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/likes`),
+			pattern: "/tracks/:userId/likes",
+			context: new RouterContextProvider(),
 		});
 		expect(res.playlistInfo).not.toBeNull();
 		expect(res.playlistInfo?.uNm).toBe("testuser");
@@ -84,7 +89,9 @@ describe("user-likes loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/likes`),
+			pattern: "/tracks/:userId/likes",
+			context: new RouterContextProvider(),
 		});
 		expect(res.hasMore).toBe(true);
 	});
@@ -104,7 +111,9 @@ describe("user-likes loader", () => {
 		await loader({
 			request: makeRequest({ after: "xyz789" }),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/likes`),
+			pattern: "/tracks/:userId/likes",
+			context: new RouterContextProvider(),
 		});
 		expect(receivedAfter).toBe("xyz789");
 	});
@@ -123,7 +132,9 @@ describe("user-likes loader", () => {
 		const res = await loader({
 			request: makeRequest(),
 			params: { userId: USER_ID },
-			context: {},
+			url: new URL(`http://localhost/tracks/${USER_ID}/likes`),
+			pattern: "/tracks/:userId/likes",
+			context: new RouterContextProvider(),
 		});
 		expect(res.TRACKS).toEqual([]);
 		expect(res.hasMore).toBe(false);

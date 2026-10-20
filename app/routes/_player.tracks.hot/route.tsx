@@ -4,6 +4,7 @@ import TracksContainer from "@/components/table/tracks-container";
 import { title } from "@/config.shared";
 import { timeout300 } from "@/helpers/timeouts";
 import { fetchHotPlaylist } from "@/services/openwhyd";
+import type { Track } from "@/types/openwhyd-types";
 import { hotPlaylistInfo, PlaylistsNames } from "@/types/playlists-types";
 
 const PAGE_TITLE = PlaylistsNames.Hot;
@@ -16,7 +17,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		const { raw, hasMore } = await fetchHotPlaylist(skip || undefined);
 		return { TRACKS: raw, hasMore };
 	} catch {
-		return { TRACKS: {}, hasMore: false };
+		return { TRACKS: { tracks: [] as Track[] }, hasMore: false };
 	}
 };
 
@@ -30,7 +31,7 @@ export default function HotTracks() {
 	return (
 		<TracksContainer
 			playlistInfo={hotPlaylistInfo}
-			tracks={TRACKS.tracks}
+			tracks={TRACKS.tracks ?? []}
 			hasMore={hasMore}
 		/>
 	);

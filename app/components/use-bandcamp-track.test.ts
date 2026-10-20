@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { server } from "@/mocks/server";
+import type { BandcampTrackData } from "@/types/bandcamp";
 import { useBandcampTrack } from "./use-bandcamp-track";
 
 const VALID_URL = "https://someartist.bandcamp.com/track/some-track";
@@ -13,7 +14,9 @@ const TRACK_DATA = {
 	coverArt: "https://cdn.bandcamp.com/cover.jpg",
 };
 
-function respondWithTrack(data = TRACK_DATA) {
+function respondWithTrack(
+	data: BandcampTrackData | { error: string } = TRACK_DATA,
+) {
 	server.use(
 		http.get("*/api/bandcamp-track", ({ request }) => {
 			const url = new URL(request.url);
